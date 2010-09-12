@@ -33,14 +33,21 @@ function connect(){
             pre: function(json){
                 output(JSON.stringify(json));
                 myChar = new char(json.data);
+            },
+            pre_new_bf: function(json){
+                output(JSON.stringify(json));
+            },
+            con_set_id: function(json){
+                output(JSON.stringify(json));
             }
         }
     });
     
 }
 
-function sendhi(){
-    ws1.send('hi');
+function create_battlefield(){
+    var char = $("#char").val();
+    ws1.send("pre_new_bf",{bf_name:"OurWar",name:char});
 }
 
 function talk(){
@@ -69,8 +76,8 @@ function sys_list_user(){
     ws1.send("sys",{cmd:"listUser"});
 }
 
-function sys_list_char(){
-    ws1.send("sys",{cmd:"listChar"});
+function sys_list_battlefield(){
+    ws1.send("sys",{cmd:"listBattlefield"});
 }
 
 function sys_list_socket(){
@@ -79,7 +86,7 @@ function sys_list_socket(){
 
 function prepare(){
     var char = $("#char").val();
-    ws1.send("pre",{cmd:"prepareChar",name:char});
+    ws1.send("pre",{cmd:"prepareChar",name:char,no:0});
 }
 
 function start(){

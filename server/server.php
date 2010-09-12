@@ -8,19 +8,21 @@ error_reporting(E_ALL);
 set_time_limit(0);
 ob_implicit_flush(1);
 //Import Class
+require_once "websockethandshake.class.php";
+require_once "core.class.php";
 require_once "cardo.class.php";
 require_once "char.class.php";
+require_once "battleaction.class.php";
+require_once "battlefield.class.php";
+require_once "console.class.php";
 
 //Start Websocket Class
 class WebSocket {
     private $core;
     private $sockets = array();
     private $user = array();
-    private $char = array();
-    private $sys = array();
     private $pre = array();
-    private $timestamp;
-    private $fightStart = 0;
+    private $battlefield = array();
 
     function __construct(){
         //Init Socket
@@ -31,33 +33,25 @@ class WebSocket {
 
         $this->sockets[] = $this->core;
         //Output Console Logs
-        $this->consoleOutput("Server Start");
-        //Make sys Array;
-        $this->sys["listUser"] = array("self","listUser"); //List All Connection User
-        $this->sys["listChar"] = array("self","listChar"); //List All Prepare Char
-        $this->sys["listSocket"] = array("self","listSocket"); //List All Socket
+        console::write("Server Start");
         //Make pre Array;
         $this->pre["prepareChar"] = array("self","prepareChar"); //Make A Char
-        $this->pre["battleStart"] = array("self","battleStart"); //Battle Start
 
         $this->loop();
-
     }
 
     private function loop(){
         while(1){
             $changed = $this->sockets;
             socket_select($changed,$w=null,$e=null,null);
-            //Action Point
-            if($this->fightStart){
-                self::addActionPoint();
-            }
+            
+            self::heartBeating(); // Action Point
 
             foreach($changed as $socket){
                 if($socket == $this->core){
                     $client = socket_accept($this->core);
                     if($client < 0){
-                        $this->consoleOutput("socket_accept() failed");
+                        console::write("socket_accept() failed");
                         continue;
                     }else{
                         $this->newUser($client);
@@ -71,13 +65,13 @@ class WebSocket {
                         if(!$user->handshake){
                             //MAX LIMIT
                             if(count($this->user) - 1 >=GI_CLIENTLIMIT){ //TODO Don't Know why need - 1
-                                self::consoleOutput("New Connection Coming, But Server Reach Max Connection");
+                                console::write("New Connection Coming, But Server Reach Max Connection");
                                 continue;
                             }
                             $this->doHandShake($user,$buffer);
                         }else{
                             $string = $this->unwrap($buffer);
-                            $this->consoleOutput($string);
+                            console::write("Server Received: " . $string);
                             $array = json_decode($string,1 /*Convert To Array*/);
                             //var_dump($array);
                             $this->process($user,$array,$socket);
@@ -88,34 +82,6 @@ class WebSocket {
         }
     }
 
-    private function addActionPoint(){
-        $multi = time() - $this->timestamp;
-        if($multi){
-            $this->timestamp = time();
-            foreach($this->char as $char){
-                $char->addActionPoint($multi);
-            }
-        }
-    }
-
-    private function feedbackActionPoint(){
-        
-    }
-
-    private function feedbackCharPrepare($id,$char){
-        $a = array();
-        $a["type"] = "pre";
-        $a["data"] = (array) $char;
-        $json = json_encode($a);
-        self::consoleOutput($json);
-        self::sendSingle($id,$json);
-    }
-
-    private function consoleOutput($str){
-        echo date('Y-m-d H:i:s') . " : " . $str . PHP_EOL;
-        return;
-    }
-
     private function newUser($socket){
         $user = new user;
         $id = uniqid();
@@ -123,7 +89,7 @@ class WebSocket {
         $user->socket = $socket;
         $this->user[$id] = $user;
         $this->sockets[$id] = $socket;
-        $this->consoleOutput($socket . " Just Come In" . PHP_EOL);
+        console::write($socket . " Just Come In");
     }
 
     private function userDisconnect($socket){
@@ -139,17 +105,21 @@ class WebSocket {
         if(!is_null($id)){
             if (isset($this->user[$id])) unset($this->user[$id]);
             if (isset($this->sockets[$id])) unset($this->sockets[$id]);
-            if (isset($this->char[$id])) unset($this->char[$id]); 
+            //Get battlefield Fight
+            $idx = self::getBattlefieldIndex($id);
+            if(is_int($idx)){
+                //Stop fight
+                $this->battlefield[$idx]->stopBattle();
+                //Kick Char from battlefield
+                if (is_int($idx)) {
+                    $this->battlefield[$idx]->kickFieldChar($id);
+                }
+            }
         }
         //Close Socket
         socket_close($socket);
-        //Fight Stop
-        if($this->fightStart){
-            $this->consoleOutput("Battle Stop");
-            $this->fightStart = 0;
-        }
         //Output Console Logs
-        $this->consoleOutput($socket . "Disconnected");
+        console::write($socket . "Disconnected");
     }
 
     private function getUserBySocket($socket){
@@ -162,46 +132,57 @@ class WebSocket {
 
     private function doHandShake($user,$buffer){
         $upgrade = (string) new WebSocketHandshake($buffer);
-        $this->consoleOutput($upgrade);
         socket_write($user->socket,$upgrade,strlen($upgrade));
-        $user->handshake=true;
-        $this->consoleOutput("Hand Shake Done");
-    }
-
-    private function wrap($msg){
-        return chr(0) . $msg . chr(255);
-    }
-
-    private function unwrap($msg){
-        return substr($msg, 1, strlen($msg)-2);
+        $user->handshake=1;
+        console::write($upgrade);
+        console::write("Hand Shake Done");
+        //Send UniqID
+        $array = array("id" => $user->id);
+        $msg = self::feedbackJSON("con_set_id",$array);
+        console::write("Send Unique ID to client {$msg}");
+        $msg = self::wrap($msg);
+        socket_write($user->socket,$msg,strlen($msg));
     }
 
     private function process($user,$array,$socket){
         //Bad Request
         if (!isset($array['type'])){
-            self::consoleOutput("Bad Request");
+            console::write("Bad Request");
             return;
         }
         //Case
         $type = $array['type'];
         if ($type == "sys"){ //System Console
             $key = $array['data']['cmd'];
-            $call_func = $this->sys[$key];
-            call_user_func($call_func);
-            return;
+            if ($key == "listUser"){
+                console::listVar($this->user);
+            }else if($key == "listSocket") {
+                console::listVar($this->sockets);
+            }else if($key == "listBattlefield"){
+                console::listVar($this->battlefield); 
+            }
         }else if($type == "talk"){ //Talk
             self::feedbackTalk($array['data']);
-            return;
         }else if($type == "pre"){ //Prepare Battle
             $key = $array['data']['cmd'];
             $call_func = $this->pre[$key];
-            call_user_func($call_func,$user,$array['data']);
-            return;
+            $no = $array['data']['no'];
+            call_user_func($call_func,$user,$array['data'],$this->battlefield[$no]);
+        }else if($type == "pre_new_bf"){
+            self::prepareBattlefield($user,$array['data']);
+        }
+    }
+
+    private function heartBeating(){
+        foreach($this->battlefield as $k => &$v){
+            if($v->checkBattleStatus()){
+                $v->addActionPoint();
+            }
         }
     }
 
     private function feedbackTalk($data){
-        self::consoleOutput($data['name'] . " says: " . $data['msg']);
+        console::write("Server Received Talk Data: " . $data['name'] . " says: " . $data['msg']);
         $feedback = array();
         $feedback['type'] = "talk";
         $feedback['data'] = array("name"=>$data['name'],"msg"=>$data['msg']);
@@ -210,49 +191,61 @@ class WebSocket {
         return;
     }
 
-    private function prepareChar($user,$data){
+    private function prepareBattlefield($user,$data){
         $id = $user->id;
-        if(isset($this->char[$id])){
-            self::consoleOutput("Char Has Been Prepared");
-            return;
-        }
+        //Check Char Has Prepared
+        if(is_int(self::getBattlefieldIndex($id))){ return; }
+        //Create battlefield
         $name = $data['name'];
-        $this->char[$id] = new char($id,$name);
-        $this->char[$id]->setMaxHP(30);
-        $this->char[$id]->setSpeed(2);
+        $battlefield = new battlefield($id,"OurWar"/*TODO*/,$name);
+        $this->battlefield[] = $battlefield;
+        //Get Max Idx
+        $no = max(array_keys($this->battlefield));
+        $this->battlefield[$no]->setIdx($no);
+        $battlefieldArray = $battlefield->getBattlefieldInfo();
+        //battlefield infomation
+        $json = self::feedbackJSON("pre_new_bf",$battlefieldArray);
         //Feedback
-        self::feedbackCharPrepare($id,$this->char[$id]);
+        self::sendSingle($id,$json);
+        //Console
+        console::write("User {$id} create a battlefield: {$json}");
     }
 
-    private function battleStart($user,$data){
-        //2 Sides Prepared
-        if(count($this->char)==2){
-            self::consoleOutput($data['name'] . " Start The Battle!");
-            $this->fightStart = 1;
-            $this->timestamp = time();
-            return;
+    private function prepareChar($user,$data,&$battlefield){
+        $id = $user->id;
+        //Check Char Has Prepared
+        if(is_int(self::getBattlefieldIndex($id))){ return; }
+        //Check Battlefield Char Count
+        if($battlefield->getFieldCharCount() == 2){
+            console::write("{$battlefield->name} has full.");
+            return; 
         }
-        //Not Prepared
-        self::consoleOutput($data['name'] . " Start The Battle, But 2 sides not fully prepared");
-        return;
+        //Prepare
+        $name = $data['name'];
+        $charArray = $battlefield->prepareChar($id,$name);
+        //Char Infomation
+        $json = self::feedbackJSON("pre",$charArray);
+        //Feedback
+        self::sendSingle($id,$json);
+        //Console
+        $n = $battlefield->getFieldName();
+        console::write("User {$id} entered battlefield {$n}: {$json}");
     }
 
-    private function listUser(){
-        var_dump($this->user);
-    }
-
-    private function listChar(){
-        var_dump($this->char);
-    }
-
-    private function listSocket(){
-        var_dump($this->sockets);
+    private function getBattlefieldIndex($id){
+        foreach($this->battlefield as $k => $v){
+            if ($v->checkCharExists($id)){
+                $fieldname = $v->getFieldName();
+                console::write("This char has in battlefield {$fieldname}");
+                return $k;
+            }
+        }
+        return false;
     }
 
     private function sendAll($msg){
-        $users = $this->user;
         $msg = $this->wrap($msg);
-        foreach ($users as $user) {
+        foreach ($this->user as $user) {
             socket_write($user->socket,$msg,strlen($msg));
         }
     }
@@ -262,67 +255,9 @@ class WebSocket {
         socket_write($this->user[$id]->socket,$msg,strlen($msg));
     }
 
-}
-
-
-class WebSocketHandshake {
-
-    /*! Easy way to handshake a WebSocket via draft-ietf-hybi-thewebsocketprotocol-00
-     * @link    http://www.ietf.org/id/draft-ietf-hybi-thewebsocketprotocol-00.txt
-     * @author  Andrea Giammarchi
-     * @blog    webreflection.blogspot.com
-     * @date    4th June 2010
-     * @example
-     *          // via function call ...
-     *          $handshake = WebSocketHandshake($buffer);
-     *          // ... or via class
-     *          $handshake = (string)new WebSocketHandshake($buffer);
-     *
-     *          socket_write($socket, $handshake, strlen($handshake));
-     */
-
-    private $__value__;
-
-    public function __construct($buffer) {
-        $resource = $host = $origin = $key1 = $key2 = $protocol = $code = $handshake = null;
-        preg_match('#GET (.*?) HTTP#', $buffer, $match) && $resource = $match[1];
-        preg_match("#Host: (.*?)\r\n#", $buffer, $match) && $host = $match[1];
-        preg_match("#Sec-WebSocket-Key1: (.*?)\r\n#", $buffer, $match) && $key1 = $match[1];
-        preg_match("#Sec-WebSocket-Key2: (.*?)\r\n#", $buffer, $match) && $key2 = $match[1];
-        preg_match("#Sec-WebSocket-Protocol: (.*?)\r\n#", $buffer, $match) && $protocol = $match[1];
-        preg_match("#Origin: (.*?)\r\n#", $buffer, $match) && $origin = $match[1];
-        preg_match("#\r\n(.*?)\$#", $buffer, $match) && $code = $match[1];
-        $this->__value__ =
-            "HTTP/1.1 101 WebSocket Protocol Handshake\r\n".
-            "Upgrade: WebSocket\r\n".
-            "Connection: Upgrade\r\n".
-            "Sec-WebSocket-Origin: {$origin}\r\n".
-            "Sec-WebSocket-Location: ws://{$host}{$resource}\r\n".
-            ($protocol ? "Sec-WebSocket-Protocol: {$protocol}\r\n" : "").
-            "\r\n".
-            $this->_createHandshakeThingy($key1, $key2, $code)
-        ;
-    }
-
-    public function __toString() {
-        return $this->__value__;
-    }
-    
-    private function _doStuffToObtainAnInt32($key) {
-        return preg_match_all('#[0-9]#', $key, $number) && preg_match_all('# #', $key, $space) ?
-            implode('', $number[0]) / count($space[0]) :
-            ''
-        ;
-    }
-
-    private function _createHandshakeThingy($key1, $key2, $code) {
-        return md5(
-            pack('N', $this->_doStuffToObtainAnInt32($key1)).
-            pack('N', $this->_doStuffToObtainAnInt32($key2)).
-            $code,
-            true
-        );
-    }
+    private function feedbackJSON($type,$array){ return json_encode( array("type" => $type, "data" => $array) ); }
+    private function wrap($msg){ return chr(0) . $msg . chr(255); }
+    private function unwrap($msg){ return substr($msg, 1, strlen($msg)-2); }
 }
 
 class user {
