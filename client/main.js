@@ -88,6 +88,6 @@ function start(){
 }
 
 function output(info){
-    $("#output").append("<div>" + info + "</div>");
+    $("#chat_log").append("<div>" + info + "</div>");
 }
 

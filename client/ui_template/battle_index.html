@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Greedo Islando Battle UI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../jquery.websocket-0.0.1.js"></script>
+<script type="text/javascript" src="../main.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+	<div id='header'>Greedo Islando</div>
+	<div id='container'>
+		<div id='top_menu'>
+			<div id='logo'>Greedo Islando</div>
+			<div id='cardo_oppo'>Opponent's Cards</div>
+			<div id='status_oppo'>Oppenent's Status</div>
+		</div>
+		<div id='middle_menu'>
+			<div id='cardo_pool'>Card Pool</div>
+			<div id='battle_log'>Battle Log</div>
+			<div id='status_own'>Own Status</div>
+			<div id='cardo_own'>Own Card</div>
+		</div>
+		<div id='bottom_menu'>
+			<div id='chat'><span>Chat log</spans>
+				<div id='chat_log'></div>
+				<div id='chat_input'>
+					<input type='text' id='input'/>
+					<div id='chat_confirm' onclick="talk();">Chat!</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id='sys_func'>
+			<input type="button" value="Browser Support" onclick="test();"/>
+			<input type="button" value="connect" onclick="connect();"/>
+			<input type="button" value="disconnect" onclick="disconnect();"/>
+			<input type="button" value="send" onclick="sendhi();"/>
+			<input type="button" value="talk" onclick="talk();"/>
+			<input type="button" value="sys_list_user" onclick="sys_list_user();"/>
+			<input type="button" value="sys_list_char" onclick="sys_list_char();"/>
+			<input type="button" value="sys_list_socket" onclick="sys_list_socket();"/>
+			<input type="button" value="prepare" onclick="prepare();"/>
+			<input type="button" value="Battle Start" onclick="start();"/>
+	</div>
+</body>
