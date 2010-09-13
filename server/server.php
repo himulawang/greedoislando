@@ -136,12 +136,6 @@ class WebSocket {
         $user->handshake=1;
         console::write($upgrade);
         console::write("Hand Shake Done");
-        //Send UniqID
-        $array = array("id" => $user->id);
-        $msg = self::feedbackJSON("con_set_id",$array);
-        console::write("Send Unique ID to client {$msg}");
-        $msg = self::wrap($msg);
-        socket_write($user->socket,$msg,strlen($msg));
     }
 
     private function process($user,$array,$socket){
@@ -161,16 +155,64 @@ class WebSocket {
             }else if($key == "listBattlefield"){
                 console::listVar($this->battlefield); 
             }
+
+        }else if($type == "con"){ //connection
+            $key = $array['data']['cmd'];
+            if($key == "set_username"){
+                self::setUsername($user,$array['data']);
+            }
+
         }else if($type == "talk"){ //Talk
             self::feedbackTalk($array['data']);
         }else if($type == "pre"){ //Prepare Battle
             $key = $array['data']['cmd'];
+            if($key == "get_user_list"){
+                self::getUserList();
+                return;
+            }else if($key == "get_bf_list"){
+                self::getBattlefieldList();
+                return;
+            }
+            
+
+
+
             $call_func = $this->pre[$key];
             $no = $array['data']['no'];
             call_user_func($call_func,$user,$array['data'],$this->battlefield[$no]);
         }else if($type == "pre_new_bf"){
             self::prepareBattlefield($user,$array['data']);
         }
+    }
+
+    private function setUsername($user,$array){
+        if(!$array['username']){
+            console::write("Username is empty");
+            return;
+        }
+        $user->name = $array['username'];
+        $a = array("id" => $user->id, "username" => $array['username']);
+        $json = self::feedbackJSON("con","get_id",$a);
+        self::sendSingle($user->id,$json);
+        self::getUserList();
+    }
+
+    private function getUserList(){
+        $a = array("userlist" => array());
+        foreach($this->user as $k=>$v){
+            $a["userlist"][] = array("id" => $v->id, "username" => $v->name);
+        }
+        $json = self::feedbackJSON("pre","set_user_list",$a);
+        self::sendAll($json);
+    }
+
+    private function getBattlefieldList(){
+        $a = array("battlefield_list" => array());
+        foreach($this->battlefield as $k=>$v){
+            $a["battlefield_list"][] = $v->getBattlefieldInfo();
+        }
+        $json = self::feedbackJSON("pre","set_battlefield_list",$a);
+        self::sendAll($json);
     }
 
     private function heartBeating(){
@@ -204,7 +246,7 @@ class WebSocket {
         $this->battlefield[$no]->setIdx($no);
         $battlefieldArray = $battlefield->getBattlefieldInfo();
         //battlefield infomation
-        $json = self::feedbackJSON("pre_new_bf",$battlefieldArray);
+        $json = self::feedbackJSON("pre","new_bf",$battlefieldArray);
         //Feedback
         self::sendSingle($id,$json);
         //Console
@@ -224,7 +266,7 @@ class WebSocket {
         $name = $data['name'];
         $charArray = $battlefield->prepareChar($id,$name);
         //Char Infomation
-        $json = self::feedbackJSON("pre",$charArray);
+        $json = self::feedbackJSON("pre","new_chr",$charArray);
         //Feedback
         self::sendSingle($id,$json);
         //Console
@@ -255,13 +297,18 @@ class WebSocket {
         socket_write($this->user[$id]->socket,$msg,strlen($msg));
     }
 
-    private function feedbackJSON($type,$array){ return json_encode( array("type" => $type, "data" => $array) ); }
+    private function feedbackJSON($type,$cmd,$array){
+        $a;
+        $a["type"] = $type;
+        $array["cmd"] = $cmd;
+        $a["data"] = $array;
+        return json_encode( $a ); }
     private function wrap($msg){ return chr(0) . $msg . chr(255); }
     private function unwrap($msg){ return substr($msg, 1, strlen($msg)-2); }
 }
 
 class user {
-    public $id,$socket,$handshake;
+    public $id,$socket,$handshake,$name;
 }
 
 $ws = new WebSocket;

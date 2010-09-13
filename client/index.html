@@ -14,10 +14,25 @@
 
 </head>
 <body>
-<div id="output"></div>
+
+<div>
+    UserName: <input id="username" value="ila" />
+    <input type="button" value="connect" onclick="connect();"/>
+    <input type="button" value="set username" onclick="set_username();"/>
+</div>
+
+<div id="chat_log"></div>
+<div id="user_list"></div>
+<div id="battlefield_list"></div>
+
+<div>
+    <input type="button" value="list battlefield" onclick="list_battlefield();"/>
+    <input type="button" value="list user" onclick="list_user();"/>
+</div>
+
 <input id="input" />
 <input type="button" value="Browser Support" onclick="test();"/>
-<input type="button" value="connect" onclick="connect();"/>
+
 <input type="button" value="disconnect" onclick="disconnect();"/>
 <input type="button" value="create battlefield" onclick="create_battlefield();"/>
 <input type="button" value="talk" onclick="talk();"/>

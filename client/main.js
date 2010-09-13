@@ -1,4 +1,16 @@
 var ws1;
+/*
+$(document).ready(function(){
+
+ws1 = new WebSocket('ws://localhost:12345/');
+ws1.onopen = function () {
+    output("connected");
+};
+
+
+});
+*/
+    
 
 //Class char
 function char(data) {
@@ -20,12 +32,8 @@ function connect(){
     }
     output("Connecting");
     ws1 = $.websocket("ws://localhost:12345/",{
-        open: function(){
-            output("Connected");
-        },
-        close: function(){
-            output("Disconnected");
-        },
+        open: function(){ },
+        close: function(){ },
         events: {
             talk: function(json){
                 output(json.data.name + ": "+json.data.msg);
@@ -37,12 +45,20 @@ function connect(){
             pre_new_bf: function(json){
                 output(JSON.stringify(json));
             },
-            con_set_id: function(json){
+            con: function(json){
                 output(JSON.stringify(json));
             }
         }
     });
-    
+    ws1.onopen = function(){ output("Connected"); }
+    ws1.onclose = function(){ output("Disconnected"); }
+}
+
+
+
+function set_username(){
+    var username = $("#username").val();
+    ws1.send("con",{cmd:"set_username",username:username});
 }
 
 function create_battlefield(){
@@ -96,5 +112,13 @@ function start(){
 
 function output(info){
     $("#chat_log").append("<div>" + info + "</div>");
+}
+
+function list_battlefield(){
+    ws1.send("pre",{cmd:"get_bf_list"});
+}
+
+function list_user(){
+    ws1.send("pre",{cmd:"get_user_list"});
 }
 
