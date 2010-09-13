@@ -18,13 +18,13 @@ function connect(){
     if(ws1){
         if(ws1.readyState == 1){return;}
     }
-    output("Connecting");
+    status("Connecting...");
     ws1 = $.websocket("ws://localhost:12345/",{
         open: function(){
-            output("Connected");
+            status("Connected");
         },
         close: function(){
-            output("Disconnected");
+            status("Disconnected");
         },
         events: {
             talk: function(json){
@@ -39,16 +39,16 @@ function connect(){
             },
             con_set_id: function(json){
                 output(JSON.stringify(json));
+                setTimeout(status("Success!"),1000);
             }
         }
-    });
-    
+    });    
 }
 
-function create_battlefield(){
+/*function create_battlefield(){
     var char = $("#char").val();
     ws1.send("pre_new_bf",{bf_name:"OurWar",name:char});
-}
+}*/
 
 function talk(){
     var el = $("#input");
@@ -95,6 +95,9 @@ function start(){
 }
 
 function output(info){
-    $("#chat_log").append("<div>" + info + "</div>");
+    $("#console").append("<div>" + info + "</div>");
 }
 
+function status(state){
+    $("#state").html("State:" + state);
+}
