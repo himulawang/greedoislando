@@ -21,9 +21,15 @@
     </div>
     
     <div id='battle_field'>
-        <input type="button" value="Create Battle Field" onclick="create_battlefield();" id="create_bf"/>
-        <input type="text" id="char_name" class="char_name" />
-        <input type="button" value="Confirm" onclick="create_char();" class="button char_name"/>
+        <input type="button" value="Create Battle Field" onclick="create_battlefield(1);" id="create_bf"/>
+	<div id='create_ch'>
+		<p>Create Your Charater</p>
+		<p>Enter Ur Name: <input type="text" id="char_name" class="char_name" /></p>
+		<p>
+		<input type="button" value="Confirm" onclick="create_char();" class="button char_name"/>
+		<input type="button" value="Back" onclick="create_battlefield(2);" class="button char_name"/>
+		</p>
+	</div>
     </div>
 
 	<div id='battle_room'>
@@ -35,7 +41,10 @@
 		<div id='middle_menu'>
 			<div id='cardo_pool'>Card Pool</div>
 			<div id='battle_log'>Battle Log</div>
-			<div id='status_own'>Own Status</div>
+			<div id='status_own'>
+				<p>Own Status:</p>
+				<p></p>
+			</div>
 			<div id='cardo_own'>Own Card</div>
 		</div>
 		<div id='bottom_menu'>
