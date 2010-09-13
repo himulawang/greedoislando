@@ -19,6 +19,10 @@
     UserName: <input id="username" value="ila" />
     <input type="button" value="connect" onclick="connect();"/>
     <input type="button" value="set username" onclick="set_username();"/>
+    【
+    <input type="button" value="list battlefield" onclick="list_battlefield();"/>
+    <input type="button" value="list user" onclick="list_user();"/>
+    】
 </div>
 
 <div id="chat_log"></div>
@@ -26,16 +30,26 @@
 <div id="battlefield_list"></div>
 
 <div>
-    <input type="button" value="list battlefield" onclick="list_battlefield();"/>
-    <input type="button" value="list user" onclick="list_user();"/>
 </div>
 
-<input id="input" />
-<input type="button" value="Browser Support" onclick="test();"/>
+<div>
+    CharName: <input id="char" value="ila's Warrior" />
+    BattlefieldName: <input id="bf" value="OurWar" />
+    <input type="button" value="create battlefield" onclick="create_battlefield();"/>
+</div>
 
+<div>
+    BattlefieldNo: <input id="bf_no" value="0" />
+    <input type="button" value="enter battlefield" onclick="enter_battlefield();"/>
+</div>
+
+<div>
+    Chat<input id="input" />
+    <input type="button" value="talk" onclick="talk();"/>
+</div>
+
+<input type="button" value="Browser Support" onclick="test();"/>
 <input type="button" value="disconnect" onclick="disconnect();"/>
-<input type="button" value="create battlefield" onclick="create_battlefield();"/>
-<input type="button" value="talk" onclick="talk();"/>
 <input type="button" value="sys_list_user" onclick="sys_list_user();"/>
 <input type="button" value="sys_list_battlefield" onclick="sys_list_battlefield();"/>
 <input type="button" value="sys_list_socket" onclick="sys_list_socket();"/>
@@ -43,7 +57,7 @@
 <input type="button" value="Battle Start" onclick="start();"/>
 
 
-<div>Character: <input id="char" value="ila" /></div>
+<div></div>
 
 </body>
 </html>

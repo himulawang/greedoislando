@@ -21,7 +21,6 @@ class WebSocket {
     private $core;
     private $sockets = array();
     private $user = array();
-    private $pre = array();
     private $battlefield = array();
 
     function __construct(){
@@ -34,8 +33,6 @@ class WebSocket {
         $this->sockets[] = $this->core;
         //Output Console Logs
         console::write("Server Start");
-        //Make pre Array;
-        $this->pre["prepareChar"] = array("self","prepareChar"); //Make A Char
 
         $this->loop();
     }
@@ -112,7 +109,8 @@ class WebSocket {
                 $this->battlefield[$idx]->stopBattle();
                 //Kick Char from battlefield
                 if (is_int($idx)) {
-                    $this->battlefield[$idx]->kickFieldChar($id);
+                    $needDestroyBattlefield = $this->battlefield[$idx]->kickFieldChar($id);
+                    if ($needDestroyBattlefield) $this->destroyBattlefield($idx);
                 }
             }
         }
@@ -172,16 +170,12 @@ class WebSocket {
             }else if($key == "get_bf_list"){
                 self::getBattlefieldList();
                 return;
+            }else if($key == "create_bf"){
+                self::prepareBattlefield($user,$array['data']);
+                return;
+            }else if($key == "enter_bf"){
+                self::prepareChar($user,$array['data']);
             }
-            
-
-
-
-            $call_func = $this->pre[$key];
-            $no = $array['data']['no'];
-            call_user_func($call_func,$user,$array['data'],$this->battlefield[$no]);
-        }else if($type == "pre_new_bf"){
-            self::prepareBattlefield($user,$array['data']);
         }
     }
 
@@ -195,6 +189,7 @@ class WebSocket {
         $json = self::feedbackJSON("con","get_id",$a);
         self::sendSingle($user->id,$json);
         self::getUserList();
+        self::getBattlefieldList();
     }
 
     private function getUserList(){
@@ -238,40 +233,57 @@ class WebSocket {
         //Check Char Has Prepared
         if(is_int(self::getBattlefieldIndex($id))){ return; }
         //Create battlefield
-        $name = $data['name'];
-        $battlefield = new battlefield($id,"OurWar"/*TODO*/,$name);
+        $charName = $data['char_name'];
+        $bfName = $data['bf_name'];
+        $battlefield = new battlefield($id,$bfName,$charName);
         $this->battlefield[] = $battlefield;
         //Get Max Idx
         $no = max(array_keys($this->battlefield));
         $this->battlefield[$no]->setIdx($no);
-        $battlefieldArray = $battlefield->getBattlefieldInfo();
         //battlefield infomation
-        $json = self::feedbackJSON("pre","new_bf",$battlefieldArray);
+        $battlefieldArray = $battlefield->getBattlefieldInfo();
+        $json = self::feedbackJSON("pre","enter_bf",$battlefieldArray);
         //Feedback
         self::sendSingle($id,$json);
         //Console
         console::write("User {$id} create a battlefield: {$json}");
+        self::getBattlefieldList();
     }
 
-    private function prepareChar($user,$data,&$battlefield){
+    private function prepareChar($user,$data){
         $id = $user->id;
         //Check Char Has Prepared
         if(is_int(self::getBattlefieldIndex($id))){ return; }
+        //Check Battlefield Vaild
+        $bf_no = $data['bf_no'];
+        if(!isset($this->battlefield[$bf_no])){
+            console::write("Invaild bf_no");
+            return;
+        }
+        $battlefield = &$this->battlefield[$bf_no];
         //Check Battlefield Char Count
         if($battlefield->getFieldCharCount() == 2){
             console::write("{$battlefield->name} has full.");
             return; 
         }
+        //Check BattleStarted
+        if($battlefield->checkBattleStatus()){
+            console::write("Battle has started in this bf");
+            return;
+        };
         //Prepare
-        $name = $data['name'];
-        $charArray = $battlefield->prepareChar($id,$name);
-        //Char Infomation
-        $json = self::feedbackJSON("pre","new_chr",$charArray);
-        //Feedback
-        self::sendSingle($id,$json);
+        $char_name = $data['char_name'];
+        $battlefield->prepareChar($id,$char_name);
+        //battlefield infomation
+        $battlefieldArray = $battlefield->getBattlefieldInfo();
+        $json = self::feedbackJSON("pre","enter_bf",$battlefieldArray);
+        //Feedback Selected
+        $idInBattlefield = $battlefield->getUserID();
+        self::sendSelected($idInBattlefield,$json);
         //Console
         $n = $battlefield->getFieldName();
         console::write("User {$id} entered battlefield {$n}: {$json}");
+        self::getBattlefieldList();
     }
 
     private function getBattlefieldIndex($id){
@@ -285,6 +297,10 @@ class WebSocket {
         return false;
     }
 
+    private function destroyBattlefield($no){
+        unset($this->battlefield[$no]);
+    }
+
     private function sendAll($msg){
         $msg = $this->wrap($msg);
         foreach ($this->user as $user) {
@@ -295,6 +311,13 @@ class WebSocket {
     private function sendSingle($id,$msg){
         $msg = $this->wrap($msg);
         socket_write($this->user[$id]->socket,$msg,strlen($msg));
+    }
+
+    private function sendSelected($array,$msg){
+        $msg = $this->wrap($msg);
+        foreach($array as $k=>$v){
+            socket_write($this->user[$v]->socket,$msg,strlen($msg));
+        }
     }
 
     private function feedbackJSON($type,$cmd,$array){

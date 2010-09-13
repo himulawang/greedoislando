@@ -40,10 +40,7 @@ function connect(){
             },
             pre: function(json){
                 output(JSON.stringify(json));
-                myChar = new char(json.data);
-            },
-            pre_new_bf: function(json){
-                output(JSON.stringify(json));
+                //myChar = new char(json.data);
             },
             con: function(json){
                 output(JSON.stringify(json));
@@ -63,7 +60,14 @@ function set_username(){
 
 function create_battlefield(){
     var char = $("#char").val();
-    ws1.send("pre_new_bf",{bf_name:"OurWar",name:char});
+    var bf_name = $("#bf").val();
+    ws1.send("pre",{cmd:"create_bf",bf_name:bf_name,char_name:char});
+}
+
+function enter_battlefield(){
+    var char = $("#char").val();
+    var bf_no = $("#bf_no").val();
+    ws1.send("pre",{cmd:"enter_bf",bf_no:bf_no,char_name:char});
 }
 
 function talk(){
