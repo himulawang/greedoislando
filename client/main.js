@@ -30,7 +30,7 @@ function connect(){
     if(ws1){
         if(ws1.readyState == 1){return;}
     }
-    status("Connecting...");
+    //status("Connecting...");
     output("Connecting");
     ws1 = $.websocket("ws://localhost:12345/",{
         open: function(){ },
@@ -45,11 +45,23 @@ function connect(){
             },
             con: function(json){
                 output(JSON.stringify(json));
-                setTimeout(status("Success!"),1000);
+                //setTimeout(status("Success!"),1000);
             }
         }
     });    
-    ws1.onopen = function(){ output("Connected"); }
+    ws1.onopen = function(){
+        output("Connected"); 
+        setInterval(
+            function(){
+                if(ws1.bufferedAmount == 0){
+                    ws1._send(0);
+                }
+            }
+        , 100);
+    }
+
+
+    
     ws1.onclose = function(){ output("Disconnected"); }
 }
 
@@ -60,7 +72,7 @@ function set_username(){
     ws1.send("con",{cmd:"set_username",username:username});
 }
 
-/*function create_battlefield(){
+function create_battlefield(){
     var char = $("#char").val();
     var bf_name = $("#bf").val();
     ws1.send("pre",{cmd:"create_bf",bf_name:bf_name,char_name:char});
@@ -70,6 +82,7 @@ function enter_battlefield(){
     var char = $("#char").val();
     var bf_no = $("#bf_no").val();
     ws1.send("pre",{cmd:"enter_bf",bf_no:bf_no,char_name:char});
+}
 
 function talk(){
     var el = $("#input");
@@ -126,3 +139,6 @@ function list_battlefield(){
 function list_user(){
     ws1.send("pre",{cmd:"get_user_list"});
 }
+
+
+

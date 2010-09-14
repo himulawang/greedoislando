@@ -68,6 +68,8 @@ class WebSocket {
                             $this->doHandShake($user,$buffer);
                         }else{
                             $string = $this->unwrap($buffer);
+                            //heartBeating
+                            if($string==0){ continue; }
                             console::write("Server Received: " . $string);
                             $array = json_decode($string,1 /*Convert To Array*/);
                             //var_dump($array);
@@ -175,6 +177,12 @@ class WebSocket {
                 return;
             }else if($key == "enter_bf"){
                 self::prepareChar($user,$array['data']);
+                return;
+            }
+        }else if($type == "batt"){ //battle
+            $key = $array['data']['cmd'];
+            if($key == "bf_start"){
+                //self::
             }
         }
     }
@@ -325,7 +333,9 @@ class WebSocket {
         $a["type"] = $type;
         $array["cmd"] = $cmd;
         $a["data"] = $array;
-        return json_encode( $a ); }
+        return json_encode( $a ); 
+    }
+
     private function wrap($msg){ return chr(0) . $msg . chr(255); }
     private function unwrap($msg){ return substr($msg, 1, strlen($msg)-2); }
 }
