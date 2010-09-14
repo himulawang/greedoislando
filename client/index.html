@@ -23,6 +23,8 @@
     <input type="button" value="list battlefield" onclick="list_battlefield();"/>
     <input type="button" value="list user" onclick="list_user();"/>
     ]
+    <input type="button" value="cls" onclick="$('#console').html('');" />
+
 </div>
 
 <div id="console"></div>
@@ -41,6 +43,7 @@
 <div>
     BattlefieldNo: <input id="bf_no" value="0" />
     <input type="button" value="enter battlefield" onclick="enter_battlefield();"/>
+    <input type="button" value="Battle Start" onclick="bf_start();"/>
 </div>
 
 <div>
@@ -54,7 +57,6 @@
 <input type="button" value="sys_list_battlefield" onclick="sys_list_battlefield();"/>
 <input type="button" value="sys_list_socket" onclick="sys_list_socket();"/>
 <input type="button" value="prepare" onclick="prepare();"/>
-<input type="button" value="Battle Start" onclick="start();"/>
 
 
 <div></div>

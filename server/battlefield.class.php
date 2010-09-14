@@ -34,11 +34,14 @@ class battlefield {
 
     public function addActionPoint(){
         $multi = self::_getMulti();
-        if($multi <= 0) { return; } //Check Need Add
+        if($multi <= 0) { return 0; } //Check Need Add return need feedback
         self::_setTimestamp();
+        $needFeedback = 0;
         foreach($this->char as $k => &$v){
-            battleaction::addActionPoint($v,$multi);
+            $_needFeedback = $v->addActionPoint($multi);
+            $needFeedback = $needFeedback || $_needFeedback;
         }
+        return (int) $needFeedback;
     }
 
     public function prepareChar($id,$charname){
@@ -50,14 +53,14 @@ class battlefield {
         //Prepare
         $char = new char($id,$charname);
         $char->setMaxHP(30); //TODO
-        $char->setSpeed(2); //TODO
+        $char->setSpeed(3); //TODO
         $this->char[$id] = $char;
         return $char->getAttributeArray();
     }
 
     public function startBattle(){ //Start A Battle
         //Check Char Count
-        if(self::getFieldCharCount != 2) {
+        if(self::getFieldCharCount() != 2) {
             console::write("Chars not fully prepared");
             return 0;
         }
@@ -73,6 +76,10 @@ class battlefield {
         if(self::checkBattleStatus()){
             $this->battleStart = 0;
             console::write("Battlefield {$this->name} has stop fighting");
+            return 1; //Stop Succeed
+        }else{
+            console::write("Battlefield {$this->name} hasn't started");
+            return 0; //Stop failed
         }
     }
 
@@ -91,7 +98,7 @@ class battlefield {
     public function kickFieldChar($id){
         //Kick Char
         if(self::checkCharExists($id)){
-            $charname = $this->char[$id]->name;
+            $charname = $this->char[$id]->getName();
             unset($this->char[$id]);
             console::write($charname . " has left the battlefield " . $this->name);
         }else{
@@ -103,6 +110,16 @@ class battlefield {
         }
     }
 
+    public function getActionPoint(){
+        $a = array();
+        $a["no"] = $this->no;
+        $a["char"] = array();
+        foreach($this->char as $k => $v){
+            $a["char"][$k] = $v->getActionPoint();
+        }
+        return $a;
+    }
+
     public function getBattlefieldInfo(){
         $a = array();
         $a["no"] = $this->no;
@@ -110,7 +127,7 @@ class battlefield {
         $a["battleStart"] = $this->battleStart;
         $a["char"] = array();
         foreach($this->char as $k => $v){
-            $a["char"][$k] = $v->name;
+            $a["char"][$k] = $v->getName();
         }
         return $a;
     }
