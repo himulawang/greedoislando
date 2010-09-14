@@ -1,13 +1,13 @@
 <?php
 class char {
-    public $id;
-    public $name;
-    public $hp;
-    public $maxhp;
-    public $speed;
-    public $speedup = 0;
-    public $actionPoint = 0;
-    public $cardo = array();
+    private $id;
+    private $name;
+    private $hp;
+    private $maxhp;
+    private $speed;
+    private $speedup = 0;
+    private $actionPoint = 0;
+    private $cardo = array();
 
     function __construct($id,$name){
         $this->id = $id;
@@ -21,6 +21,33 @@ class char {
 
     public function setSpeed($speed){
         $this->speed = $speed;
+    }
+
+    public function getActionPoint(){
+        return $this->actionPoint;
+    }
+
+    public function getName(){
+        return $this->name;
+    }
+
+    public function checkActionPointFull(){
+        return $this->actionPoint >= 10 ? 1 : 0;
+    }
+
+    public function addActionPoint($multi){
+        //check ActionPointFull
+        if(self::checkActionPointFull()){ 
+            return 0; //Don need feedback
+        }
+
+        while ($multi > 0){
+            $this->actionPoint += $this->speed + $this->speedup;
+            if(self::checkActionPointFull()){ return 1; }
+
+            --$multi;
+        }
+        return 1;
     }
 
     function __tostring(){
