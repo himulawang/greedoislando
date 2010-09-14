@@ -1,15 +1,9 @@
 var ws1;
-/*
 $(document).ready(function(){
 
-ws1 = new WebSocket('ws://localhost:12345/');
-ws1.onopen = function () {
-    output("connected");
-};
-
+connect();
 
 });
-*/
     
 
 //Class char
@@ -46,7 +40,10 @@ function connect(){
             con: function(json){
                 output(JSON.stringify(json));
                 //setTimeout(status("Success!"),1000);
-            }
+            },
+            batt: function(json){
+                output(JSON.stringify(json));
+            },
         }
     });    
     ws1.onopen = function(){
@@ -54,7 +51,7 @@ function connect(){
         setInterval(
             function(){
                 if(ws1.bufferedAmount == 0){
-                    ws1._send(0);
+                    ws1._send(1);
                 }
             }
         , 100);
@@ -123,9 +120,9 @@ function prepare(){
     ws1.send("pre",{cmd:"prepareChar",name:char,no:0});
 }
 
-function start(){
+function bf_start(){
     var char = $("#char").val();
-    ws1.send("pre",{cmd:"battleStart",name:char});
+    ws1.send("pre",{cmd:"bf_start"});
 }
 
 function output(info){
