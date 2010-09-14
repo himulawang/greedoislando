@@ -12,6 +12,10 @@ class battlefield {
         self::prepareChar($id,$charname);
     }
 
+    function __destruct(){
+        console::write("Battlefield {$this->name} has been destoryed");
+    }
+
     private function _getMulti(){
         return time() - $this->timestamp;
     }
@@ -95,13 +99,8 @@ class battlefield {
         }
         //Destory this field
         if(self::getFieldCharCount()==0){
-            console::write("Battlefield {$this->name} has been destoryed");
-            self::destoryField();
+            return 1; //need destory this field;
         }
-    }
-
-    public function destoryField(){
-        unset($this);
     }
 
     public function getBattlefieldInfo(){
@@ -111,9 +110,13 @@ class battlefield {
         $a["battleStart"] = $this->battleStart;
         $a["char"] = array();
         foreach($this->char as $k => $v){
-            $a["char"][] = $v->name;
+            $a["char"][$k] = $v->name;
         }
         return $a;
+    }
+
+    public function getUserID(){
+        return array_keys($this->char);
     }
 
 }

@@ -1,4 +1,16 @@
 var ws1;
+/*
+$(document).ready(function(){
+
+ws1 = new WebSocket('ws://localhost:12345/');
+ws1.onopen = function () {
+    output("connected");
+};
+
+
+});
+*/
+    
 
 //Class char
 function char(data) {
@@ -19,36 +31,45 @@ function connect(){
         if(ws1.readyState == 1){return;}
     }
     status("Connecting...");
+    output("Connecting");
     ws1 = $.websocket("ws://localhost:12345/",{
-        open: function(){
-            status("Connected");
-        },
-        close: function(){
-            status("Disconnected");
-        },
+        open: function(){ },
+        close: function(){ },
         events: {
             talk: function(json){
                 output(json.data.name + ": "+json.data.msg);
             },
             pre: function(json){
                 output(JSON.stringify(json));
-                myChar = new char(json.data);
+                //myChar = new char(json.data);
             },
-            pre_new_bf: function(json){
-                output(JSON.stringify(json));
-            },
-            con_set_id: function(json){
+            con: function(json){
                 output(JSON.stringify(json));
                 setTimeout(status("Success!"),1000);
             }
         }
     });    
+    ws1.onopen = function(){ output("Connected"); }
+    ws1.onclose = function(){ output("Disconnected"); }
+}
+
+
+
+function set_username(){
+    var username = $("#username").val();
+    ws1.send("con",{cmd:"set_username",username:username});
 }
 
 /*function create_battlefield(){
     var char = $("#char").val();
-    ws1.send("pre_new_bf",{bf_name:"OurWar",name:char});
-}*/
+    var bf_name = $("#bf").val();
+    ws1.send("pre",{cmd:"create_bf",bf_name:bf_name,char_name:char});
+}
+
+function enter_battlefield(){
+    var char = $("#char").val();
+    var bf_no = $("#bf_no").val();
+    ws1.send("pre",{cmd:"enter_bf",bf_no:bf_no,char_name:char});
 
 function talk(){
     var el = $("#input");
@@ -98,6 +119,10 @@ function output(info){
     $("#console").append("<div>" + info + "</div>");
 }
 
-function status(state){
-    $("#state").html("State:" + state);
+function list_battlefield(){
+    ws1.send("pre",{cmd:"get_bf_list"});
+}
+
+function list_user(){
+    ws1.send("pre",{cmd:"get_user_list"});
 }
