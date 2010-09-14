@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="../jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../jquery.websocket-0.0.1.js"></script>
-<script type="text/javascript" src="../main.js"></script>
+<!--<script type="text/javascript" src="../main.js"></script>-->
 <script type="text/javascript" src="../func.js"></script>
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
@@ -16,18 +16,23 @@
         <div class='cancel_title'>
             <p onclick="hide_show_toggle('console',this)">Hide</p>
         </div>
-        <p>Console</p>
+        <p style='font-weight:bold;'>Console</p>
         <p id='state'>State now</p>
     </div>
     
     <div id='battle_field'>
-        <input type="button" value="Create Battle Field" onclick="create_battlefield(1);" id="create_bf"/>
+        <input type="button" value="Create Battle Field" onclick="create_battlefield_info(1);" id="create_bf"/>
 	<div id='create_ch'>
 		<p>Create Your Charater</p>
-		<p>Enter Ur Name: <input type="text" id="char_name" class="char_name" /></p>
+        <p><span class='info_input'>UserName: </span><input type="text" id="user_name" class="text_input" value="Dya" readonly="readonly" ondblclick="change_name();"/></p>
+        <p><input type="button" value="Set Username" onclick="set_user_name();"/>
+        <input type="button" value="list battlefield" onclick="list_battlefield();"/>
+        <input type="button" value="list user" onclick="list_user();"/></p>
+		<p><span class='info_input'>CharacterName: </span><input type="text" id="char_name" class="text_input" value="Mage Dya" /></p>
+        <p><span class='info_input'>BattleFieldName: </span><input type="text" id="bf_name" class="text_input" value="Bloody Hell" /></p>
 		<p>
-		<input type="button" value="Confirm" onclick="create_char();" class="button char_name"/>
-		<input type="button" value="Back" onclick="create_battlefield(2);" class="button char_name"/>
+		<input type="button" value="Confirm" onclick="create_battlefield();" class="button char_name"/>
+		<input type="button" value="Back" onclick="create_battlefield_info(2);" class="button char_name"/>
 		</p>
 	</div>
     </div>

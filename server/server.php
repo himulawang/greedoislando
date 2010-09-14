@@ -2,7 +2,7 @@
 //Set Constants Here
 define("GI_ADDRESS","localhost");
 define("GI_PORT",12345);
-define("GI_CLIENTLIMIT",2);
+define("GI_CLIENTLIMIT",5);
 //Config Environment
 error_reporting(E_ALL);
 set_time_limit(0);
@@ -42,7 +42,6 @@ class WebSocket {
             $changed = $this->sockets;
             socket_select($changed,$w=null,$e=null,null);
             
-            self::heartBeating(); // Action Point
 
             foreach($changed as $socket){
                 if($socket == $this->core){
@@ -67,9 +66,10 @@ class WebSocket {
                             }
                             $this->doHandShake($user,$buffer);
                         }else{
+                            self::addActionPoint(); // Action Point
                             $string = $this->unwrap($buffer);
-                            //heartBeating
-                            if($string==0){ continue; }
+                            //BufferedAmount
+                            if($string==1){ continue; }
                             console::write("Server Received: " . $string);
                             $array = json_decode($string,1 /*Convert To Array*/);
                             //var_dump($array);
@@ -120,6 +120,8 @@ class WebSocket {
         socket_close($socket);
         //Output Console Logs
         console::write($socket . "Disconnected");
+        self::getUserList();
+        self::getBattlefieldList();
     }
 
     private function getUserBySocket($socket){
@@ -178,11 +180,15 @@ class WebSocket {
             }else if($key == "enter_bf"){
                 self::prepareChar($user,$array['data']);
                 return;
+            }else if($key == "bf_start"){
+                self::startBattle($user);
+                return;
             }
         }else if($type == "batt"){ //battle
             $key = $array['data']['cmd'];
-            if($key == "bf_start"){
-                //self::
+            //TODO
+            if($key == ""){
+                return;
             }
         }
     }
@@ -218,10 +224,16 @@ class WebSocket {
         self::sendAll($json);
     }
 
-    private function heartBeating(){
+    private function addActionPoint(){
         foreach($this->battlefield as $k => &$v){
             if($v->checkBattleStatus()){
-                $v->addActionPoint();
+                $needFeedback = $v->addActionPoint();
+                if($needFeedback){
+                    $selected = $this->battlefield[$k]->getUserID();
+                    $array = $this->battlefield[$k]->getActionPoint();
+                    $json = self::feedbackJSON("batt","set_action_point",$array);
+                    self::sendSelected($selected,$json);
+                }
             }
         }
     }
@@ -292,6 +304,22 @@ class WebSocket {
         $n = $battlefield->getFieldName();
         console::write("User {$id} entered battlefield {$n}: {$json}");
         self::getBattlefieldList();
+    }
+
+    private function startBattle($user){
+        $id = $user->id;
+        $bf_no = $this->getBattlefieldIndex($id);
+        if(!is_int($bf_no)){
+            console::write("This char not in battlefield");
+            return 0;
+        }
+        $bf = &$this->battlefield[$bf_no];
+        if ($bf->startBattle()){
+            $selected = $bf->getUserID();
+            $array = $bf->getBattlefieldInfo();
+            $json = self::feedbackJSON("pre","bf_start",$array);
+            self::sendSelected($selected,$json);
+        }
     }
 
     private function getBattlefieldIndex($id){
