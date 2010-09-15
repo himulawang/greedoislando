@@ -32,6 +32,10 @@ class cardo {
             $this->xxx = core::random($this->CARDOINDEX); //random a cardo
         }
     }
+
+    public function getXXX(){
+        return $this->xxx;
+    }
 }
 
 ?>

@@ -43,7 +43,7 @@ function connect(){
             },
             batt: function(json){
                 output(JSON.stringify(json));
-            },
+            }
         }
     });    
     ws1.onopen = function(){
