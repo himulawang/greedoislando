@@ -12,6 +12,10 @@ ob_implicit_flush(1);
 //Import Class
 require_once "websockethandshake.class.php";
 require_once "core.class.php";
+require_once "c2s.class.php";
+require_once "s2c.class.php";
+require_once "connection.class.php";
+require_once "prepare.class.php";
 require_once "cardo.class.php";
 require_once "char.class.php";
 require_once "battleaction.class.php";
@@ -21,9 +25,9 @@ require_once "console.class.php";
 //Start Websocket Class
 class WebSocket {
     private $core;
-    private $sockets = array();
-    private $user = array();
-    private $battlefield = array();
+    public $socket = array();
+    public $user = array();
+    public $battlefield = array();
 
     function __construct(){
         //Init Socket
@@ -32,7 +36,7 @@ class WebSocket {
         socket_bind($this->core,GI_ADDRESS,GI_PORT);
         socket_listen($this->core,GI_CLIENTLIMIT);
 
-        $this->sockets[] = $this->core;
+        $this->socket[] = $this->core;
         //Output Console Logs
         console::write("Server Start");
 
@@ -41,7 +45,7 @@ class WebSocket {
 
     private function loop(){
         while(1){
-            $changed = $this->sockets;
+            $changed = $this->socket;
             socket_select($changed,$w=null,$e=null,null);
             
 
@@ -75,7 +79,11 @@ class WebSocket {
                             console::write("Server Received: " . $string);
                             $array = json_decode($string,1 /*Convert To Array*/);
                             //var_dump($array);
-                            $this->process($user,$array,$socket);
+                            $id = $user->id;
+                            $feedbackMsg = c2s::entrance($id,$this,$array);
+                            var_dump($feedbackMsg);
+                            $this->feedback($feedbackMsg);
+                            //$this->process($user,$array,$socket);
                         }
                     }
                 }
@@ -89,7 +97,7 @@ class WebSocket {
         $user->id = $id;
         $user->socket = $socket;
         $this->user[$id] = $user;
-        $this->sockets[$id] = $socket;
+        $this->socket[$id] = $socket;
         console::write($socket . " Just Come In");
     }
 
@@ -105,7 +113,7 @@ class WebSocket {
         //Delete User & Socket & Char
         if(!is_null($id)){
             if (isset($this->user[$id])) unset($this->user[$id]);
-            if (isset($this->sockets[$id])) unset($this->sockets[$id]);
+            if (isset($this->socket[$id])) unset($this->socket[$id]);
             //Get battlefield Fight
             $idx = self::getBattlefieldIndex($id);
             if(is_int($idx)){
@@ -151,21 +159,7 @@ class WebSocket {
         //Case
         $type = $array['type'];
         if ($type == "sys"){ //System Console
-            $key = $array['data']['cmd'];
-            if ($key == "listUser"){
-                console::listVar($this->user);
-            }else if($key == "listSocket") {
-                console::listVar($this->sockets);
-            }else if($key == "listBattlefield"){
-                console::listVar($this->battlefield); 
-            }
-
         }else if($type == "con"){ //connection
-            $key = $array['data']['cmd'];
-            if($key == "set_username"){
-                self::setUsername($user,$array['data']);
-            }
-
         }else if($type == "talk"){ //Talk
             self::feedbackTalk($array['data']);
         }else if($type == "pre"){ //Prepare Battle
@@ -193,37 +187,6 @@ class WebSocket {
                 return;
             }
         }
-    }
-
-    private function setUsername($user,$array){
-        if(!$array['username']){
-            console::write("Username is empty");
-            return;
-        }
-        $user->name = $array['username'];
-        $a = array("id" => $user->id, "username" => $array['username']);
-        $json = self::feedbackJSON("con","get_id",$a);
-        self::sendSingle($user->id,$json);
-        self::getUserList();
-        self::getBattlefieldList();
-    }
-
-    private function getUserList(){
-        $a = array("userlist" => array());
-        foreach($this->user as $k=>$v){
-            $a["userlist"][] = array("id" => $v->id, "username" => $v->name);
-        }
-        $json = self::feedbackJSON("pre","set_user_list",$a);
-        self::sendAll($json);
-    }
-
-    private function getBattlefieldList(){
-        $a = array("battlefield_list" => array());
-        foreach($this->battlefield as $k=>$v){
-            $a["battlefield_list"][] = $v->getBattlefieldInfo();
-        }
-        $json = self::feedbackJSON("pre","set_battlefield_list",$a);
-        self::sendAll($json);
     }
 
     private function addActionPoint(){
@@ -330,8 +293,8 @@ class WebSocket {
                     $otherMsg = $feedback["other"];
                     $otherMsg = self::feedbackJSON("batt","deal_cardo",$otherMsg);
                 }
-                $other = array_diff($selected,array($id));
-                self::sendDifferent($id,$specMsg,$other,$otherMsg);
+                $other = array_diff($selected,array($v));
+                self::sendDifferent($v,$specMsg,$other,$otherMsg);
             }
         }
     }
@@ -381,6 +344,20 @@ class WebSocket {
         $array["cmd"] = $cmd;
         $a["data"] = $array;
         return json_encode( $a ); 
+    }
+
+    private function feedback($returns){
+        if(!$returns) return;
+
+        foreach($returns as $k => $v){
+            if(!$v) continue;
+            list($sendtype,$id,$range,$json) = array_values($v);
+            if($sendtype == "single"){
+                self::sendSingle($id,$json);
+            }else if($sendtype == "all"){
+                self::sendAll($json);
+            }
+        }
     }
 
     private function wrap($msg){ return chr(0) . $msg . chr(255); }
