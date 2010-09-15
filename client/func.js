@@ -1,5 +1,43 @@
 var ws1;
 
+var coreMap = {
+    "talk" : {
+        talk : "talk_talk"
+    },
+    "pre" : {
+        set_user_list : ""
+    }
+}
+
+/*
+var aa = '{"type":"pre","data":{"userlist":[{"id":"4c8de1f5baebb","username":"ila"},{"id":"4c8de1f9a807d","username":"Dya"}],"cmd":"set_user_list"}}';
+var json = JSON.parse(aa);
+ */
+
+
+var _GI_ = {
+    core : {
+        globalProcess : function(msg){
+            var json = JSON.parse(msg);
+            var func = ["_GI_", json.type, json.data.cmd].join(".") + "(json)";
+            $("#console").html(func);
+            $.globalEval(func);
+        }
+    },
+    talk : {
+        talk : function(json){
+            output(json.data.name + ": "+json.data.msg);
+        } 
+    },
+
+    pre : {
+        set_user_list : function(json){
+            output(json.data.userlist[0].username);
+        }
+    }
+
+}
+
 function connect(){
     if(ws1){
         if(ws1.readyState == 1){return;}
@@ -10,6 +48,8 @@ function connect(){
         open: function(){ },
         close: function(){ },
         events: {
+
+            /*
             talk: function(json){
                 output(json.data.name + ": "+json.data.msg);
             },
@@ -19,11 +59,13 @@ function connect(){
                     output(json.data.userlist[0].username);
                 }
                 //myChar = new char(json.data);
+                Pro
             },
             con: function(json){
                 output(JSON.stringify(json));
                 //setTimeout(status("Success!"),1000);
             }
+                */
         }
     });    
     ws1.onopen = function(){
@@ -37,6 +79,9 @@ function connect(){
         , 100);
     }
     ws1.onclose = function(){ output("Disconnected"); }
+    ws1.onmessage = function(msg){
+        _GI_.core.globalProcess(msg);
+    }
 }
 
 function disconnect(){
@@ -49,10 +94,6 @@ function output(info){
 
 function status(state){
     $("#state").html("State:" + state);
-}
-
-function output(info){
-    $("#console").append("<div>" + info + "</div>");
 }
 
 function hide_show_toggle(tohide,tochange){

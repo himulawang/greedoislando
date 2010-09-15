@@ -55,7 +55,7 @@ class battlefield {
         $char->setMaxHP(30); //TODO
         $char->setSpeed(3); //TODO
         $this->char[$id] = $char;
-        return $char->getAttributeArray();
+        return $char->getCharInfo();
     }
 
     public function startBattle(){ //Start A Battle
@@ -132,8 +132,34 @@ class battlefield {
         return $a;
     }
 
+    public function getBattleStartInfo(){
+        $a = array();
+        $a["no"] = $this->no;
+        $a["bf_name"] = $this->name;
+        $a["battleStart"] = $this->battleStart;
+        foreach($this->char as $k => $v){
+            $a["char"][$k] = $v->getCharInfo();
+        }
+        return $a;
+    }
+
     public function getUserID(){
         return array_keys($this->char);
+    }
+
+    public function dealCardo($id){
+        if( !isset($this->char[$id]) ){
+            console::write("Invalid char");
+            return 0;
+        }
+        $a = array();
+        $a["spec"] = array();
+        $a["spec"]["cardo"] = array();
+        $a["spec"]["cardo"][$id] = battleaction::dealCardo($this->char[$id]);
+        $a["other"] = array();
+        $a["other"]["cardo"] = array();
+        $a["other"]["cardo"][$id] = $this->char[$id]->getCardoObverse();
+        return $a;
     }
 
 }

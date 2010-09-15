@@ -3,6 +3,8 @@
 define("GI_ADDRESS","localhost");
 define("GI_PORT",12345);
 define("GI_CLIENTLIMIT",5);
+//Game Parameter
+define("GI_BattleCardoCount",6);
 //Config Environment
 error_reporting(E_ALL);
 set_time_limit(0);
@@ -316,9 +318,21 @@ class WebSocket {
         $bf = &$this->battlefield[$bf_no];
         if ($bf->startBattle()){
             $selected = $bf->getUserID();
-            $array = $bf->getBattlefieldInfo();
+            $array = $bf->getBattleStartInfo();
             $json = self::feedbackJSON("pre","bf_start",$array);
             self::sendSelected($selected,$json);
+            //Deal Cardo
+            foreach ($selected as $k => $v){
+                $feedback = $bf->dealCardo($v);
+                if($feedback){
+                    $specMsg = $feedback["spec"];
+                    $specMsg = self::feedbackJSON("batt","deal_cardo",$specMsg);
+                    $otherMsg = $feedback["other"];
+                    $otherMsg = self::feedbackJSON("batt","deal_cardo",$otherMsg);
+                }
+                $other = array_diff($selected,array($id));
+                self::sendDifferent($id,$specMsg,$other,$otherMsg);
+            }
         }
     }
 
@@ -354,6 +368,11 @@ class WebSocket {
         foreach($array as $k=>$v){
             socket_write($this->user[$v]->socket,$msg,strlen($msg));
         }
+    }
+
+    private function sendDifferent($spec,$specMsg,$other,$otherMsg){
+        $this->sendSingle($spec,$specMsg);
+        $this->sendSelected($other,$otherMsg);
     }
 
     private function feedbackJSON($type,$cmd,$array){

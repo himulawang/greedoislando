@@ -7,7 +7,7 @@ class char {
     private $speed;
     private $speedup = 0;
     private $actionPoint = 0;
-    private $cardo = array();
+    public $cardo = array();
 
     function __construct($id,$name){
         $this->id = $id;
@@ -55,8 +55,28 @@ class char {
         return json_encode($array);
     }
 
-    public function getAttributeArray(){
-        return (array) $this;
+    public function getCharInfo(){
+        $a["id"] = $this->id;
+        $a["name"] = $this->name;
+        $a["hp"] = $this->hp;
+        $a["maxhp"] = $this->maxhp;
+        $a["speed"] = $this->speed;
+        $a["speedup"] = $this->speedup;
+        $a["actionPoint"] = $this->actionPoint;
+        $a["cardo"] = $this->cardo;
+        return $a;
+    }
+
+    public function getCardoCount(){
+        return count($this->cardo);
+    }
+
+    public function getCardoObverse(){ //Return Cardo Obverse To Opponent
+        $a;
+        foreach($this->cardo as $k => $v){
+            $a[$k] = 0;
+        }
+        return $a;
     }
 
 }
