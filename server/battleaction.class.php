@@ -2,14 +2,6 @@
 
 
 class battleaction {
-    //check
-    public static function checkActionPointFull($char){ //Check ActionPoint is full
-    }
-
-    //add
-    public static function addActionPoint(&$char,$multi){ //Add ActionPoint every second
-    }
-
     //minus
     public static function minusActionPoint(&$char){ //Minus ActionPoint before action
         //check ActionPointFull

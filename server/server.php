@@ -60,10 +60,11 @@ class WebSocket {
                     }
                 }else{
                     $bytes = socket_recv($socket,$buffer,2048,0);
+                    $user = $this->getUserBySocket($socket);
+                    $id = $user->id;
                     if($bytes==0){
-                        $this->userDisconnect($socket);
+                        connection::disconnect($id,$this,null);
                     }else{
-                        $user = $this->getUserBySocket($socket);
                         if(!$user->handshake){
                             //MAX LIMIT
                             if(count($this->user) - 1 >=GI_CLIENTLIMIT){ //TODO Don't Know why need - 1
@@ -79,9 +80,7 @@ class WebSocket {
                             console::write("Server Received: " . $string);
                             $array = json_decode($string,1 /*Convert To Array*/);
                             //var_dump($array);
-                            $id = $user->id;
                             $feedbackMsg = c2s::entrance($id,$this,$array);
-                            var_dump($feedbackMsg);
                             $this->feedback($feedbackMsg);
                             //$this->process($user,$array,$socket);
                         }
@@ -213,64 +212,6 @@ class WebSocket {
         return;
     }
 
-    private function prepareBattlefield($user,$data){
-        $id = $user->id;
-        //Check Char Has Prepared
-        if(is_int(self::getBattlefieldIndex($id))){ return; }
-        //Create battlefield
-        $charName = $data['char_name'];
-        $bfName = $data['bf_name'];
-        $battlefield = new battlefield($id,$bfName,$charName);
-        $this->battlefield[] = $battlefield;
-        //Get Max Idx
-        $no = max(array_keys($this->battlefield));
-        $this->battlefield[$no]->setIdx($no);
-        //battlefield infomation
-        $battlefieldArray = $battlefield->getBattlefieldInfo();
-        $json = self::feedbackJSON("pre","enter_bf",$battlefieldArray);
-        //Feedback
-        self::sendSingle($id,$json);
-        //Console
-        console::write("User {$id} create a battlefield: {$json}");
-        self::getBattlefieldList();
-    }
-
-    private function prepareChar($user,$data){
-        $id = $user->id;
-        //Check Char Has Prepared
-        if(is_int(self::getBattlefieldIndex($id))){ return; }
-        //Check Battlefield Vaild
-        $bf_no = $data['bf_no'];
-        if(!isset($this->battlefield[$bf_no])){
-            console::write("Invaild bf_no");
-            return;
-        }
-        $battlefield = &$this->battlefield[$bf_no];
-        //Check Battlefield Char Count
-        if($battlefield->getFieldCharCount() == 2){
-            console::write("{$battlefield->name} has full.");
-            return; 
-        }
-        //Check BattleStarted
-        if($battlefield->checkBattleStatus()){
-            console::write("Battle has started in this bf");
-            return;
-        };
-        //Prepare
-        $char_name = $data['char_name'];
-        $battlefield->prepareChar($id,$char_name);
-        //battlefield infomation
-        $battlefieldArray = $battlefield->getBattlefieldInfo();
-        $json = self::feedbackJSON("pre","enter_bf",$battlefieldArray);
-        //Feedback Selected
-        $idInBattlefield = $battlefield->getUserID();
-        self::sendSelected($idInBattlefield,$json);
-        //Console
-        $n = $battlefield->getFieldName();
-        console::write("User {$id} entered battlefield {$n}: {$json}");
-        self::getBattlefieldList();
-    }
-
     private function startBattle($user){
         $id = $user->id;
         $bf_no = $this->getBattlefieldIndex($id);
@@ -310,7 +251,7 @@ class WebSocket {
         return false;
     }
 
-    private function destroyBattlefield($no){
+    public function destroyBattlefield($no){
         unset($this->battlefield[$no]);
     }
 
@@ -356,6 +297,8 @@ class WebSocket {
                 self::sendSingle($id,$json);
             }else if($sendtype == "all"){
                 self::sendAll($json);
+            }else if($sendtype == "selected_battlefield"){
+                self::sendSelected($range,$json);
             }
         }
     }
