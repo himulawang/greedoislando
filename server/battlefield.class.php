@@ -9,7 +9,7 @@ class battlefield {
 
     function __construct($id,$battlefieldname,$charname){
         $this->name = $battlefieldname;
-        self::prepareChar($id,$charname);
+        self::enterBattlefield($id,$charname);
     }
 
     function __destruct(){
@@ -44,13 +44,7 @@ class battlefield {
         return (int) $needFeedback;
     }
 
-    public function prepareChar($id,$charname){
-        //Check Char is in this battlefield
-        if(self::checkCharExists($id)){ 
-            console::write("Char" . $charname . "is in this field");
-            return;
-        }
-        //Prepare
+    public function enterBattlefield($id,$charname){
         $char = new char($id,$charname);
         $char->setMaxHP(30); //TODO
         $char->setSpeed(3); //TODO

@@ -24,7 +24,13 @@ $map_c2s["pre"] = array();
 $map_c2s["pre"]["create_bf"] = array();
 $map_c2s["pre"]["create_bf"][] = array("prepare","createBattlefield");
 $map_c2s["pre"]["create_bf"][] = array("connection","setBattlefieldList");
-//$map_cs2["pre"]["enter_bf"] = array();
+
+$map_c2s["pre"]["enter_bf"] = array();
+$map_c2s["pre"]["enter_bf"][] = array("prepare","enterBattlefield");
+$map_c2s["pre"]["enter_bf"][] = array("connection","setBattlefieldList");
+
+$map_c2s["pre"]["start_bf"] = array();
+$map_c2s["pre"]["start_bf"][] = array("prepare","startBattlefield");
 
 class c2s {
     public static function verify($msg){
@@ -32,7 +38,6 @@ class c2s {
             && isset($msg["data"])
             && isset($msg["data"]["cmd"]) ? 1 : 0;
     }
-
     public static function entrance($id,$ws,$msg){
         global $map_c2s;
         if(!c2s::verify($msg)) return;  //Invaild c2s message

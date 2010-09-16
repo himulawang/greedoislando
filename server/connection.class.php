@@ -1,6 +1,23 @@
 <?php
 
 class connection{
+    public static function disconnect($id,$ws,$msg){
+        //Delete User & Socket & Char
+        socket_close($ws->user[$id]->socket);
+        if (isset($ws->user[$id])) unset($ws->user[$id]);
+        if (isset($ws->socket[$id])) unset($ws->socket[$id]);
+        //Get battlefield Fight
+        $bf_no = prepare::getBattlefieldIndex($id,$ws);
+        if(!is_int($bf_no)) return;
+        //Stop fight
+        $ws->battlefield[$bf_no]->stopBattle();
+        //Kick Char from battlefield
+        $needDestroyBattlefield = $ws->battlefield[$bf_no]->kickFieldChar($id);
+        if ($needDestroyBattlefield) $ws->destroyBattlefield($bf_no);
+        //Close Socket
+        console::write($id . "Disconnected");
+        s2c::serverPush($id,$ws,"con","disconnect");
+    }
     public static function setUsername($id,$ws,$msg){
         if(!isset($msg["data"]["username"]) && !$msg["data"]["username"]){
             console::error("Invaild Username");

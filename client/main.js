@@ -122,7 +122,7 @@ function prepare(){
 
 function bf_start(){
     var char = $("#char").val();
-    ws1.send("pre",{cmd:"bf_start"});
+    ws1.send("pre",{cmd:"start_bf"});
 }
 
 function output(info){
