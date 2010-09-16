@@ -19,6 +19,12 @@ $map_c2s["con"]["set_username"][] = array("connection","setUsername");
 $map_c2s["con"]["set_username"][] = array("connection","setUserList");
 $map_c2s["con"]["set_username"][] = array("connection","setBattlefieldList");
 
+$map_c2s["con"]["set_userlist"] = array();
+$map_c2s["con"]["set_userlist"][] = array("connection","setUserList");
+
+$map_c2s["con"]["set_battlefieldlist"] = array();
+$map_c2s["con"]["set_battlefieldlist"][] = array("connection","setBattlefieldList");
+
 $map_c2s["pre"] = array();
 
 $map_c2s["pre"]["create_bf"] = array();
@@ -31,6 +37,7 @@ $map_c2s["pre"]["enter_bf"][] = array("connection","setBattlefieldList");
 
 $map_c2s["pre"]["start_bf"] = array();
 $map_c2s["pre"]["start_bf"][] = array("prepare","startBattlefield");
+$map_c2s["pre"]["start_bf"][] = array("battleaction","initDealCardo");
 
 class c2s {
     public static function verify($msg){
@@ -48,7 +55,6 @@ class c2s {
         $funcs = $map_c2s[$type][$cmd];
         $returns = array();
         foreach($funcs as $k => $v){
-            var_dump($v);
             $returns[] = call_user_func($v,$id,$ws,$msg);
         }
         return $returns;
