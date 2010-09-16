@@ -48,7 +48,6 @@ class WebSocket {
             $changed = $this->socket;
             socket_select($changed,$w=null,$e=null,null);
             
-
             foreach($changed as $socket){
                 if($socket == $this->core){
                     $client = socket_accept($this->core);
@@ -62,28 +61,28 @@ class WebSocket {
                     $bytes = socket_recv($socket,$buffer,2048,0);
                     $user = $this->getUserBySocket($socket);
                     $id = $user->id;
-                    if($bytes==0){
-                        connection::disconnect($id,$this,null);
-                    }else{
-                        if(!$user->handshake){
-                            //MAX LIMIT
-                            if(count($this->user) - 1 >=GI_CLIENTLIMIT){ //TODO Don't Know why need - 1
-                                console::write("New Connection Coming, But Server Reach Max Connection");
-                                continue;
-                            }
-                            $this->doHandShake($user,$buffer);
-                        }else{
-                            self::addActionPoint(); // Action Point
-                            $string = $this->unwrap($buffer);
-                            //BufferedAmount
-                            if($string==1){ continue; }
-                            console::write("Server Received: " . $string);
-                            $array = json_decode($string,1 /*Convert To Array*/);
-                            //var_dump($array);
-                            $feedbackMsg = c2s::entrance($id,$this,$array);
-                            $this->feedback($feedbackMsg);
-                            //$this->process($user,$array,$socket);
+                    if($bytes==0){ //disconnect
+                        $feedbackMsg = s2c::entrance($id,$this,"con","disconnect");
+                        $this->feedback($feedbackMsg);
+                        continue;
+                    }
+
+                    if(!$user->handshake){
+                        //MAX LIMIT
+                        if(count($this->user) - 1 >=GI_CLIENTLIMIT){ //TODO Don't Know why need - 1
+                            console::write("New Connection Coming, But Server Reach Max Connection");
+                            continue;
                         }
+                        $this->doHandShake($user,$buffer);
+                    }else{
+                        self::addActionPoint(); // Action Point
+                        $string = $this->unwrap($buffer);
+                        //BufferedAmount
+                        if($string==1) continue; 
+                        console::write("Server Received: " . $string);
+                        $array = json_decode($string,1 /*Convert To Array*/);
+                        $feedbackMsg = c2s::entrance($id,$this,$array);
+                        $this->feedback($feedbackMsg);
                     }
                 }
             }
@@ -98,39 +97,6 @@ class WebSocket {
         $this->user[$id] = $user;
         $this->socket[$id] = $socket;
         console::write($socket . " Just Come In");
-    }
-
-    private function userDisconnect($socket){
-        $id = null;
-        //Find Which User Disconnect
-        foreach($this->user as $user){
-            if($user->socket == $socket){
-                $id = $user->id;
-                break;
-            }
-        }
-        //Delete User & Socket & Char
-        if(!is_null($id)){
-            if (isset($this->user[$id])) unset($this->user[$id]);
-            if (isset($this->socket[$id])) unset($this->socket[$id]);
-            //Get battlefield Fight
-            $idx = self::getBattlefieldIndex($id);
-            if(is_int($idx)){
-                //Stop fight
-                $this->battlefield[$idx]->stopBattle();
-                //Kick Char from battlefield
-                if (is_int($idx)) {
-                    $needDestroyBattlefield = $this->battlefield[$idx]->kickFieldChar($id);
-                    if ($needDestroyBattlefield) $this->destroyBattlefield($idx);
-                }
-            }
-        }
-        //Close Socket
-        socket_close($socket);
-        //Output Console Logs
-        console::write($socket . "Disconnected");
-        self::getUserList();
-        self::getBattlefieldList();
     }
 
     private function getUserBySocket($socket){
@@ -240,7 +206,7 @@ class WebSocket {
         }
     }
 
-    private function getBattlefieldIndex($id){
+    private function getBattlefieldIndex($id){ //TODO wait delete
         foreach($this->battlefield as $k => $v){
             if ($v->checkCharExists($id)){
                 $fieldname = $v->getFieldName();
@@ -274,7 +240,7 @@ class WebSocket {
         }
     }
 
-    private function sendDifferent($spec,$specMsg,$other,$otherMsg){
+    public function sendDifferent($spec,$specMsg,$other,$otherMsg){
         $this->sendSingle($spec,$specMsg);
         $this->sendSelected($other,$otherMsg);
     }

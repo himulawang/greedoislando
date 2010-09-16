@@ -130,11 +130,11 @@ function output(info){
 }
 
 function list_battlefield(){
-    ws1.send("pre",{cmd:"get_bf_list"});
+    ws1.send("con",{cmd:"set_battlefieldlist"});
 }
 
 function list_user(){
-    ws1.send("pre",{cmd:"get_user_list"});
+    ws1.send("con",{cmd:"set_userlist"});
 }
 
 

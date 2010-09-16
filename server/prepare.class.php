@@ -59,24 +59,11 @@ class prepare {
         $battlefield = &$ws->battlefield[$bf_no];
         if ($battlefield->startBattle()){
             $selected = $battlefield->getUserID();
-            $a = $battlefield->getBattleStartInfo();
+            $a = $battlefield->getBattlefieldStartInfo();
             $json = s2c::JSON("pre","start_bf",$a);
             $range = $battlefield->getUserID();
             return s2c::outlet("selected_battlefield",$id,$range,$json);
         }
     }
-            /*
-            foreach ($selected as $k => $v){
-                $feedback = $bf->dealCardo($v);
-                if($feedback){
-                    $specMsg = $feedback["spec"];
-                    $specMsg = self::feedbackJSON("batt","deal_cardo",$specMsg);
-                    $otherMsg = $feedback["other"];
-                    $otherMsg = self::feedbackJSON("batt","deal_cardo",$otherMsg);
-                }
-                $other = array_diff($selected,array($v));
-                self::sendDifferent($v,$specMsg,$other,$otherMsg);
-            }
-             */
 }
 ?>

@@ -2,7 +2,6 @@
 
 
 class battleaction {
-    //minus
     public static function minusActionPoint(&$char){ //Minus ActionPoint before action
         //check ActionPointFull
         if(battleaction::checkActionPointFull($char)){
@@ -12,23 +11,27 @@ class battleaction {
             return 0; //fail
         }
     }
-
-    public static function dealCardo(&$char){ // Return 0 or Dealed Cardo Array
-        //Check Cardo Full
-        if( $char->getCardoCount() >= GI_BattleCardoCount){
-            return 0;
-        }
-        $cardo = &$char->cardo;
-        $feedback;
-        for($i = 0; $i < GI_BattleCardoCount; ++$i){
-            if( isset($cardo[$i]) ){
-                continue;
-            }else{
-                $cardo[$i] = new cardo();
-                $feedback[$i] = $cardo[$i]->getXXX();
+    public static function initDealCardo($id,$ws,$msg){
+        $bf_no = prepare::getBattlefieldIndex($id,$ws);
+        $battlefield = &$ws->battlefield[$bf_no];
+        $selected = $battlefield->getUserID();
+        foreach($selected as $k => $v){
+            $feedback = $battlefield->dealCardo($v);
+            if($feedback){
+                $specMsg = $feedback["spec"];
+                $specMsg = s2c::JSON("batt","deal_cardo",$specMsg);
+                $otherMsg = $feedback["other"];
+                $otherMsg = s2c::JSON("batt","deal_cardo",$otherMsg);
+                $other = array_diff($selected,array($v));
+                $ws->sendDifferent($v,$specMsg,$other,$otherMsg);
             }
         }
-        return $feedback;
+    }
+    public static function dealCardo($id,$ws,$para){ // Return null or Dealed Cardo Array
+        $bf_no = prepare::getBattlefieldIndex($id,$ws);
+        if(!is_int($bf_no)) return;
+        $ws->battlefield[$bf_no];
+        //Check Cardo Full
     }
 
 }

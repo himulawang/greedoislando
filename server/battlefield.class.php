@@ -125,8 +125,7 @@ class battlefield {
         }
         return $a;
     }
-
-    public function getBattleStartInfo(){
+    public function getBattlefieldStartInfo(){
         $a = array();
         $a["no"] = $this->no;
         $a["bf_name"] = $this->name;
@@ -136,25 +135,37 @@ class battlefield {
         }
         return $a;
     }
-
     public function getUserID(){
         return array_keys($this->char);
     }
 
-    public function dealCardo($id){
-        if( !isset($this->char[$id]) ){
-            console::write("Invalid char");
-            return 0;
+    public function dealCardo($id){ 
+        if( !isset($this->char[$id]) ) return;
+        $char = &$this->char[$id];
+        
+        if( $char->getCardoCount() >= GI_BattleCardoCount){
+            return;
+        }
+        $cardo = &$char->cardo;
+        $feedback = array();
+        for($i = 0; $i < GI_BattleCardoCount; ++$i){
+            if( isset($cardo[$i]) ){
+                continue;
+            }else{
+                $cardo[$i] = new cardo();
+                $feedback[$i] = $cardo[$i]->getXXX();
+            }
         }
         $a = array();
         $a["spec"] = array();
         $a["spec"]["cardo"] = array();
-        $a["spec"]["cardo"][$id] = battleaction::dealCardo($this->char[$id]);
+        $a["spec"]["cardo"][$id] = $feedback;
         $a["other"] = array();
         $a["other"]["cardo"] = array();
         $a["other"]["cardo"][$id] = $this->char[$id]->getCardoObverse();
         return $a;
     }
+
 
 }
 

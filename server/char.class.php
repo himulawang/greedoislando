@@ -63,7 +63,6 @@ class char {
         $a["speed"] = $this->speed;
         $a["speedup"] = $this->speedup;
         $a["actionPoint"] = $this->actionPoint;
-        $a["cardo"] = $this->cardo;
         return $a;
     }
 
@@ -72,9 +71,17 @@ class char {
     }
 
     public function getCardoObverse(){ //Return Cardo Obverse To Opponent
-        $a;
+        $a = array();
         foreach($this->cardo as $k => $v){
             $a[$k] = 0;
+        }
+        return $a;
+    }
+
+    public function getCardo(){
+        $a = array();
+        foreach($this->cardo as $k => $v){
+            $a[$k] = $v->getXXX();
         }
         return $a;
     }
