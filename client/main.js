@@ -137,5 +137,9 @@ function list_user(){
     ws1.send("con",{cmd:"set_userlist"});
 }
 
+function use_actionpoint(){
+    ws1.send("sys",{cmd:"use_actionpoint"});
+}
+
 
 

@@ -5,6 +5,7 @@ define("GI_PORT",12345);
 define("GI_CLIENTLIMIT",5);
 //Game Parameter
 define("GI_BattleCardoCount",6);
+define("GI_BattleUseActionPoint",10);
 //Config Environment
 error_reporting(E_ALL);
 set_time_limit(0);
@@ -115,45 +116,6 @@ class WebSocket {
         console::write("Hand Shake Done");
     }
 
-    private function process($user,$array,$socket){
-        //Bad Request
-        if (!isset($array['type'])){
-            console::write("Bad Request");
-            return;
-        }
-        //Case
-        $type = $array['type'];
-        if ($type == "sys"){ //System Console
-        }else if($type == "con"){ //connection
-        }else if($type == "talk"){ //Talk
-            self::feedbackTalk($array['data']);
-        }else if($type == "pre"){ //Prepare Battle
-            $key = $array['data']['cmd'];
-            if($key == "get_user_list"){
-                self::getUserList();
-                return;
-            }else if($key == "get_bf_list"){
-                self::getBattlefieldList();
-                return;
-            }else if($key == "create_bf"){
-                self::prepareBattlefield($user,$array['data']);
-                return;
-            }else if($key == "enter_bf"){
-                self::prepareChar($user,$array['data']);
-                return;
-            }else if($key == "bf_start"){
-                self::startBattle($user);
-                return;
-            }
-        }else if($type == "batt"){ //battle
-            $key = $array['data']['cmd'];
-            //TODO
-            if($key == ""){
-                return;
-            }
-        }
-    }
-
     private function addActionPoint(){
         foreach($this->battlefield as $k => &$v){
             if($v->checkBattleStatus()){
@@ -178,62 +140,23 @@ class WebSocket {
         return;
     }
 
-    private function startBattle($user){
-        $id = $user->id;
-        $bf_no = $this->getBattlefieldIndex($id);
-        if(!is_int($bf_no)){
-            console::write("This char not in battlefield");
-            return 0;
-        }
-        $bf = &$this->battlefield[$bf_no];
-        if ($bf->startBattle()){
-            $selected = $bf->getUserID();
-            $array = $bf->getBattleStartInfo();
-            $json = self::feedbackJSON("pre","bf_start",$array);
-            self::sendSelected($selected,$json);
-            //Deal Cardo
-            foreach ($selected as $k => $v){
-                $feedback = $bf->dealCardo($v);
-                if($feedback){
-                    $specMsg = $feedback["spec"];
-                    $specMsg = self::feedbackJSON("batt","deal_cardo",$specMsg);
-                    $otherMsg = $feedback["other"];
-                    $otherMsg = self::feedbackJSON("batt","deal_cardo",$otherMsg);
-                }
-                $other = array_diff($selected,array($v));
-                self::sendDifferent($v,$specMsg,$other,$otherMsg);
-            }
-        }
-    }
-
-    private function getBattlefieldIndex($id){ //TODO wait delete
-        foreach($this->battlefield as $k => $v){
-            if ($v->checkCharExists($id)){
-                $fieldname = $v->getFieldName();
-                console::write("This char has in battlefield {$fieldname}");
-                return $k;
-            }
-        }
-        return false;
-    }
-
     public function destroyBattlefield($no){
         unset($this->battlefield[$no]);
     }
 
-    private function sendAll($msg){
+    public function sendAll($msg){
         $msg = $this->wrap($msg);
         foreach ($this->user as $user) {
             socket_write($user->socket,$msg,strlen($msg));
         }
     }
 
-    private function sendSingle($id,$msg){
+    public function sendSingle($id,$msg){
         $msg = $this->wrap($msg);
         socket_write($this->user[$id]->socket,$msg,strlen($msg));
     }
 
-    private function sendSelected($array,$msg){
+    public function sendSelected($array,$msg){
         $msg = $this->wrap($msg);
         foreach($array as $k=>$v){
             socket_write($this->user[$v]->socket,$msg,strlen($msg));

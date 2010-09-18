@@ -1,8 +1,33 @@
 <?php
 
+$CARDOINDEX = array();
+
+$CARDOINDEX["51"] = array("xxx" => 51, "probability" => 200, "type" => 1, "name" => "hammer");
+$CARDOINDEX["52"] = array("xxx" => 52, "probability" => 80, "type" => 1, "name" => "gun");
+$CARDOINDEX["53"] = array("xxx" => 53, "probability" => 60, "type" => 1, "name" => "bomb");
+
+$CARDOINDEX["61"] = array("xxx" => 61, "probability" => 200, "type" => 2, "name" => "fire");
+$CARDOINDEX["62"] = array("xxx" => 61, "probability" => 50, "type" => 2, "name" => "thunder");
+
+$CARDOINDEX["71"] = array("xxx" => 71, "probability" => 80, "type" => 3, "name" => "umbrella");
+$CARDOINDEX["72"] = array("xxx" => 72, "probability" => 60, "type" => 3, "name" => "lid");
+$CARDOINDEX["71"] = array("xxx" => 73, "probability" => 10, "type" => 3, "name" => "GFW");
+
+$CARDOINDEX["81"] = array("xxx" => 81, "probability" => 70, "type" => 4, "name" => "Kinetic energy distribution field");
+$CARDOINDEX["82"] = array("xxx" => 82, "probability" => 50, "type" => 4, "name" => "St. Cross Shield");
+
+$CARDOINDEX["91"] = array("xxx" => 91, "probability" => 100, "type" => 5, "name" => "stone");
+$CARDOINDEX["92"] = array("xxx" => 92, "probability" => 30, "type" => 5, "name" => "cock blood");
+$CARDOINDEX["93"] = array("xxx" => 93, "probability" => 0, "type" => 5, "name" => "run away");
+$CARDOINDEX["94"] = array("xxx" => 94, "probability" => 60, "type" => 5, "name" => "exchange");
+$CARDOINDEX["95"] = array("xxx" => 95, "probability" => 10, "type" => 5, "name" => "real exchange");
+$CARDOINDEX["96"] = array("xxx" => 96, "probability" => 30, "type" => 5, "name" => "Mr. Chen's Camera");
+$CARDOINDEX["97"] = array("xxx" => 97, "probability" => 5, "type" => 5, "name" => "Mr. Chen's Teachings");
+
 class cardo {
     protected $xxx;
     protected $type; //phy attack; mag attack etc.
+    protected $name;
     private $CARDOINDEX = array(
         51 => 200
         ,52 => 80
@@ -26,11 +51,14 @@ class cardo {
     //ref: https://spreadsheets0.google.com/ccc?key=tO-BC7MPXxXbvmuqiVzLDpg#gid=0
 
     function __construct($xxx=null){
+        global $CARDOINDEX;
         if(is_int($xxx)){
             $this->xxx = $xxx; // cardo id has decided
         }else{
             $this->xxx = core::random($this->CARDOINDEX); //random a cardo
         }
+        $this->type = $CARDOINDEX[$this->xxx]["type"];
+        $this->name = $CARDOINDEX[$this->xxx]["name"];
         unset($this->CARDOINDEX);
     }
 

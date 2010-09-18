@@ -44,6 +44,16 @@ class battlefield {
         return (int) $needFeedback;
     }
 
+    public function useActionPoint($id){
+        if(!self::checkCharExists($id)) return;
+        $char = $this->char[$id]->useActionPoint();
+        if(!is_array($char)) return;
+        $a = array();
+        $a["no"] = $this->no;
+        $a["char"] = $char;
+        return $a;
+    }
+
     public function enterBattlefield($id,$charname){
         $char = new char($id,$charname);
         $char->setMaxHP(30); //TODO

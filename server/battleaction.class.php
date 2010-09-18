@@ -2,13 +2,14 @@
 
 
 class battleaction {
-    public static function minusActionPoint(&$char){ //Minus ActionPoint before action
-        //check ActionPointFull
-        if(battleaction::checkActionPointFull($char)){
-            $char->actionPoint -= 10;
-            return 1; //succes
-        }else{
-            return 0; //fail
+    public static function useActionPoint($id,$ws,$msg){ //Minus ActionPoint before action
+        $bf_no = prepare::getBattlefieldIndex($id,$ws);
+        $battlefield = &$ws->battlefield[$bf_no];
+        $actionPoint = $battlefield->useActionPoint($id);
+        if(is_array($actionPoint)){
+            $selected = $battlefield->getUserID();
+            $json = s2c::JSON("batt","set_action_point",$actionPoint);
+            $ws->sendSelected($selected,$json);
         }
     }
     public static function initDealCardo($id,$ws,$msg){

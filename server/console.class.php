@@ -7,7 +7,6 @@ class console {
     public static function error($msg){
         echo date('Y-m-d H:i:s') . " : ERROR" . $msg . PHP_EOL;
     }
-
     public static function listUser($id,$ws,$msg){
         var_dump($ws->user);
     }

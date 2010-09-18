@@ -4,7 +4,6 @@ class prepare {
         foreach($ws->battlefield as $k => $v){
             if ($v->checkCharExists($id)){
                 $fieldname = $v->getFieldName();
-                console::write("This char has in battlefield {$fieldname}");
                 return $k;
             }
         }
