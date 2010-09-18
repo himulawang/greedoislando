@@ -12,6 +12,9 @@ $map_c2s["sys"]["listSocket"][] = array("console","listSocket");
 $map_c2s["sys"]["listBattlefield"] = array();
 $map_c2s["sys"]["listBattlefield"][] = array("console","listBattlefield");
 
+$map_c2s["sys"]["use_actionpoint"] = array();
+$map_c2s["sys"]["use_actionpoint"][] = array("battleaction","useActionPoint");
+
 $map_c2s["con"] = array();
 
 $map_c2s["con"]["set_username"] = array();
@@ -38,6 +41,9 @@ $map_c2s["pre"]["enter_bf"][] = array("connection","setBattlefieldList");
 $map_c2s["pre"]["start_bf"] = array();
 $map_c2s["pre"]["start_bf"][] = array("prepare","startBattlefield");
 $map_c2s["pre"]["start_bf"][] = array("battleaction","initDealCardo");
+
+$map_c2s["batt"]["use_cardo"][] = array();
+$map_c2s["batt"]["use_cardo"][] = array("battleaction","useActionPoint");
 
 class c2s {
     public static function verify($msg){

@@ -7,6 +7,7 @@ class char {
     private $speed;
     private $speedup = 0;
     private $actionPoint = 0;
+    private $timestamp;
     public $cardo = array();
 
     function __construct($id,$name){
@@ -48,6 +49,14 @@ class char {
             --$multi;
         }
         return 1;
+    }
+
+    public function useActionPoint(){
+        if(!self::checkActionPointFull()) return;
+        $this->actionPoint = $this->actionPoint - GI_BattleUseActionPoint;
+        $a = array();
+        $a[$this->id] = $this->actionPoint;
+        return $a;
     }
 
     function __tostring(){
