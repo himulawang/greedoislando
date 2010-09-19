@@ -65,6 +65,9 @@ class cardo {
     public function getXXX(){
         return $this->xxx;
     }
+    public function getType(){
+        return $this->type;
+    }
 }
 
 ?>

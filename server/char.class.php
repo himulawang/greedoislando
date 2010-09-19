@@ -95,5 +95,22 @@ class char {
         return $a;
     }
 
+    public function getCardoXXXByPos($pos){
+        if (!isset($this->cardo[$pos])) return;
+        return $this->cardo[$pos]->getXXX();
+    }
+    public function getCardoTypeByPos($pos){
+        if (!isset($this->cardo[$pos])) return;
+        return $this->cardo[$pos]->getType();
+    }
+
+    public function setHPByChange($change){
+        if($change<0){
+            $this->hp = $this->hp + $change;
+            if($this->hp<0) $this->hp = 0;
+        }
+        return $this->hp;
+    }
+
 }
 ?>
