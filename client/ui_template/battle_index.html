@@ -21,43 +21,60 @@
     </div>
     
     <div id='battle_field'>
-        <input type="button" value="Create Battle Field" onclick="create_battlefield_info(1);" id="create_bf"/>
-	<div id='create_ch'>
-		<p>Create Your Charater</p>
-        <p><span class='info_input'>UserName: </span><input type="text" id="user_name" class="text_input" value="Dya" readonly="readonly" ondblclick="change_name();"/></p>
-        <p><input type="button" value="Set Username" onclick="set_user_name();"/>
-        <input type="button" value="list battlefield" onclick="list_battlefield();"/>
-        <input type="button" value="list user" onclick="list_user();"/></p>
+        <input type="button" value="Create Battle Field" onclick="create_battlefield_info(1);" id="create_bf" class="list_create_button"/>
+        <input type="button" value="List Battlefield" onclick="list_online_battle_field(1);" id="list_bf" class="list_create_button"/>
+        <input type="button" value="List User" onclick="list_online_player(1);" id="list_user" class="list_create_button"/>
+	<div id='create_ch' class='online_list'>
+		<p>Create Your Charater<span style='float:right;cursor:pointer;' onclick='create_battlefield_info(2)'>X</span></p>
+        	<p><span class='info_input'>UserName: </span><input type="text" id="user_name" class="text_input" value="Dya" readonly="readonly" ondblclick="change_name();"/></p>
+        	<!--<p><input type="button" value="Set Username" onclick="set_user_name();"/></p>-->
 		<p><span class='info_input'>CharacterName: </span><input type="text" id="char_name" class="text_input" value="Mage Dya" /></p>
-        <p><span class='info_input'>BattleFieldName: </span><input type="text" id="bf_name" class="text_input" value="Bloody Hell" /></p>
+        	<p><span class='info_input'>BattleFieldName: </span><input type="text" id="bf_name" class="text_input" value="Bloody Hell" /></p>
 		<p>
 		<input type="button" value="Confirm" onclick="create_battlefield();" class="button char_name"/>
 		<input type="button" value="Back" onclick="create_battlefield_info(2);" class="button char_name"/>
 		</p>
 	</div>
+    <div id='battle_field_online_list' class='online_list'>
+        <p>Online BF List<span style='float:right;cursor:pointer;' onclick='list_online_battle_field(2)'>X</span></p>
+    </div>
+    <div id='user_online_list' class='online_list'>
+        <p>Online User List<span style='float:right;cursor:pointer;' onclick="list_online_player(2);">X</span></p>
+    </div>
     </div>
 
 	<div id='battle_room'>
 		<div id='top_menu'>
 			<div id='logo'>Greedo Islando</div>
-			<div id='cardo_oppo'>Opponent's Cards</div>
-			<div id='status_oppo'>Oppenent's Status</div>
+			<div id='cardo_oppo'>
+            <p>Opponent's Cards</p>
+            <input type='range' min='0' max='100' value='0' class='ap_range' id='opp_ap'/>
+            </div>
+			<div id='status_oppo'>
+                <p>oppCharname:</p>
+                <p></p>
+            </div>
 		</div>
 		<div id='middle_menu'>
 			<div id='cardo_pool'>Card Pool</div>
 			<div id='battle_log'>Battle Log</div>
 			<div id='status_own'>
-				<p>Own Status:</p>
-				<p></p>
+				<p>Username:</p>
+				<p>Charname:</p>
+                <p></p>
+                <input type="button" value="Ready" onclick="bf_start()" class="button char_name" id="ready_to_fight" />
 			</div>
-			<div id='cardo_own'>Own Card</div>
+			<div id='cardo_own'>
+            <p>Own Card</p>
+            <input type='range' min='0' max='100' value='0' class='ap_range' id='own_ap'/>
+            </div>
 		</div>
 		<div id='bottom_menu'>
 			<div id='chat'><span>Chat log</span>
 				<div id='chat_log'></div>
 				<div id='chat_input'>
-					<input type='text' id='input'/>
-					<div id='chat_confirm' onclick="talk();">Chat!</div>
+					<input type='text' id='chat_input'/>
+					<div id='chat_confirm' onclick="chat();">Chat!</div>
 				</div>
 			</div>
 		</div>

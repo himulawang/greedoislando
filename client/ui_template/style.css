@@ -1,29 +1,35 @@
 *{margin:0;padding:0;color:#424200;font-family: 微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif;list-style:none;font-size:13px;}
 body {background:#FFF;}
-#console {height:600px;width:300px;float:left;border:1px solid #CCC;margin:50px 10px;padding:5px;-moz-box-shadow:5px 4px 6px #AAA;-webkit-box-shadow:5px 4px 6px #AAA;overflow:hidden;}
+#console {height:570px;width:330px;float:left;border:1px solid #CCC;margin:50px 10px;padding:5px;-moz-box-shadow:5px 4px 6px #AAA;-webkit-box-shadow:5px 4px 6px #AAA;overflow:scroll;}
 #console div {word-wrap:break-word;width:100%;}
 #header {height:40px;background:#DDD;width:99%;border-radius:10px;border:1px solid #CCC;font-size:16px;text-align:center;line-height:35px;margin:5px auto;-moz-box-shadow:5px 2px 6px #AAA;-webkit-box-shadow:5px 2px 6px #AAA;}
 .cancel_title {height:15px;width:100%;float:left;}
 .cancel_title p {float:right;cursor:pointer;}
 #battle_room {border:1px solid #CCC;height:570px;width:920px;margin:50px auto;-moz-box-shadow:5px 2px 6px #AAA;-webkit-box-shadow:5px 2px 6px #AAA;display:none;}
 #top_menu {height:150px;width:900px;padding:10px 10px;float:left;}
-#logo {height:150px;width:130px;border:1px solid #CCC;float:left;}
-#cardo_oppo {height:150px;width:500px;border:1px solid #CCC;float:left;margin-left:10px;}
-#status_oppo {height:150px;width:240px;border:1px solid #CCC;float:left;margin-left:10px;}
+#logo {height:150px;width:130px;border:1px solid #CCC;float:left;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
+#cardo_oppo {height:150px;width:500px;border:1px solid #CCC;float:left;margin-left:10px;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
+#status_oppo {height:150px;width:240px;border:1px solid #CCC;float:left;margin-left:10px;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
 #middle_menu {height:370px;width:645px;padding:10px 0 10px 10px;float:left;}
-#cardo_pool {height:200px;width:150px;border:1px solid #CCC;float:left;}
-#battle_log {height:200px;width:480px;border:1px solid #CCC;float:left;margin-left:10px;}
-#status_own {height:150px;width:130px;border:1px solid #CCC;float:left;margin-top:10px;}
-#cardo_own {height:150px;width:500px;border:1px solid #CCC;float:left;margin-left:10px;margin-top:10px;}
+#cardo_pool {height:200px;width:150px;border:1px solid #CCC;float:left;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
+#battle_log {height:200px;width:480px;border:1px solid #CCC;float:left;margin-left:10px;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
+#status_own {height:150px;width:130px;border:1px solid #CCC;float:left;margin-top:10px;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
+#cardo_own {height:150px;width:500px;border:1px solid #CCC;float:left;margin-left:10px;margin-top:10px;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
 #bottom_menu {height:370px;width:220px;padding:10px 0;float:left;}
-#chat {height:362px;width:240px;border:1px solid #CCC;float:left;margin-left:10px;}
+#chat {height:362px;width:240px;border:1px solid #CCC;float:left;margin-left:10px;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;}
 #sys_func {width:920px;margin:10px auto;}
 #create_ch {display:none;height:170px;margin:5px;text-align:center;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;background:#FFF;width:100%;border:1px solid #CCC;text-align:left;padding:5px;}
 #create_ch p {margin-top:5px;}
 .text_input {cursor:text;width:160px;}
 .float_left {float:left;}
 .info_input {width:120px;display:block;float:left;}
-
+.list_create_button {height:30px;margin:5px;text-align:center;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;background:#FFF;width:150px;}
+.online_list {display:none;margin:5px;text-align:center;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;background:#FFF;width:100%;border:1px solid #CCC;text-align:left;padding:5px;}
+.online_list p {margin-top:5px;}
+.online_list p:first-child {border-bottom:1px solid #CCC;}
+.id {display:none;}
+#ready_to_fight {width:110px;margin:80px 0 0 10px;}
+.ap_range {float:left;width:480px;margin-left:5px;}
 
 /****************Chat CSS************************/
 #chat_log {height:320px;width:230px;float:left;margin-left:5px;}
