@@ -22,6 +22,9 @@ require_once "char.class.php";
 require_once "battleaction.class.php";
 require_once "battlefield.class.php";
 require_once "console.class.php";
+require_once "packet.class.php";
+require_once "process.php";
+
 
 //Start Websocket Class
 class WebSocket {
@@ -45,6 +48,7 @@ class WebSocket {
     }
 
     private function loop(){
+        $world = new world();
         while(1){
             $changed = $this->socket;
             socket_select($changed,$w=null,$e=null,null);
@@ -56,7 +60,9 @@ class WebSocket {
                         console::write("socket_accept() failed");
                         continue;
                     }else{
-                        $this->newUser($client);
+                        $user = $this->newUser($client);
+                        $world->user[$id] = $user;
+                        $this->socket[$id] = $socket;
                     }
                 }else{
                     $bytes = socket_recv($socket,$buffer,2048,0);
@@ -81,9 +87,12 @@ class WebSocket {
                         //BufferedAmount
                         if($string==1) continue; 
                         console::write("Server Received: " . $string);
-                        $array = json_decode($string,1 /*Convert To Array*/);
-                        $feedbackMsg = c2s::entrance($id,$this,$array);
-                        $this->feedback($feedbackMsg);
+                        $o = json_decode($string,1 /*Convert To Array*/);
+                        $packet = new packet($id,$world,$o);
+                        $packet->setProcess("c2s");
+                        $packet->process();
+                        $result = $packet->getResult();
+                        self::feedback($result);
                     }
                 }
             }
@@ -95,9 +104,7 @@ class WebSocket {
         $id = uniqid();
         $user->id = $id;
         $user->socket = $socket;
-        $this->user[$id] = $user;
-        $this->socket[$id] = $socket;
-        console::write($socket . " Just Come In");
+        return $user;
     }
 
     private function getUserBySocket($socket){
@@ -181,13 +188,11 @@ class WebSocket {
 
         foreach($returns as $k => $v){
             if(!$v) continue;
-            list($sendtype,$id,$range,$json) = array_values($v);
+            list($sendtype,$id,$json,$other,$otherjson) = array_values($v);
             if($sendtype == "single"){
                 self::sendSingle($id,$json);
             }else if($sendtype == "all"){
                 self::sendAll($json);
-            }else if($sendtype == "selected_battlefield"){
-                self::sendSelected($range,$json);
             }
         }
     }
@@ -198,6 +203,11 @@ class WebSocket {
 
 class user {
     public $id,$socket,$handshake,$name;
+}
+
+class world {
+    public $bf = array();
+    public $user = array();
 }
 
 $ws = new WebSocket;

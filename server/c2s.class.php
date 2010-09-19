@@ -15,6 +15,9 @@ $map_c2s["sys"]["listBattlefield"][] = array("console","listBattlefield");
 $map_c2s["sys"]["use_actionpoint"] = array();
 $map_c2s["sys"]["use_actionpoint"][] = array("battleaction","useActionPoint");
 
+$map_c2s["sys"]["get_attackcardo"] = array();
+$map_c2s["sys"]["get_attackcardo"][] = array("battleaction","getAttackCardo");
+
 $map_c2s["con"] = array();
 
 $map_c2s["con"]["set_username"] = array();
@@ -42,28 +45,18 @@ $map_c2s["pre"]["start_bf"] = array();
 $map_c2s["pre"]["start_bf"][] = array("prepare","startBattlefield");
 $map_c2s["pre"]["start_bf"][] = array("battleaction","initDealCardo");
 
-$map_c2s["batt"]["use_cardo"][] = array();
+$map_c2s["batt"]["use_cardo"] = array();
 $map_c2s["batt"]["use_cardo"][] = array("battleaction","useActionPoint");
+$map_c2s["batt"]["use_cardo"][] = array("battleaction","useCardo");
+
 
 class c2s {
-    public static function verify($msg){
-        return isset($msg["type"])
-            && isset($msg["data"])
-            && isset($msg["data"]["cmd"]) ? 1 : 0;
-    }
-    public static function entrance($id,$ws,$msg){
-        global $map_c2s;
-        if(!c2s::verify($msg)) return;  //Invaild c2s message
-
-        $type = $msg["type"];
-        $cmd = $msg["data"]["cmd"];
-
-        $funcs = $map_c2s[$type][$cmd];
-        $returns = array();
+    public static function in($p){
+        $funcs = $p->process;
         foreach($funcs as $k => $v){
-            $returns[] = call_user_func($v,$id,$ws,$msg);
+            $p->setResult(call_user_func($v));
         }
-        return $returns;
+        return $p;
     }
 }
 

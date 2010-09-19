@@ -141,5 +141,11 @@ function use_actionpoint(){
     ws1.send("sys",{cmd:"use_actionpoint"});
 }
 
+function get_attackcardo(){
+    ws1.send("sys",{cmd:"get_attackcardo"});
+}
 
+function use_cardo(pos){
+    ws1.send("batt",{cmd:"use_cardo",pos:pos});
+}
 

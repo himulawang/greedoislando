@@ -3,7 +3,7 @@
 class battlefield {
     private $no;
     private $name; //battlefield name
-    private $char = array(); //store char object
+    public $char = array(); //store char object
     private $battleStart = 0;
     private $timestamp;
 
@@ -174,6 +174,42 @@ class battlefield {
         $a["other"]["cardo"] = array();
         $a["other"]["cardo"][$id] = $this->char[$id]->getCardoObverse();
         return $a;
+    }
+
+    public function getAttackCardo($id){
+        if( !isset($this->char[$id]) ) return;
+        $char = &$this->char[$id];
+        
+        $cardo = &$char->cardo;
+        $feedback = array();
+        for($i = 0; $i < GI_BattleCardoCount; ++$i){
+            $cardo[$i] = new cardo(51);
+            $feedback[$i] = $cardo[$i]->getXXX();
+        }
+        $a = array();
+        $a["spec"] = array();
+        $a["spec"]["cardo"] = array();
+        $a["spec"]["cardo"][$id] = $feedback;
+        $a["other"] = array();
+        $a["other"]["cardo"] = array();
+        $a["other"]["cardo"][$id] = $this->char[$id]->getCardoObverse();
+        return $a;
+    }
+
+    public function useAttackCardo($xxx,$caster,$target){
+        if($xxx==51){
+            $change = -1;
+        }else if($xxx==52){
+            $change = -3;
+        }else if($xxx==53){
+            $change = -5;
+        }
+        return $this->char[$target]->setHPByChange($change);
+    }
+    public function getOpponentID($id){
+        $array = self::getUserID();
+        $array = array_diff($array,array($id));
+        return $array[0];
     }
 
 

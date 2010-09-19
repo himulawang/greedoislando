@@ -9,6 +9,7 @@ $map_s2c["con"]["disconnect"][] = array("connection","disconnect");
 $map_s2c["con"]["disconnect"][] = array("connection","setUserList");
 $map_s2c["con"]["disconnect"][] = array("connection","setBattlefieldList");
 
+
 class s2c {
     public static function JSON($type,$cmd,$array){
         $a;
@@ -17,12 +18,13 @@ class s2c {
         $a["data"] = $array;
         return json_encode( $a ); 
     }
-    public static function outlet($sendtype,$id,$range,$json){
+    public static function outlet($sendtype,$id,$json,$other=null,$otherjson=null){
         $r;
         $r["sendtype"] = $sendtype;
         $r["id"] = $id;
-        $r["range"] = $range;
         $r["json"] = $json;
+        $r["other"] = $other;
+        $r["otherjson"] = $otherjson;
         return $r;
     }
     public static function entrance($id,$ws,$type,$cmd,$para=null){
