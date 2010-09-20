@@ -115,6 +115,10 @@ function sys_list_socket(){
     ws1.send("sys",{cmd:"listSocket"});
 }
 
+function sys_list_result(){
+    ws1.send("sys",{cmd:"listResult"});
+}
+
 function prepare(){
     var char = $("#char").val();
     ws1.send("pre",{cmd:"prepareChar",name:char,no:0});

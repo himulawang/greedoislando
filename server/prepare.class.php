@@ -1,7 +1,7 @@
 <?php
 class prepare {
-    public static function getBattlefieldIndex($id,$ws){
-        foreach($ws->battlefield as $k => $v){
+    public static function getBattlefieldIndex($id,$gi){
+        foreach($gi->bf as $k => $v){
             if ($v->checkCharExists($id)){
                 $fieldname = $v->getFieldName();
                 return $k;
@@ -9,60 +9,54 @@ class prepare {
         }
         return false;
     }
-    public static function createBattlefield($id,$ws,$msg){
-        if(is_int(prepare::getBattlefieldIndex($id,$ws))) return; //Check Char Has Prepared
+    public static function getBattlefield($id,$gi){
+        $bf_no = prepare::getBattlefieldIndex($id,$gi);
+        return $gi->bf[$bf_no];
+    }
+    public static function createBattlefield($id,$msg,$gi){
+        if(is_int(prepare::getBattlefieldIndex($id,$gi))) return; //Check Char Has Prepared
         //Create battlefield
-        $charName = $msg["data"]['char_name'];
-        $bfName = $msg["data"]['bf_name'];
-        $battlefield = new battlefield($id,$bfName,$charName);
-        $ws->battlefield[] = $battlefield;
+        $charName = $msg['char_name'];
+        $bfName = $msg['bf_name'];
+        $bf = new battlefield($id,$bfName,$charName);
+        $gi->bf[] = $bf;
         //Get Max Idx
-        $no = max(array_keys($ws->battlefield));
-        $ws->battlefield[$no]->setIdx($no);
-        //battlefield infomation
-        $a = $battlefield->getBattlefieldInfo();
-        $json = s2c::JSON("pre","enter_bf",$a);
-        return s2c::outlet("single",$id,"one",$json);
+        $no = max(array_keys($gi->bf));
+        $gi->bf[$no]->setIdx($no);
+        return 1;
     }
-    public static function enterBattlefield($id,$ws,$msg){
-        if(is_int(prepare::getBattlefieldIndex($id,$ws))) return; //Check Char Has Prepared
-        //Check Battlefield Vaild
-        $bf_no =@ $msg["data"]['bf_no'];
-        if(!isset($ws->battlefield[$bf_no])){
-            console::write("Invaild bf_no");
-            return;
-        }
-        $battlefield = &$ws->battlefield[$bf_no];
-        //Check Battlefield Char Count
-        if($battlefield->getFieldCharCount() == 2){
-            console::write("{$battlefield->getFieldName()} has full.");
-            return; 
-        }
-        //Check BattleStarted
-        if($battlefield->checkBattleStatus()){
-            console::write("Battle has started in this bf");
-            return;
-        };
+    public static function enterBattlefield($id,$msg,$gi){
+        if(is_int(prepare::getBattlefieldIndex($id,$gi))) return; //Check Char Has Prepared
+        $bf_no =@ $msg['bf_no'];
+        if(!isset($gi->bf[$bf_no])) return; //Check Battlefield Vaild
+        $bf = $gi->bf[$bf_no];
+        if($bf->getFieldCharCount() == 2) return; //Check Battlefield Char Count
+        if($bf->battleStart) return; //Check BattleStarted
         //Prepare
-        $char_name = $msg["data"]["char_name"];
-        $battlefield->enterBattlefield($id,$char_name);
-        //battlefield infomation
-        $a = $battlefield->getBattlefieldInfo();
-        $json = s2c::JSON("pre","enter_bf",$a);
-        $range = $battlefield->getUserID();
-        return s2c::outlet("selected_battlefield",$id,$range,$json);
+        $char_name = $msg["char_name"];
+        $bf->enterBattlefield($id,$char_name);
+        return 1;
     }
-    public static function startBattlefield($id,$ws,$msg){
-        $bf_no = prepare::getBattlefieldIndex($id,$ws);
+    public static function getEnterBattlefieldInfo($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $a = $bf->getBattlefieldInfo();
+        $json = s2c::JSON("pre","enter_bf",$a);
+        $range = $bf->getUserID();
+        return s2c::outlet("selected",$range,$json);
+    }
+    public static function startBattlefield($id,$msg,$gi){
+        $bf_no = prepare::getBattlefieldIndex($id,$gi);
         if(!is_int($bf_no)) return; //Char not in battlefield
-        $battlefield = &$ws->battlefield[$bf_no];
-        if ($battlefield->startBattle()){
-            $selected = $battlefield->getUserID();
-            $a = $battlefield->getBattlefieldStartInfo();
-            $json = s2c::JSON("pre","start_bf",$a);
-            $range = $battlefield->getUserID();
-            return s2c::outlet("selected_battlefield",$id,$range,$json);
-        }
+        $bf = $gi->bf[$bf_no];
+        if (!$bf->startBattle()) return; //Battle Not Start Succeed
+        return 1;
+    }
+    public static function getStartBattlefieldInfo($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $a = $bf->getBattlefieldStartInfo();
+        $json = s2c::JSON("pre","start_bf",$a);
+        $range = $bf->getUserID();
+        return s2c::outlet("selected",$range,$json);
     }
 }
 ?>
