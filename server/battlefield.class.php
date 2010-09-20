@@ -4,7 +4,7 @@ class battlefield {
     private $no;
     private $name; //battlefield name
     public $char = array(); //store char object
-    private $battleStart = 0;
+    public $battleStart = 0;
     private $timestamp;
 
     function __construct($id,$battlefieldname,$charname){
@@ -66,9 +66,9 @@ class battlefield {
         //Check Char Count
         if(self::getFieldCharCount() != 2) {
             console::write("Chars not fully prepared");
-            return 0;
+            return;
         }
-        if(!self::checkBattleStatus()){
+        if(!$this->battleStart){
             $this->battleStart = 1;
             $this->timestamp = time(); //Time count for action point
             console::write("Battlefield {$this->name} has start fighting");
@@ -77,7 +77,7 @@ class battlefield {
     }
 
     public function stopBattle(){ //Stop A Battle
-        if(self::checkBattleStatus()){
+        if($this->battleStart){
             $this->battleStart = 0;
             console::write("Battlefield {$this->name} has stop fighting");
             return 1; //Stop Succeed
@@ -85,10 +85,6 @@ class battlefield {
             console::write("Battlefield {$this->name} hasn't started");
             return 0; //Stop failed
         }
-    }
-
-    public function checkBattleStatus(){ //Check Battle is started
-        return $this->battleStart;
     }
 
     public function getFieldCharCount(){
@@ -153,26 +149,25 @@ class battlefield {
         if( !isset($this->char[$id]) ) return;
         $char = &$this->char[$id];
         
-        if( $char->getCardoCount() >= GI_BattleCardoCount){
-            return;
-        }
+        if( $char->getCardoCount() >= GI_BattleCardoCount) return; 
         $cardo = &$char->cardo;
-        $feedback = array();
         for($i = 0; $i < GI_BattleCardoCount; ++$i){
             if( isset($cardo[$i]) ){
                 continue;
             }else{
                 $cardo[$i] = new cardo();
-                $feedback[$i] = $cardo[$i]->getXXX();
             }
         }
+        return 1;
+    }
+
+    public function getDealCardoInfo($id){
+        $char = $this->char[$id];
         $a = array();
-        $a["spec"] = array();
-        $a["spec"]["cardo"] = array();
-        $a["spec"]["cardo"][$id] = $feedback;
+        $a["player"] = array();
+        $a["player"][$id] = $char->getCardo();
         $a["other"] = array();
-        $a["other"]["cardo"] = array();
-        $a["other"]["cardo"][$id] = $this->char[$id]->getCardoObverse();
+        $a["other"][$id] = $char->getCardoObverse();
         return $a;
     }
 
@@ -181,19 +176,10 @@ class battlefield {
         $char = &$this->char[$id];
         
         $cardo = &$char->cardo;
-        $feedback = array();
         for($i = 0; $i < GI_BattleCardoCount; ++$i){
             $cardo[$i] = new cardo(51);
-            $feedback[$i] = $cardo[$i]->getXXX();
         }
-        $a = array();
-        $a["spec"] = array();
-        $a["spec"]["cardo"] = array();
-        $a["spec"]["cardo"][$id] = $feedback;
-        $a["other"] = array();
-        $a["other"]["cardo"] = array();
-        $a["other"]["cardo"][$id] = $this->char[$id]->getCardoObverse();
-        return $a;
+        return 1;
     }
 
     public function useAttackCardo($xxx,$caster,$target){
@@ -209,6 +195,7 @@ class battlefield {
     public function getOpponentID($id){
         $array = self::getUserID();
         $array = array_diff($array,array($id));
+        $array = array_values($array);
         return $array[0];
     }
 

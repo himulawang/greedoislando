@@ -14,6 +14,9 @@ $c2s["sys"]["listSocket"][] = array("console","listSocket");
 $c2s["sys"]["listBattlefield"] = array();
 $c2s["sys"]["listBattlefield"][] = array("console","listBattlefield");
 
+$c2s["sys"]["listResult"] = array();
+$c2s["sys"]["listResult"][] = array("console","listResult");
+
 $c2s["sys"]["use_actionpoint"] = array();
 $c2s["sys"]["use_actionpoint"][] = array("battleaction","useActionPoint");
 
@@ -23,12 +26,41 @@ $c2s["sys"]["get_attackcardo"][] = array("battleaction","getAttackCardo");
 $c2s["con"] = array();
 $c2s["con"]["set_username"] = array();
 $c2s["con"]["set_username"][] = array("connection","setUsername");
-$c2s["con"]["set_username"][] = array("connection","setUserList");
-$c2s["con"]["set_username"][] = array("connection","setBattlefieldList");
+
+$c2s["pre"] = array();
+
+$c2s["pre"]["create_bf"] = array();
+$c2s["pre"]["create_bf"][] = array("prepare","createBattlefield");
+
+$c2s["pre"]["enter_bf"] = array();
+$c2s["pre"]["enter_bf"][] = array("prepare","enterBattlefield");
+
+$c2s["pre"]["start_bf"] = array();
+$c2s["pre"]["start_bf"][] = array("prepare","startBattlefield");
+$c2s["pre"]["start_bf"][] = array("battleaction","initDealCardo");
 
 
+$s2c = array();
 
-$p["s2c"] = array();
+$s2c["sys"] = array();
+$s2c["sys"]["get_attackcardo"] = array();
+$s2c["sys"]["get_attackcardo"][] = array("battleaction","getDealCardoInfo");
 
+$s2c["con"] = array();
+$s2c["con"]["set_username"] = array();
+$s2c["con"]["set_username"][] = array("connection","getUsername");
+$s2c["con"]["set_username"][] = array("connection","getUserList");
+$s2c["con"]["set_username"][] = array("connection","getBattlefieldList");
 
+$s2c["pre"]["create_bf"] = array();
+$s2c["pre"]["create_bf"][] = array("prepare","getEnterBattlefieldInfo");
+$s2c["pre"]["create_bf"][] = array("connection","getBattlefieldList");
+
+$s2c["pre"]["enter_bf"] = array();
+$s2c["pre"]["enter_bf"][] = array("prepare","getEnterBattlefieldInfo");
+$s2c["pre"]["enter_bf"][] = array("connection","getBattlefieldList");
+
+$s2c["pre"]["start_bf"] = array();
+$s2c["pre"]["start_bf"][] = array("prepare","getStartBattlefieldInfo");
+$s2c["pre"]["start_bf"][] = array("battleaction","getInitDealCardoInfo");
 ?>

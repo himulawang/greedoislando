@@ -19,38 +19,39 @@ class connection{
         console::write($id . " Disconnected");
         return;
     }
-    public static function setUsername($id,$world,$data){
+    public static function setUsername($id,$data,$gi){
         if(!isset($data["username"]) && !$data["username"]){
             console::error("Invaild Username");
             return;
         }
-        $world->user[$id] = new user();
-        $world->user[$id]->name = $data["username"];
-        $world->user[$id]->id = $id;
+        $gi->user[$id]->username = $data["username"];
 
+        return 1;
+    }
+    public static function getUsername($id,$data,$gi){
         $a = array();
         $a["id"] = $id;
-        $a["username"] = $data["username"];
+        $a["username"] = $gi->user[$id]->username;
 
         $json = s2c::JSON("con","get_id",$a);
         return s2c::outlet("single",$id,$json);
     }
-    public static function setUserList($id,$world,$data){
+    public static function getUserList($id,$data,$gi){
         $a = array();
         $a["userlist"] = array();
-        foreach($world->user as $k=>$v){
-            $a["userlist"][] = array("id" => $v->id, "username" => $v->name);
+        foreach($gi->user as $k=>$v){
+            $a["userlist"][] = array("id" => $v->id, "username" => $v->username);
         }
-        $json = s2c::JSON("con","set_user_list",$a);
+        $json = s2c::JSON("con","get_user_list",$a);
         return s2c::outlet("all",$id,$json);
     }
-    public static function setBattlefieldList($id,$world,$data){
+    public static function getBattlefieldList($id,$data,$gi){
         $a = array();
         $a["battlefieldlist"] = array();
-        foreach($world->bf as $k=>$v){
+        foreach($gi->bf as $k=>$v){
             $a["battlefieldlist"][] = $v->getBattlefieldInfo();
         }
-        $json = s2c::JSON("con","set_battlefieldlist",$a);
+        $json = s2c::JSON("con","get_battlefieldlist",$a);
         return s2c::outlet("all",$id,$json);
     }
 }

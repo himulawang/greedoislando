@@ -7,11 +7,17 @@ class console {
     public static function error($msg){
         echo date('Y-m-d H:i:s') . " : ERROR" . $msg . PHP_EOL;
     }
-    public static function listUser($id,$world,$msg){
-        var_dump($world->user);
+    public static function listUser($id,$msg,$gi){
+        var_dump($gi->user);
     }
-    public static function listBattlefield($id,$world,$msg){
-        var_dump($world->bf);
+    public static function listBattlefield($id,$msg,$gi){
+        var_dump($gi->bf);
+    }
+    public static function listSocket($id,$msg,$gi){
+        var_dump($gi->socket);
+    }
+    public static function listResult($id,$msg,$gi){
+        var_dump($gi->result);
     }
 
 }

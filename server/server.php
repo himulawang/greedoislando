@@ -33,108 +33,102 @@ class WebSocket {
     public $user = array();
     public $battlefield = array();
 
-    function __construct(){
+    function __construct($gi){
         //Init Socket
-        $this->core = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
-        socket_set_option($this->core,SOL_SOCKET,SO_REUSEADDR,1);
-        socket_bind($this->core,GI_ADDRESS,GI_PORT);
-        socket_listen($this->core,GI_CLIENTLIMIT);
+        $core = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
+        socket_set_option($core,SOL_SOCKET,SO_REUSEADDR,1);
+        socket_bind($core,GI_ADDRESS,GI_PORT);
+        socket_listen($core,GI_CLIENTLIMIT);
 
-        $this->socket[] = $this->core;
-        //Output Console Logs
+        $gi->socket[] = $core;
         console::write("Server Start");
 
-        $this->loop();
+        $this->loop($gi,$core);
     }
 
-    private function loop(){
-        $world = new world();
+    private function loop($gi,$core){
         while(1){
-            $changed = $this->socket;
+            $changed = $gi->socket;
             socket_select($changed,$w=null,$e=null,null);
             
             foreach($changed as $socket){
-                if($socket == $this->core){
-                    $client = socket_accept($this->core);
+                if($socket == $core){
+                    $client = socket_accept($core);
                     if($client < 0){
                         console::write("socket_accept() failed");
                         continue;
                     }else{
-                        $user = $this->newUser($client);
-                        $world->user[$id] = $user;
-                        $this->socket[$id] = $socket;
+                        self::connectNewUser($client,$gi);
                     }
                 }else{
                     $bytes = socket_recv($socket,$buffer,2048,0);
-                    $user = $this->getUserBySocket($socket);
+                    $user = self::getUserBySocket($socket,$gi);
                     $id = $user->id;
-                    if($bytes==0){ //disconnect
+                    if($bytes==0){ //TODO disconnect
+                        /*
                         $feedbackMsg = s2c::entrance($id,$this,"con","disconnect");
+
                         $this->feedback($feedbackMsg);
+                         */
                         continue;
                     }
 
                     if(!$user->handshake){
                         //MAX LIMIT
-                        if(count($this->user) - 1 >=GI_CLIENTLIMIT){ //TODO Don't Know why need - 1
+                        if(count($gi->user) - 1 >=GI_CLIENTLIMIT){ //TODO Don't Know why need - 1
                             console::write("New Connection Coming, But Server Reach Max Connection");
                             continue;
                         }
-                        $this->doHandShake($user,$buffer);
+                        self::doHandShake($id,$buffer,$gi);
                     }else{
-                        self::addActionPoint(); // Action Point
-                        $string = $this->unwrap($buffer);
+                        $r = $gi->addActionPoint();
+                        $gi->getNewResult($r);
+                        self::feedback($gi);
+
+                        $string = self::unwrap($buffer);
                         //BufferedAmount
                         if($string==1) continue; 
                         console::write("Server Received: " . $string);
                         $o = json_decode($string,1 /*Convert To Array*/);
-                        $packet = new packet($id,$world,$o);
+                        $packet = new packet($id,$o,$gi);
                         $packet->setProcess("c2s");
                         $packet->process();
+                        if(!$packet->verifyLastResult()) continue;
+                        $packet->setProcess("s2c");
+                        $packet->process();
                         $result = $packet->getResult();
-                        self::feedback($result);
+                        $gi->getNewResult($result);
+                        self::feedback($gi);
                     }
                 }
             }
         }
     }
 
-    private function newUser($socket){
+    private function connectNewUser($socket,$gi){
         $user = new user;
         $id = uniqid();
         $user->id = $id;
         $user->socket = $socket;
-        return $user;
+
+        $gi->user[$id] = $user;
+        $gi->socket[$id] = $socket;
     }
 
-    private function getUserBySocket($socket){
-        foreach($this->user as $user){
+    private function getUserBySocket($socket,$gi){
+        foreach($gi->user as $user){
             if($user->socket == $socket){
                 return $user;
             }
         }
     }
 
-    private function doHandShake($user,$buffer){
+    private function doHandShake($id,$buffer,$gi){
         $upgrade = (string) new WebSocketHandshake($buffer);
-        socket_write($user->socket,$upgrade,strlen($upgrade));
-        $user->handshake=1;
+        socket_write($gi->user[$id]->socket,$upgrade,strlen($upgrade));
+        $gi->user[$id]->handshake=1;
         console::write($upgrade);
         console::write("Hand Shake Done");
-    }
-
-    private function addActionPoint(){
-        foreach($this->battlefield as $k => &$v){
-            if($v->checkBattleStatus()){
-                $needFeedback = $v->addActionPoint();
-                if($needFeedback){
-                    $selected = $this->battlefield[$k]->getUserID();
-                    $array = $this->battlefield[$k]->getActionPoint();
-                    $json = self::feedbackJSON("batt","set_action_point",$array);
-                    self::sendSelected($selected,$json);
-                }
-            }
-        }
     }
 
     private function feedbackTalk($data){
@@ -151,28 +145,32 @@ class WebSocket {
         unset($this->battlefield[$no]);
     }
 
-    public function sendAll($msg){
+    public function sendAll($msg,$gi){
         $msg = $this->wrap($msg);
-        foreach ($this->user as $user) {
+        foreach ($gi->user as $user) {
             socket_write($user->socket,$msg,strlen($msg));
         }
     }
 
-    public function sendSingle($id,$msg){
+    public function sendSingle($id,$msg,$gi){
         $msg = $this->wrap($msg);
-        socket_write($this->user[$id]->socket,$msg,strlen($msg));
+        socket_write($gi->socket[$id],$msg,strlen($msg));
     }
 
-    public function sendSelected($array,$msg){
+    public function sendSelect($array,$msg,$gi){
         $msg = $this->wrap($msg);
-        foreach($array as $k=>$v){
-            socket_write($this->user[$v]->socket,$msg,strlen($msg));
+        if (is_array($array)) {
+            foreach($array as $k=>$v){
+                socket_write($gi->socket[$v],$msg,strlen($msg));
+            }
+        }else{
+            socket_write($gi->socket[$array],$msg,strlen($msg));
         }
     }
 
-    public function sendDifferent($spec,$specMsg,$other,$otherMsg){
-        $this->sendSingle($spec,$specMsg);
-        $this->sendSelected($other,$otherMsg);
+    public function sendDiff($id,$json,$other,$otherjson,$gi){
+        $this->sendSingle($id,$json,$gi);
+        $this->sendSelect($other,$otherjson,$gi);
     }
 
     private function feedbackJSON($type,$cmd,$array){
@@ -183,17 +181,24 @@ class WebSocket {
         return json_encode( $a ); 
     }
 
-    private function feedback($returns){
+    private function feedback($gi){
+        $returns = $gi->result;
         if(!$returns) return;
 
         foreach($returns as $k => $v){
             if(!$v) continue;
             list($sendtype,$id,$json,$other,$otherjson) = array_values($v);
             if($sendtype == "single"){
-                self::sendSingle($id,$json);
+                self::sendSingle($id,$json,$gi);
             }else if($sendtype == "all"){
-                self::sendAll($json);
+                self::sendAll($json,$gi);
+            }else if($sendtype == "selected"){
+                self::sendSelect($id,$json,$gi); //$id is an array
+            }else if($sendtype == "diff"){
+                self::sendDiff($id,$json,$other,$otherjson,$gi);
             }
+
+            unset($gi->result[$k]); //Delete Result After Sent
         }
     }
 
@@ -202,15 +207,38 @@ class WebSocket {
 }
 
 class user {
-    public $id,$socket,$handshake,$name;
+    public $id,$socket,$handshake,$username;
 }
 
-class world {
+class gi {
+    public $socket = array();
     public $bf = array();
     public $user = array();
+    public $result = array(); //Store Unsent Result
+
+    public function addActionPoint(){
+        $returns = array();
+        foreach($this->bf as $k => $v){
+            if($v->battleStart){
+                $needFeedback = $v->addActionPoint();
+                if($needFeedback){
+                    $range = $this->bf[$k]->getUserID();
+                    $a = $this->bf[$k]->getActionPoint();
+                    $json = s2c::JSON("batt","set_action_point",$a);
+                    $returns[] = s2c::outlet("selected",$range,$json);
+                }
+            }
+        }
+        return $returns;
+    }
+    public function getNewResult($array){
+        if(!$array) return;
+        $this->result = array_merge($this->result,$array);
+    }
 }
 
-$ws = new WebSocket;
+$gi = new gi;
+$ws = new WebSocket($gi);
 
 
 ?>
