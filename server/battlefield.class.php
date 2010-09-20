@@ -46,12 +46,7 @@ class battlefield {
 
     public function useActionPoint($id){
         if(!self::checkCharExists($id)) return;
-        $char = $this->char[$id]->useActionPoint();
-        if(!is_array($char)) return;
-        $a = array();
-        $a["no"] = $this->no;
-        $a["char"] = $char;
-        return $a;
+        return $this->char[$id]->useActionPoint();
     }
 
     public function enterBattlefield($id,$charname){
@@ -182,7 +177,7 @@ class battlefield {
         return 1;
     }
 
-    public function useAttackCardo($xxx,$caster,$target){
+    public function useAttackCardo($xxx,$caster,$target,$pos){
         if($xxx==51){
             $change = -1;
         }else if($xxx==52){
@@ -190,7 +185,9 @@ class battlefield {
         }else if($xxx==53){
             $change = -5;
         }
-        return $this->char[$target]->setHPByChange($change);
+        $this->char[$target]->setHPByChange($change);
+        unset($this->char[$caster]->cardo[$pos]);
+        return 1;
     }
     public function getOpponentID($id){
         $array = self::getUserID();

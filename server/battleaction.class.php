@@ -2,15 +2,17 @@
 
 
 class battleaction {
-    public static function useActionPoint($id,$ws,$msg){ //Minus ActionPoint before action
-        $bf_no = prepare::getBattlefieldIndex($id,$ws);
-        $battlefield = &$ws->battlefield[$bf_no];
-        $actionPoint = $battlefield->useActionPoint($id);
-        if(is_array($actionPoint)){
-            $selected = $battlefield->getUserID();
-            $json = s2c::JSON("batt","set_action_point",$actionPoint);
-            $ws->sendSelected($selected,$json);
-        }
+    public static function useActionPoint($id,$msg,$gi){ //Minus ActionPoint before action
+        if(!is_int(prepare::getBattlefieldIndex($id,$gi))) return;
+        $bf = prepare::getBattlefield($id,$gi);
+        return $bf->useActionPoint($id);
+    }
+    public static function getActionPoint($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $actionPoint = $bf->char[$id]->getActionPoint();
+        $json = s2c::JSON("batt","set_action_point",array($id=>$actionPoint));
+        $range = $bf->getUserID();
+        return S2c::outlet("selected",$range,$json);
     }
     public static function initDealCardo($id,$msg,$gi){
         $bf_no = prepare::getBattlefieldIndex($id,$gi);
@@ -55,23 +57,35 @@ class battleaction {
         $bf = prepare::getBattlefield($id,$gi);
         return $bf->getAttackCardo($id);
     }
-    public static function useCardo($id,$ws,$msg){
-        $bf_no = prepare::getBattlefieldIndex($id,$ws);
-        $battlefield = &$ws->battlefield[$bf_no];
-        $castChar = &$battlefield->char[$id];
-        $pos = $msg["data"]["pos"];
-        $xxx = $castChar->getCardoXXXByPos($pos);
-        $type = $castChar->getCardoTypeByPos($pos);
+    public static function useCardo($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $caster = $bf->char[$id];
+        $pos = $msg["pos"];
+        $xxx = $caster->getCardoXXXByPos($pos);
+        $type = $caster->getCardoTypeByPos($pos);
         if($xxx && $type){
             if($type==1){
-                $oppID = $battlefield->getOpponentID($id);
-                $hp = $battlefield->useAttackCardo($xxx,$id,$oppID);
-                $selected = $battlefield->getUserID();
-                $json = s2c::JSON("batt","set_hp",array($oppID=>$hp));
-                $ws->sendSelected($selected,$json);
+                $target = $bf->getOpponentID($id);
+                $hp = $bf->useAttackCardo($xxx,$id,$target,$pos);
+                return 1;
             }
         }
-        
+        return;
+    }
+    public static function getSelfHP($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $hp = $bf->char[$id]->getHP();
+        $json = s2c::JSON("batt","get_hp",array($id=>$hp));
+        $range = $bf->getUserID();
+        return s2c::outlet("selected",$range,$json);
+    }
+    public static function getOpponentHP($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $target = $bf->getOpponentID($id);
+        $hp = $bf->char[$target]->getHP();
+        $json = s2c::JSON("batt","get_hp",array($target=>$hp));
+        $range = $bf->getUserID();
+        return s2c::outlet("selected",$range,$json);
     }
 
 }

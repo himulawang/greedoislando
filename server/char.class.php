@@ -23,6 +23,9 @@ class char {
     public function setSpeed($speed){
         $this->speed = $speed;
     }
+    public function getHP(){
+        return $this->hp;
+    }
 
     public function getActionPoint(){
         return $this->actionPoint;
@@ -54,9 +57,7 @@ class char {
     public function useActionPoint(){
         if(!self::checkActionPointFull()) return;
         $this->actionPoint = $this->actionPoint - GI_BattleUseActionPoint;
-        $a = array();
-        $a[$this->id] = $this->actionPoint;
-        return $a;
+        return 1;
     }
 
     function __tostring(){
@@ -105,11 +106,9 @@ class char {
     }
 
     public function setHPByChange($change){
-        if($change<0){
-            $this->hp = $this->hp + $change;
-            if($this->hp<0) $this->hp = 0;
-        }
-        return $this->hp;
+        $this->hp = $this->hp + $change;
+        if($this->hp<0) $this->hp = 0;
+        if($this->hp>$this->maxhp) $this->hp = $this->maxhp;
     }
 
 }

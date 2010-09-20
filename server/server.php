@@ -202,8 +202,12 @@ class WebSocket {
         }
     }
 
-    private function wrap($msg){ return chr(0) . $msg . chr(255); }
-    private function unwrap($msg){ return substr($msg, 1, strlen($msg)-2); }
+    private function wrap($msg){ 
+        return chr(0) . $msg . chr(255); 
+    }
+    private function unwrap($msg){ 
+        return substr($msg, 1, strlen($msg)-2); 
+    }
 }
 
 class user {
