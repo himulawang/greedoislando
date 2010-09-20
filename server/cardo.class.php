@@ -7,11 +7,11 @@ $CARDOINDEX["52"] = array("xxx" => 52, "probability" => 80, "type" => 1, "name" 
 $CARDOINDEX["53"] = array("xxx" => 53, "probability" => 60, "type" => 1, "name" => "bomb");
 
 $CARDOINDEX["61"] = array("xxx" => 61, "probability" => 200, "type" => 2, "name" => "fire");
-$CARDOINDEX["62"] = array("xxx" => 61, "probability" => 50, "type" => 2, "name" => "thunder");
+$CARDOINDEX["62"] = array("xxx" => 62, "probability" => 50, "type" => 2, "name" => "thunder");
 
 $CARDOINDEX["71"] = array("xxx" => 71, "probability" => 80, "type" => 3, "name" => "umbrella");
 $CARDOINDEX["72"] = array("xxx" => 72, "probability" => 60, "type" => 3, "name" => "lid");
-$CARDOINDEX["71"] = array("xxx" => 73, "probability" => 10, "type" => 3, "name" => "GFW");
+$CARDOINDEX["73"] = array("xxx" => 73, "probability" => 10, "type" => 3, "name" => "GFW");
 
 $CARDOINDEX["81"] = array("xxx" => 81, "probability" => 70, "type" => 4, "name" => "Kinetic energy distribution field");
 $CARDOINDEX["82"] = array("xxx" => 82, "probability" => 50, "type" => 4, "name" => "St. Cross Shield");
