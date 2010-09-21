@@ -64,12 +64,11 @@ class WebSocket {
                     $bytes = socket_recv($socket,$buffer,2048,0);
                     $user = self::getUserBySocket($socket,$gi);
                     $id = $user->id;
-                    if($bytes==0){ //TODO disconnect
-                        /*
-                        $feedbackMsg = s2c::entrance($id,$this,"con","disconnect");
-
-                        $this->feedback($feedbackMsg);
-                         */
+                    if($bytes==0){ 
+                        connection::disconnect($id,null,$gi);
+                        connection::getUserList($id,null,$gi);
+                        connection::getBattlefieldList($id,null,$gi);
+                        console::write($id . " Disconnect");
                         continue;
                     }
 
@@ -141,10 +140,6 @@ class WebSocket {
         return;
     }
 
-    public function destroyBattlefield($no){
-        unset($this->battlefield[$no]);
-    }
-
     public function sendAll($msg,$gi){
         $msg = $this->wrap($msg);
         foreach ($gi->user as $user) {
@@ -154,6 +149,7 @@ class WebSocket {
 
     public function sendSingle($id,$msg,$gi){
         $msg = $this->wrap($msg);
+        if(!isset($gi->socket[$id])) return;
         socket_write($gi->socket[$id],$msg,strlen($msg));
     }
 
@@ -161,9 +157,11 @@ class WebSocket {
         $msg = $this->wrap($msg);
         if (is_array($array)) {
             foreach($array as $k=>$v){
+                if(!isset($gi->socket[$v])) continue;                
                 socket_write($gi->socket[$v],$msg,strlen($msg));
             }
         }else{
+            if(!isset($gi->socket[$array])) return;            
             socket_write($gi->socket[$array],$msg,strlen($msg));
         }
     }
@@ -239,6 +237,10 @@ class gi {
         if(!$array) return;
         $this->result = array_merge($this->result,$array);
     }
+    public function destroyBattlefield($no){
+        unset($this->battlefield[$no]);
+    }
+    
 }
 
 $gi = new gi;
