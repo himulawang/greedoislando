@@ -8,6 +8,8 @@ class char {
     private $speedup = 0;
     private $actionPoint = 0;
     private $timestamp;
+    private $preDefendField;
+    private $defendField;
     public $cardo = array();
 
     function __construct($id,$name){
@@ -109,6 +111,13 @@ class char {
         $this->hp = $this->hp + $change;
         if($this->hp<0) $this->hp = 0;
         if($this->hp>$this->maxhp) $this->hp = $this->maxhp;
+    }
+
+    public function setDefendField($defendField){
+        if($this->defendField) {
+            $this->preDefendField = $this->defendField;
+        }
+        $this->defendField = $defendField;
     }
 
 }

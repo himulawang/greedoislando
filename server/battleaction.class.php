@@ -12,7 +12,8 @@ class battleaction {
         $actionPoint = $bf->char[$id]->getActionPoint();
         $json = s2c::JSON("batt","set_action_point",array($id=>$actionPoint));
         $range = $bf->getUserID();
-        return S2c::outlet("selected",$range,$json);
+        $gi->result[] = S2c::outlet("selected",$range,$json);
+        return array();
     }
     public static function initDealCardo($id,$msg,$gi){
         $bf_no = prepare::getBattlefieldIndex($id,$gi);
@@ -57,6 +58,10 @@ class battleaction {
         $bf = prepare::getBattlefield($id,$gi);
         return $bf->getAttackCardo($id);
     }
+    public static function getDefendCardo($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        return $bf->getDefendCardo($id);
+    }
     public static function useCardo($id,$msg,$gi){
         $bf = prepare::getBattlefield($id,$gi);
         $caster = $bf->char[$id];
@@ -66,8 +71,9 @@ class battleaction {
         if($xxx && $type){
             if($type==1){
                 $target = $bf->getOpponentID($id);
-                $hp = $bf->useAttackCardo($xxx,$id,$target,$pos);
-                return 1;
+                return $bf->usePhyAttackCardo($xxx,$id,$target,$pos);
+            }else if($type==3){
+                return $bf->usePhyDefendCardo($xxx,$id,$pos);
             }
         }
         return;

@@ -224,10 +224,10 @@ class gi {
             if($v->battleStart){
                 $needFeedback = $v->addActionPoint();
                 if($needFeedback){
-                    $range = $this->bf[$k]->getUserID();
-                    $a = $this->bf[$k]->getActionPoint();
-                    $json = s2c::JSON("batt","set_action_point",$a);
-                    $returns[] = s2c::outlet("selected",$range,$json);
+                    $range = $v->getUserID();
+                    foreach($range as $idx=> $id){
+                        battleaction::getActionPoint($id,null,$this);
+                    }
                 }
             }
         }
