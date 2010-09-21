@@ -171,21 +171,53 @@ class battlefield {
         $char = &$this->char[$id];
         
         $cardo = &$char->cardo;
-        for($i = 0; $i < GI_BattleCardoCount; ++$i){
-            $cardo[$i] = new cardo(51);
-        }
+        $cardo[0] = new cardo(51);
+        $cardo[1] = new cardo(52);
+        $cardo[2] = new cardo(53);
+        $cardo[3] = new cardo(51);
+        $cardo[4] = new cardo(52);
+        $cardo[5] = new cardo(51);
+        return 1;
+    }
+    public function getDefendCardo($id){
+        if( !isset($this->char[$id]) ) return;
+        $char = &$this->char[$id];
+        
+        $cardo = &$char->cardo;
+        $cardo[0] = new cardo(71);
+        $cardo[1] = new cardo(72);
+        $cardo[2] = new cardo(73);
+        $cardo[3] = new cardo(81);
+        $cardo[4] = new cardo(82);
+        $cardo[5] = new cardo(82);
         return 1;
     }
 
-    public function useAttackCardo($xxx,$caster,$target,$pos){
+    public function usePhyAttackCardo($xxx,$caster,$target,$pos){
         if($xxx==51){
             $change = -1;
         }else if($xxx==52){
             $change = -3;
         }else if($xxx==53){
             $change = -5;
+        }else{
+            return;
         }
         $this->char[$target]->setHPByChange($change);
+        unset($this->char[$caster]->cardo[$pos]);
+        return 1;
+    }
+    public function usePhyDefendCardo($xxx,$caster,$pos){
+        if($xxx==71){
+            $defendField = 71;
+        }else if($xxx==72){
+            $defendField = 72;
+        }else if($xxx==73){
+            $defendField = 73;
+        }else{
+            return;
+        }
+        $this->char[$caster]->setDefendField($defendField);
         unset($this->char[$caster]->cardo[$pos]);
         return 1;
     }

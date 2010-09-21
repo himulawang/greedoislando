@@ -2,8 +2,8 @@
 
 class connection{
     public static function disconnect($id,$msg,$gi){
-        //Delete User & Socket & Char
-        socket_close($gi->user[$id]->socket);
+        
+        socket_close($gi->user[$id]->socket);//Delete User & Socket & Char
         $username = $gi->user[$id]->username;
         if (isset($gi->user[$id])) unset($gi->user[$id]);
         if (isset($gi->socket[$id])) unset($gi->socket[$id]);
@@ -20,8 +20,8 @@ class connection{
         $range = $bf->getUserID();
         $json = s2c::JSON("pre","stop_battle",array("no"=>$bf_no,"bf_name"=>$bf_name));
         $gi->result[] = s2c::outlet("selected",$range,$json);
-        //Kick Char from battlefield
-        $needDestroyBf = $bf->kickFieldChar($id);
+        
+        $needDestroyBf = $bf->kickFieldChar($id);//Kick Char from battlefield
         if ($needDestroyBf) $gi->destroyBattlefield($bf_no);
         return 1;
     }
@@ -50,6 +50,7 @@ class connection{
         }
         $json = s2c::JSON("con","get_user_list",$a);
         $gi->result[] = s2c::outlet("all",$id,$json);
+        return array();
     }
     public static function getBattlefieldList($id,$data,$gi){
         $a = array();
@@ -59,6 +60,7 @@ class connection{
         }
         $json = s2c::JSON("con","get_battlefieldlist",$a);
         $gi->result[] = s2c::outlet("all",$id,$json);
+        return array();
     }
 }
 

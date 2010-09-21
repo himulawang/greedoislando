@@ -148,6 +148,9 @@ function use_actionpoint(){
 function get_attackcardo(){
     ws1.send("sys",{cmd:"get_attackcardo"});
 }
+function get_defendcardo(){
+    ws1.send("sys",{cmd:"get_defendcardo"});
+}
 
 function use_cardo(pos){
     ws1.send("batt",{cmd:"use_cardo",pos:pos});
