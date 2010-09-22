@@ -42,7 +42,11 @@ function connect(){
                 //setTimeout(status("Success!"),1000);
             },
             batt: function(json){
-                output(JSON.stringify(json));
+                if(json.data.cmd=="set_action_point"){
+                    output("<span class='set-action-point'>" + JSON.stringify(json) + "</span>");
+                }else{
+                    output(JSON.stringify(json));
+                }
             }
         }
     });    
@@ -130,7 +134,7 @@ function bf_start(){
 }
 
 function output(info){
-    $("#console").append("<div>" + info + "</div>");
+    $("#console").prepend("<div>" + info + "</div>");
 }
 
 function list_battlefield(){

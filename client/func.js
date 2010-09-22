@@ -1,11 +1,27 @@
 var ws1;
 
+//Class char
+function char(data) {
+    this.id = data.id;
+    this.username = data.username;
+    this.charname = data.charname;
+    this.hp = data.hp;
+    this.maxhp = data.maxhp;
+    this.speed = data.speed;
+    this.speedup = data.speedup;
+    this.actionPoint = data.actionPoint;
+    this.cardo = [];
+}
+
+var mychar;
+var opchar;
+
 var _GI_ = {
     core : {
         globalProcess : function(msg){
             var json = JSON.parse(msg.data);
             var string = msg.data;
-            output(string);
+            //output(string);
             var func = ["_GI_", json.type, json.data.cmd].join(".") + "("+string+")";
             $.globalEval(func);
         }
@@ -20,27 +36,58 @@ var _GI_ = {
     pre : {        
         enter_bf : function(json){
             for(x in json.data.char){
-                charname = $("#status_own > p:eq(1)").text();
-                if(json.data.char[x] == charname){
-                    $("#status_own > p:eq(1)").html("<p>" + json.data.char[x] + "</p>");
-                    $("#status_own > p:eq(2)").html("<p>" + x + "</p>");
+                if(x == mychar.id){
+                    mychar.charname = json.data.char[x];
+                    $("#status_own > p:eq(0)").html("<p>" + json.data.char[x] + "</p>");
+                    $("#status_own > p:eq(1)").html("<p>" + x + "</p>");
                 }else{
+                    opchar = new char(json.data.char);
+                    opchar.id = x;
+                    opchar.charname = json.data.char[x];
                     $("#status_oppo > p:eq(0)").html("<p>" + json.data.char[x] + "</p>");
                     $("#status_oppo > p:eq(1)").html("<p>" + x + "</p>");
                 }
             }
         },
+
         create_bf : function(json){
-            //创建战场
+            
+        },
+            
+        start_bf : function(json){
+            var op_num = 0;
+            for(x in json.data.char){
+                if(x == mychar.id){
+                    mychar.hp = json.data.char[x].hp;
+                    mychar.maxhp = json.data.char[x].maxhp;
+                    mychar.speed = json.data.char[x].speed;
+                    mychar.speedup = json.data.char[x].speedup;
+                    mychar.actionPoint = json.data.char[x].actionPoint;
+                    $("#status_own > p:eq(2)").html("<p>HP:" + mychar.hp + " / " + mychar.maxhp + "</p>");
+                    $("#status_own > p:eq(3)").html("<p>Speed:" + mychar.speed + "</p>");
+                    $("#status_own > p:eq(4)").html("<p>Speedup:" + mychar.speedup + "</p>");
+                    $("#status_own > p:eq(5)").html("<p>ActionPoint:" + mychar.actionPoint + "</p>");
+                }else{
+                    opchar.hp = json.data.char[x].hp;
+                    opchar.maxhp = json.data.char[x].maxhp;
+                    opchar.speed = json.data.char[x].speed;
+                    opchar.speedup = json.data.char[x].speedup;
+                    opchar.actionPoint = json.data.char[x].actionPoint;
+                    $("#status_oppo > p:eq(2)").html("<p>HP:" + opchar.hp + " / " + opchar.maxhp + "</p>");
+                    $("#status_oppo > p:eq(3)").html("<p>Speed:" + opchar.speed + "</p>");
+                    $("#status_oppo > p:eq(4)").html("<p>Speedup:" + opchar.speedup + "</p>");
+                    $("#status_oppo > p:eq(5)").html("<p>ActionPoint:" + opchar.actionPoint + "</p>");
+                }
+            }
         }
     },
 
     con : {
         get_id : function(json){
-            $("#status_own > p:eq(0)").html("<p>" + json.data.username + "<span class='id'>" + json.data.id + "</span></p>");
+            mychar = new char(json.data);
         },
 
-        set_user_list : function(json){
+        get_user_list : function(json){
             var x;
             $("#user_online_list").empty();
             $("#user_online_list").append("<p>Online User List<span style='float:right;cursor:pointer;' onclick='list_online_player(2);'>X</span></p>");
@@ -49,13 +96,13 @@ var _GI_ = {
             }
         },
 
-        set_battlefieldlist : function(json){
+        get_battlefieldlist : function(json){
             var x;
             $("#battle_field_online_list").empty();
             $("#battle_field_online_list").append("<p>Online BF List<span style='float:right;cursor:pointer;' onclick='list_online_battle_field(2)'>X</span></p>");
             for(x in json.data.battlefieldlist){
                 $("#battle_field_online_list").append("<p>Room No." + json.data.battlefieldlist[x].no + " " + json.data.battlefieldlist[x].bf_name + "<span style='float:right;cursor:pointer;' onclick='enter_bf("+ json.data.battlefieldlist[x].no +");'>Enter</span></p>");
-            }            
+            }
         },
 
     },
@@ -63,37 +110,56 @@ var _GI_ = {
     batt : {
         set_action_point : function(json){
             var x;
-            var ownid = $("#status_own > p:eq(2)").text();
-            var oppid = $("#status_oppo > p:eq(1)").text();
             for(x in json.data.char){
-                if(x == ownid){
+                if(x == mychar.id){
                     var own_value = json.data.char[x] * 10;
                     $("#own_ap").val(own_value);
-                }else if(x == oppid){
+                    $("#status_own > p:eq(5)").html("<p>ActionPoint:" + json.data.char[x] + "</p>");
+                }else{
                     var opp_value = json.data.char[x] * 10;
                     $("#opp_ap").val(opp_value);
+                    $("#status_oppo > p:eq(5)").html("<p>ActionPoint:" + json.data.char[x] + "</p>");
                 }
             }
         },
 
         deal_cardo : function(json){
             var x;
-            var ownid = $("#status_own > p:eq(2)").text();
-            var oppid = $("#status_oppo > p:eq(1)").text();
-            for(x in json.data.cardo){
+            var c_name;
+            for(x in json.data){
                 var y;
-                if(x == ownid){
-                    for(y in json.data.cardo[x]){
-                        $("#cardo_own").append("<div style='border:1px solid #CCC;height:100px;width:75px;float:left;margin-left:5px;' onclick='use_actionpoint();'>" + json.data.cardo[x][y] + "</div>");
+                if(x == mychar.id){
+                    $("#own_cardo_in_hand").empty();
+                    for(y in json.data[x]){
+                        c_name = cardo_name(json.data[x][y]);
+                        $("#own_cardo_in_hand").append("<div style='border:1px solid #CCC;height:100px;width:75px;float:left;margin-left:5px;cursor:pointer; border-radius: 5px;' onclick='action_type(" + y + ");'>" + c_name + "</div>");
                     }
-                }else if(x == oppid){
-                    for(y in json.data.cardo[x]){
-                        $("#cardo_oppo").append("<div style='border:1px solid #CCC;height:100px;width:75px;float:left;margin-left:5px;' onclick='use_actionpoint();'>" + json.data.cardo[x][y] + "</div>");
+                }else if(x == opchar.id){
+                    $("#oppo_cardo_in_hand").empty();
+                    for(y in json.data[x]){
+                        c_name = cardo_name(json.data[x][y]);
+                        $("#oppo_cardo_in_hand").append("<div style='border:1px solid #CCC;height:100px;width:75px;float:left;margin-left:5px; border-radius: 5px;'>" + c_name + "</div>");
                     }
                 }
             }
-        }
+        },
 
+        get_hp : function(json){
+            var x;
+            for(x in json.data){
+                if(x == mychar.id){
+                    $("#status_own > p:eq(3)").html("<p>" + json.data[x] + "</p>");
+                }else if(x == opchar.id){
+                    $("#status_oppo > p:eq(2)").html("<p>" + json.data[x] + "</p>");
+                }
+            }
+        }
+    },
+
+    sys : {
+        get_attackcardo : function(json){
+            //
+        }
     }
 }
 
@@ -197,7 +263,6 @@ function create_battlefield(){
 	var char = $("#char_name").val();
     var bf_name = $("#bf_name").val();
     ws1.send("pre",{cmd:"create_bf",bf_name:bf_name,char_name:char});
-    $("#status_own > p:eq(1)").html("<p>" + char + "</p>");
 	$("#battle_field").css({display:"none"});
 	$("#battle_room").css({display:"block"});
 }
@@ -236,13 +301,12 @@ function enter_bf(num){
 	var char = $("#char_name").val();
 	var bf_no = num;
 	ws1.send("pre",{cmd:"enter_bf",bf_no:bf_no,char_name:char});
-    $("#status_own > p:eq(1)").html("<p>" + char + "</p>");
 	$("#battle_field").css({display:"none"});
 	$("#battle_room").css({display:"block"});
 }
 
 function bf_start(){
-    char = $("#status_own > p:eq(1)").text();
+    char = mychar.charname;
     ws1.send("pre",{cmd:"start_bf"});
 }
 
@@ -255,8 +319,39 @@ function chat(){
     el.val("");
 }
 
-function use_actionpoint(){
-    ws1.send("sys",{cmd:"use_actionpoint"});
+function get_attackcardo(){
+    ws1.send("sys",{cmd:"get_attackcardo"});
+}
+
+function action_type(number){
+    ws1.send("batt",{cmd:"use_cardo",pos:number});
+}
+
+var _CARDO_ = {
+    0: { name:"GI Cardo"}
+    ,51: { name:"Hammer" }
+    ,52: { name:"Gun" }
+    ,53: { name:"Bomb" }
+    ,61: { name:"Fire" }
+    ,62: { name:"Thunder" }
+    ,71: { name:"Umbrella" }
+    ,72: { name:"Lid" }
+    ,73: { name:"GFW" }
+    ,81: { name:"K.E.D.F" }
+    ,82: { name:"St. Cross Shield" }
+    ,91: { name:"Stone" }
+    ,92: { name:"Cock Blood" }
+    ,93: { name:"Run Away" }
+    ,94: { name:"Exchange" }
+    ,95: { name:"Real Exchange" }
+    ,96: { name:"Mr. Chen's Camera" }
+    ,97: { name:"Mr. Chen's Teachings" }
+
+}
+
+
+function cardo_name(cardo_num){
+    return _CARDO_[cardo_num].name;
 }
 
 $(function(){

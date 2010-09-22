@@ -1,15 +1,5 @@
 <?php
 
-$map_s2c = array();
-
-$map_s2c["con"] = array();
-
-$map_s2c["con"]["disconnect"] = array();
-$map_s2c["con"]["disconnect"][] = array("connection","disconnect");
-$map_s2c["con"]["disconnect"][] = array("connection","setUserList");
-$map_s2c["con"]["disconnect"][] = array("connection","setBattlefieldList");
-
-
 class s2c {
     public static function JSON($type,$cmd,$array){
         $a;
@@ -26,16 +16,6 @@ class s2c {
         $r["other"] = $other;
         $r["otherjson"] = $otherjson;
         return $r;
-    }
-    public static function entrance($id,$ws,$type,$cmd,$para=null){
-        global $map_s2c;
-
-        $funcs = $map_s2c[$type][$cmd];
-        $returns = array();
-        foreach($funcs as $k => $v){
-            $returns[] = call_user_func($v,$id,$ws,$para);
-        }
-        return $returns;
     }
 }
 

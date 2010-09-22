@@ -8,8 +8,7 @@ class char {
     private $speedup = 0;
     private $actionPoint = 0;
     private $timestamp;
-    private $preDefendField;
-    private $defendField;
+    public $defendField;
     public $cardo = array();
 
     function __construct($id,$name){
@@ -35,6 +34,9 @@ class char {
 
     public function getName(){
         return $this->name;
+    }
+    public function getID(){
+        return $this->id;
     }
 
     public function checkActionPointFull(){
@@ -113,11 +115,29 @@ class char {
         if($this->hp>$this->maxhp) $this->hp = $this->maxhp;
     }
 
+    public function doHarm($damage){
+        $this->hp = $this->hp - $damage;
+        if($this->hp<0) $this->hp = 0;
+        if($this->hp>$this->maxhp) $this->hp = $this->maxhp;
+    }
+
     public function setDefendField($defendField){
-        if($this->defendField) {
-            $this->preDefendField = $this->defendField;
-        }
         $this->defendField = $defendField;
+    }
+    public function cancelDefendField(){
+        if($this->defendField){
+            $xxx = $this->defendField->getXXX();
+            $this->defendField = null;
+            return $xxx;
+        }
+        return;
+    }
+    public function getDefendField(){
+        return $this->defendField;
+    }
+    public function verifyExist($pos){
+        if (!isset($this->cardo[$pos])) return;
+        return 1;
     }
 
 }

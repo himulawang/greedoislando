@@ -2,23 +2,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Greedo Islando Battle UI</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="../jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../jquery.websocket-0.0.1.js"></script>
-<!--<script type="text/javascript" src="../main.js"></script>-->
 <script type="text/javascript" src="../func.js"></script>
-<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
 	<div id='header'>Greedo Islando</div>
 
-    <div id='console'>
+    <!--<div id='console'>
         <div class='cancel_title'>
             <p onclick="hide_show_toggle('console',this)">Hide</p>
         </div>
         <p style='font-weight:bold;'>Console</p>
         <p id='state'>State now</p>
-    </div>
+    </div>-->
     
     <div id='battle_field'>
         <input type="button" value="Create Battle Field" onclick="create_battlefield_info(1);" id="create_bf" class="list_create_button"/>
@@ -49,24 +48,33 @@
 			<div id='cardo_oppo'>
             <p>Opponent's Cards</p>
             <input type='range' min='0' max='100' value='0' class='ap_range' id='opp_ap'/>
+            <div id='oppo_cardo_in_hand'></div>
             </div>
 			<div id='status_oppo'>
-                <p>oppCharname:</p>
-                <p></p>
+                <p>oppCharname:<span></span></p>
+                <p>oppID:<span></span></p>
+                <p>Hp:<span></span></p>
+                <p>Speed:<span></span></p>
+                <p>Speedup:<span></span></p>
+                <p>ActionPoint:<span></span></p>
             </div>
 		</div>
 		<div id='middle_menu'>
 			<div id='cardo_pool'>Card Pool</div>
 			<div id='battle_log'>Battle Log</div>
 			<div id='status_own'>
-				<p>Username:</p>
-				<p>Charname:</p>
-                <p></p>
+				<p>Charname:<span></span></p>
+                <p>ID:<span></span></p>
+                <p>Hp:<span></span></p>
+                <p>Speed:<span></span></p>
+                <p>Speedup:<span></span></p>
+                <p>ActionPoint:<span></span></p>
                 <input type="button" value="Ready" onclick="bf_start()" class="button char_name" id="ready_to_fight" />
 			</div>
 			<div id='cardo_own'>
             <p>Own Card</p>
             <input type='range' min='0' max='100' value='0' class='ap_range' id='own_ap'/>
+            <div id='own_cardo_in_hand'></div>
             </div>
 		</div>
 		<div id='bottom_menu'>
@@ -78,6 +86,9 @@
 				</div>
 			</div>
 		</div>
+        <div id='sys_control'>
+            <input type="button" value="sys_Atk_Card" onclick="get_attackcardo()" class="button sys_control"/>
+        </div>
 	</div>
 
 	<!--<div id='sys_func'>
@@ -95,3 +106,4 @@
 
 
 </body>
+</html>

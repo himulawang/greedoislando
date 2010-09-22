@@ -13,11 +13,9 @@ ob_implicit_flush(1);
 //Import Class
 require_once "websockethandshake.class.php";
 require_once "core.class.php";
-require_once "c2s.class.php";
 require_once "s2c.class.php";
 require_once "connection.class.php";
 require_once "prepare.class.php";
-require_once "cardo.class.php";
 require_once "char.class.php";
 require_once "battleaction.class.php";
 require_once "battlefield.class.php";
@@ -25,14 +23,25 @@ require_once "console.class.php";
 require_once "packet.class.php";
 require_once "process.php";
 
+require_once "cardo.class.php";
+require_once "cardotype_phyattack.class.php";
+require_once "cardotype_phydefend.class.php";
+require_once "cardotype_magattack.class.php";
+require_once "cardotype_magdefend.class.php";
+require_once "cardotype_special.class.php";
+require_once "xxx051.class.php";
+require_once "xxx052.class.php";
+require_once "xxx053.class.php";
+require_once "xxx061.class.php";
+require_once "xxx062.class.php";
+require_once "xxx071.class.php";
+require_once "xxx072.class.php";
+require_once "xxx073.class.php";
+require_once "xxx081.class.php";
+require_once "xxx082.class.php";
 
-//Start Websocket Class
+
 class WebSocket {
-    private $core;
-    public $socket = array();
-    public $user = array();
-    public $battlefield = array();
-
     function __construct($gi){
         //Init Socket
         $core = socket_create(AF_INET,SOCK_STREAM,SOL_TCP);
@@ -97,6 +106,7 @@ class WebSocket {
                         $packet->process();
                         $result = $packet->getResult();
                         $gi->getNewResult($result);
+                        //var_dump($gi->result);
                         self::feedback($gi);
                     }
                 }
@@ -171,20 +181,12 @@ class WebSocket {
         $this->sendSelect($other,$otherjson,$gi);
     }
 
-    private function feedbackJSON($type,$cmd,$array){
-        $a;
-        $a["type"] = $type;
-        $array["cmd"] = $cmd;
-        $a["data"] = $array;
-        return json_encode( $a ); 
-    }
-
     private function feedback($gi){
         $returns = $gi->result;
         if(!$returns) return;
 
         foreach($returns as $k => $v){
-            if(!$v) continue;
+            if(!$v || !is_array($v)) continue;
             list($sendtype,$id,$json,$other,$otherjson) = array_values($v);
             if($sendtype == "single"){
                 self::sendSingle($id,$json,$gi);
@@ -198,6 +200,7 @@ class WebSocket {
 
             unset($gi->result[$k]); //Delete Result After Sent
         }
+        $gi->result = array(); //Empty result
     }
 
     private function wrap($msg){ 
@@ -238,7 +241,7 @@ class gi {
         $this->result = array_merge($this->result,$array);
     }
     public function destroyBattlefield($no){
-        unset($this->battlefield[$no]);
+        unset($this->bf[$no]);
     }
     
 }

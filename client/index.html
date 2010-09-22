@@ -5,8 +5,10 @@
 <title>Greedo Islando</title>
 
 <style>
+body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; font-size: 80%;}
 #console {display: block; width: 100%; height: 535px; border: 1px solid #444444; border-radius: 5px; overflow: auto;}
-#right {}
+.set-action-point {color: #DDDDDD;}
+#cardo {margin-left: auto;margin-right: auto; margin-bottom: 15px; margin-top: 15px; width: 500px;}
 </style>
 
 <script src="jquery-1.4.2.min.js"></script>
@@ -20,7 +22,7 @@
 
 <div id="right">
 <div>
-    UserName: <input id="username" value="ila" />
+    User: <input id="username" value="ila" />
     <input type="button" value="connect" onclick="connect();"/>
     <input type="button" value="set username" onclick="set_username();"/>
     [
@@ -38,39 +40,39 @@
 </div>
 
 <div>
-    CharName: <input id="char" value="ila's Warrior" />
-    BattlefieldName: <input id="bf" value="OurWar" />
+    Char: <input id="char" value="ila's Warrior" />
+    bf: <input id="bf" value="OurWar" />
+    bf_no: <input id="bf_no" value="0" />
     <input type="button" value="create battlefield" onclick="create_battlefield();"/>
-    BattlefieldNo: <input id="bf_no" value="0" />
     <input type="button" value="enter battlefield" onclick="enter_battlefield();"/>
     <input type="button" value="Battle Start" onclick="bf_start();"/>
 </div>
 
-<div>
-    <input type="button" value="Get Attack Cardo" onclick="get_attackcardo();"/>
-    <input type="button" value="Get Defend Cardo" onclick="get_defendcardo();"/>
-    <input type="button" value="Use Cardo 0" onclick="use_cardo(0);"/>
-    <input type="button" value="Use Cardo 1" onclick="use_cardo(1);"/>
-    <input type="button" value="Use Cardo 2" onclick="use_cardo(2);"/>
-    <input type="button" value="Use Cardo 3" onclick="use_cardo(3);"/>
-    <input type="button" value="Use Cardo 4" onclick="use_cardo(4);"/>
-    <input type="button" value="Use Cardo 5" onclick="use_cardo(5);"/>
+<div id="cardo">
+    [
+    <input type="button" value="Cardo 0" onclick="use_cardo(0);"/>
+    <input type="button" value="Cardo 1" onclick="use_cardo(1);"/>
+    <input type="button" value="Cardo 2" onclick="use_cardo(2);"/>
+    <input type="button" value="Cardo 3" onclick="use_cardo(3);"/>
+    <input type="button" value="Cardo 4" onclick="use_cardo(4);"/>
+    <input type="button" value="Cardo 5" onclick="use_cardo(5);"/>
+    ]
 </div>
 
-<div>
-    Chat<input id="input" />
-    <input type="button" value="talk" onclick="talk();"/>
-</div>
-
-<input type="button" value="Browser Support" onclick="test();"/>
 <input type="button" value="disconnect" onclick="disconnect();"/>
 <input type="button" value="sys_list_user" onclick="sys_list_user();"/>
 <input type="button" value="sys_list_socket" onclick="sys_list_socket();"/>
 <input type="button" value="sys_list_battlefield" onclick="sys_list_battlefield();"/>
 <input type="button" value="sys_list_result" onclick="sys_list_result();"/>
+<input type="button" value="sys Get Attack Cardo" onclick="get_attackcardo();"/>
+<input type="button" value="sys Get Defend Cardo" onclick="get_defendcardo();"/>
 <input type="button" value="Use ActionPoint" onclick="use_actionpoint();"/>
-<input type="button" value="prepare" onclick="prepare();"/>
 
+
+<div>
+    Chat<input id="input" />
+    <input type="button" value="talk" onclick="talk();"/>
+</div>
 
 </div>
 

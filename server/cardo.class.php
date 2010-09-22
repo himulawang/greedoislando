@@ -24,11 +24,7 @@ $CARDOINDEX["95"] = array("xxx" => 95, "probability" => 10, "type" => 5, "name" 
 $CARDOINDEX["96"] = array("xxx" => 96, "probability" => 30, "type" => 5, "name" => "Mr. Chen's Camera");
 $CARDOINDEX["97"] = array("xxx" => 97, "probability" => 5, "type" => 5, "name" => "Mr. Chen's Teachings");
 
-class cardo {
-    protected $xxx;
-    protected $type; //phy attack; mag attack etc.
-    protected $name;
-    private $CARDOINDEX = array(
+$CARDOPROBABILITY = array(
         51 => 200
         ,52 => 80
         ,53 => 60
@@ -48,25 +44,21 @@ class cardo {
         ,97 => 5
     );
 
-    //ref: https://spreadsheets0.google.com/ccc?key=tO-BC7MPXxXbvmuqiVzLDpg#gid=0
+class cardo {
+    protected $xxx;
+    protected $type;
+    protected $name;
 
-    function __construct($xxx=null){
-        global $CARDOINDEX;
-        if(is_int($xxx)){
-            $this->xxx = $xxx; // cardo id has decided
-        }else{
-            $this->xxx = core::random($this->CARDOINDEX); //random a cardo
-        }
-        $this->type = $CARDOINDEX[$this->xxx]["type"];
-        $this->name = $CARDOINDEX[$this->xxx]["name"];
-        unset($this->CARDOINDEX);
-    }
+    //ref: https://spreadsheets0.google.com/ccc?key=tO-BC7MPXxXbvmuqiVzLDpg#gid=0
 
     public function getXXX(){
         return $this->xxx;
     }
     public function getType(){
         return $this->type;
+    }
+    public function getName(){
+        return $this->name;
     }
 }
 

@@ -150,7 +150,7 @@ class battlefield {
             if( isset($cardo[$i]) ){
                 continue;
             }else{
-                $cardo[$i] = new cardo();
+                $cardo[$i] = core::gain(51);
             }
         }
         return 1;
@@ -171,12 +171,12 @@ class battlefield {
         $char = &$this->char[$id];
         
         $cardo = &$char->cardo;
-        $cardo[0] = new cardo(51);
-        $cardo[1] = new cardo(52);
-        $cardo[2] = new cardo(53);
-        $cardo[3] = new cardo(51);
-        $cardo[4] = new cardo(52);
-        $cardo[5] = new cardo(51);
+        $cardo[0] = core::gain(51);
+        $cardo[1] = core::gain(52);
+        $cardo[2] = core::gain(53);
+        $cardo[3] = core::gain(61);
+        $cardo[4] = core::gain(62);
+        $cardo[5] = core::gain(53);
         return 1;
     }
     public function getDefendCardo($id){
@@ -184,43 +184,15 @@ class battlefield {
         $char = &$this->char[$id];
         
         $cardo = &$char->cardo;
-        $cardo[0] = new cardo(71);
-        $cardo[1] = new cardo(72);
-        $cardo[2] = new cardo(73);
-        $cardo[3] = new cardo(81);
-        $cardo[4] = new cardo(82);
-        $cardo[5] = new cardo(82);
+        $cardo[0] = core::gain(71);
+        $cardo[1] = core::gain(72);
+        $cardo[2] = core::gain(73);
+        $cardo[3] = core::gain(81);
+        $cardo[4] = core::gain(82);
+        $cardo[5] = core::gain(82);
         return 1;
     }
 
-    public function usePhyAttackCardo($xxx,$caster,$target,$pos){
-        if($xxx==51){
-            $change = -1;
-        }else if($xxx==52){
-            $change = -3;
-        }else if($xxx==53){
-            $change = -5;
-        }else{
-            return;
-        }
-        $this->char[$target]->setHPByChange($change);
-        unset($this->char[$caster]->cardo[$pos]);
-        return 1;
-    }
-    public function usePhyDefendCardo($xxx,$caster,$pos){
-        if($xxx==71){
-            $defendField = 71;
-        }else if($xxx==72){
-            $defendField = 72;
-        }else if($xxx==73){
-            $defendField = 73;
-        }else{
-            return;
-        }
-        $this->char[$caster]->setDefendField($defendField);
-        unset($this->char[$caster]->cardo[$pos]);
-        return 1;
-    }
     public function getOpponentID($id){
         $array = self::getUserID();
         $array = array_diff($array,array($id));
