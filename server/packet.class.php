@@ -19,8 +19,8 @@ class packet{
     }
     public function setProcess($to){
         global $c2s,$s2c;
-        $this->done = array();
-        $this->result = array();
+        $this->done = null;
+        $this->result = null;
         if($to=="c2s"){
             if(isset($c2s[$this->type][$this->cmd])){
                 $this->process = $c2s[$this->type][$this->cmd];
@@ -62,4 +62,3 @@ class packet{
 }
 
 ?>
-

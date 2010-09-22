@@ -2,7 +2,7 @@
 
 
 class battleaction {
-    public static function useActionPoint($id,$msg,$gi){ //Minus ActionPoint before action
+    public static function useActionPoint($id,$msg,$gi){ //Use ActionPoint before action
         if(!is_int(prepare::getBattlefieldIndex($id,$gi))) return;
         $bf = prepare::getBattlefield($id,$gi);
         return $bf->useActionPoint($id);
@@ -13,7 +13,7 @@ class battleaction {
         $json = s2c::JSON("batt","set_action_point",array($id=>$actionPoint));
         $range = $bf->getUserID();
         $gi->result[] = S2c::outlet("selected",$range,$json);
-        return array();
+        return 1;
     }
     public static function initDealCardo($id,$msg,$gi){
         $bf_no = prepare::getBattlefieldIndex($id,$gi);
@@ -65,18 +65,20 @@ class battleaction {
     public static function useCardo($id,$msg,$gi){
         $bf = prepare::getBattlefield($id,$gi);
         $caster = $bf->char[$id];
+        $oppID = $bf->getOpponentID($id);
+        $target = $bf->char[$oppID];
         $pos = $msg["pos"];
-        $xxx = $caster->getCardoXXXByPos($pos);
-        $type = $caster->getCardoTypeByPos($pos);
-        if($xxx && $type){
-            if($type==1){
-                $target = $bf->getOpponentID($id);
-                return $bf->usePhyAttackCardo($xxx,$id,$target,$pos);
-            }else if($type==3){
-                return $bf->usePhyDefendCardo($xxx,$id,$pos);
-            }
-        }
-        return;
+        
+        if(!$caster->verifyExist($pos)) return;
+        //Defend Field
+        $cardo = $caster->cardo[$pos];
+        $df = $target->defendField;
+        if($df) $df->effect($caster,$target,$cardo,$gi); //Take Effect
+
+        $gi->result[] = $caster->cardo[$pos]->gain($caster,$target,$msg,$gi);
+        unset($caster->cardo[$pos]);
+        
+        return 1;
     }
     public static function getSelfHP($id,$msg,$gi){
         $bf = prepare::getBattlefield($id,$gi);
@@ -93,7 +95,14 @@ class battleaction {
         $range = $bf->getUserID();
         return s2c::outlet("selected",$range,$json);
     }
-
+    public static function getDefendField($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $defendField = $bf->char[$id]->getDefendField();
+        $xxx = $defendField ? $defendField->getXXX() : 0;
+        $json = s2c::JSON("batt","get_defendfield",array($id=>$xxx));
+        $range = $bf->getUserID();
+        return s2c::outlet("selected",$range,$json);
+    }
 }
 
 ?>
