@@ -192,6 +192,19 @@ class battlefield {
         $cardo[5] = core::gain(82);
         return 1;
     }
+    public function getSpecialCardo($id){
+        if( !isset($this->char[$id]) ) return;
+        $char = &$this->char[$id];
+        
+        $cardo = &$char->cardo;
+        $cardo[0] = core::gain(91);
+        $cardo[1] = core::gain(92);
+        $cardo[2] = core::gain(91);
+        $cardo[3] = core::gain(91);
+        $cardo[4] = core::gain(91);
+        $cardo[5] = core::gain(91);
+        return 1;
+    }
 
     public function getOpponentID($id){
         $array = self::getUserID();
@@ -199,9 +212,13 @@ class battlefield {
         $array = array_values($array);
         return $array[0];
     }
+    public function roundFinish($caster,$target,$msg,$gi){
+        foreach($caster->buffer as $k=>$v){ //Count down buffer
+            $v->bufferCountdown($caster,$target,$msg,$gi);
+        }
+    }
 
 
 }
 
 ?>
-

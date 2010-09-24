@@ -9,6 +9,7 @@ class char {
     private $actionPoint = 0;
     private $timestamp;
     public $defendField;
+    public $buffer = array(); //Cardo
     public $cardo = array();
 
     function __construct($id,$name){
@@ -24,12 +25,21 @@ class char {
     public function setSpeed($speed){
         $this->speed = $speed;
     }
+    public function setSpeedUp($up){
+        $this->speedup = $up;
+    }
+    public function setActionPoint($actionPoint){
+        $this->actionPoint = $actionPoint;
+    }
     public function getHP(){
         return $this->hp;
     }
 
     public function getActionPoint(){
         return $this->actionPoint;
+    }
+    public function getSpeedup(){
+        return $this->speedup;
     }
 
     public function getName(){
