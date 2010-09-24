@@ -7,16 +7,16 @@ class magattack extends cardo {
     protected $damage;
 
     public function gain($caster,$target,$msg,$gi){
+        $id = $caster->getID();
+        $oppID = $target->getID();
+        $range = array($id,$oppID);
+
         $target->doHarm($this->damage);
 
         $xxx = $target->cancelDefendField();
-        if($xxx){
-            $id = $caster->getID();
-            $oppID = $target->getID();
-            $range = array($id,$oppID);
-            self::getCancelDefendField($oppID,$range,$xxx,$gi);
-        }
-        return battleaction::getOpponentHP($caster->getID(),$msg,$gi);
+        if($xxx) self::getCancelDefendField($oppID,$range,$xxx,$gi);
+        
+        return battleaction::getOpponentHP($id,$msg,$gi);
     }
     public function getDamage(){
         return $this->damage;

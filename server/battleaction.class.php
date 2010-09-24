@@ -62,6 +62,10 @@ class battleaction {
         $bf = prepare::getBattlefield($id,$gi);
         return $bf->getDefendCardo($id);
     }
+    public static function getSpecialCardo($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        return $bf->getSpecialCardo($id);
+    }
     public static function useCardo($id,$msg,$gi){
         $bf = prepare::getBattlefield($id,$gi);
         $caster = $bf->char[$id];
@@ -70,13 +74,17 @@ class battleaction {
         $pos = $msg["pos"];
         
         if(!$caster->verifyExist($pos)) return;
-        //Defend Field
+
         $cardo = $caster->cardo[$pos];
+        $cardo->getGainInfo($caster->getID(),$bf->getUserID(),$cardo->getXXX(),$gi);
+        //Defend Field
         $df = $target->defendField;
         if($df) $df->effect($caster,$target,$cardo,$gi); //Take Effect
 
         $gi->result[] = $caster->cardo[$pos]->gain($caster,$target,$msg,$gi);
         unset($caster->cardo[$pos]);
+
+        $bf->roundFinish($caster,$target,$msg,$gi);
         
         return 1;
     }
@@ -102,6 +110,14 @@ class battleaction {
         $json = s2c::JSON("batt","get_defendfield",array($id=>$xxx));
         $range = $bf->getUserID();
         return s2c::outlet("selected",$range,$json);
+    }
+    public static function getSpeedUp($id,$msg,$gi){
+        $bf = prepare::getBattlefield($id,$gi);
+        $speedup = $bf->char[$id]->getSpeedup();
+        $json = s2c::JSON("batt","get_speedup",array($id=>$speedup));
+        $range = $bf->getUserID();
+        $gi->result[] = s2c::outlet("selected",$range,$json);
+        return 1;
     }
 }
 

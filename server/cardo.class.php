@@ -60,6 +60,10 @@ class cardo {
     public function getName(){
         return $this->name;
     }
+    public function getGainInfo($id,$range,$xxx,$gi){
+        $json = s2c::JSON("batt","gain_cardo",array($id=>$xxx));
+        $gi->result[] = s2c::outlet("selected",$range,$json);
+    }
 }
 
 ?>

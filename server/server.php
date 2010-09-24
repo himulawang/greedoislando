@@ -39,6 +39,8 @@ require_once "xxx072.class.php";
 require_once "xxx073.class.php";
 require_once "xxx081.class.php";
 require_once "xxx082.class.php";
+require_once "xxx091.class.php";
+require_once "xxx092.class.php";
 
 
 class WebSocket {

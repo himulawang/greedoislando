@@ -26,6 +26,9 @@ $c2s["sys"]["get_attackcardo"][] = array("battleaction","getAttackCardo");
 $c2s["sys"]["get_defendcardo"] = array();
 $c2s["sys"]["get_defendcardo"][] = array("battleaction","getDefendCardo");
 
+$c2s["sys"]["get_specialcardo"] = array();
+$c2s["sys"]["get_specialcardo"][] = array("battleaction","getSpecialCardo");
+
 $c2s["con"] = array();
 $c2s["con"]["set_username"] = array();
 $c2s["con"]["set_username"][] = array("connection","setUsername");
@@ -54,6 +57,9 @@ $s2c["sys"]["get_attackcardo"][] = array("battleaction","getDealCardoInfo");
 
 $s2c["sys"]["get_defendcardo"] = array();
 $s2c["sys"]["get_defendcardo"][] = array("battleaction","getDealCardoInfo");
+
+$s2c["sys"]["get_specialcardo"] = array();
+$s2c["sys"]["get_specialcardo"][] = array("battleaction","getDealCardoInfo");
 
 $s2c["sys"]["use_actionpoint"] = array();
 $s2c["sys"]["use_actionpoint"][] = array("battleaction","getActionPoint");
