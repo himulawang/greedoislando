@@ -10,7 +10,7 @@ class battleaction {
     public static function getActionPoint($id,$msg,$gi){
         $bf = prepare::getBattlefield($id,$gi);
         $actionPoint = $bf->char[$id]->getActionPoint();
-        $json = s2c::JSON("batt","set_action_point",array($id=>$actionPoint));
+        $json = s2c::JSON("batt","get_action_point",array($id=>$actionPoint));
         $range = $bf->getUserID();
         $gi->result[] = S2c::outlet("selected",$range,$json);
         return 1;
@@ -76,7 +76,7 @@ class battleaction {
         if(!$caster->verifyExist($pos)) return;
 
         $cardo = $caster->cardo[$pos];
-        $cardo->getGainInfo($caster->getID(),$bf->getUserID(),$cardo->getXXX(),$gi);
+        $cardo->getUseCardo($caster->getID(),$bf->getUserID(),$cardo->getXXX(),$pos,$gi);
         //Defend Field
         $df = $target->defendField;
         if($df) $df->effect($caster,$target,$cardo,$gi); //Take Effect

@@ -40,27 +40,26 @@ class connection{
         $a["username"] = $gi->user[$id]->username;
 
         $json = s2c::JSON("con","get_id",$a);
-        return s2c::outlet("single",$id,$json);
+        $gi->result[] = s2c::outlet("single",$id,$json);
+        return 1;
     }
     public static function getUserList($id,$data,$gi){
         $a = array();
-        $a["userlist"] = array();
         foreach($gi->user as $k=>$v){
-            $a["userlist"][] = array("id" => $v->id, "username" => $v->username);
+            $a[$v->id] = $v->username;
         }
         $json = s2c::JSON("con","get_user_list",$a);
         $gi->result[] = s2c::outlet("all",$id,$json);
-        return array();
+        return 1;
     }
     public static function getBattlefieldList($id,$data,$gi){
         $a = array();
-        $a["battlefieldlist"] = array();
         foreach($gi->bf as $k=>$v){
-            $a["battlefieldlist"][] = $v->getBattlefieldInfo();
+            $a[] = $v->getBattlefieldInfo();
         }
         $json = s2c::JSON("con","get_battlefieldlist",$a);
         $gi->result[] = s2c::outlet("all",$id,$json);
-        return array();
+        return 1;
     }
 }
 

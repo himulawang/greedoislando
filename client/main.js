@@ -42,7 +42,7 @@ function connect(){
                 //setTimeout(status("Success!"),1000);
             },
             batt: function(json){
-                if(json.data.cmd=="set_action_point"){
+                if(json.data.cmd=="get_action_point"){
                     output("<span class='set-action-point'>" + JSON.stringify(json) + "</span>");
                 }else{
                     output(JSON.stringify(json));

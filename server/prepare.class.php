@@ -39,7 +39,7 @@ class prepare {
     }
     public static function getEnterBattlefieldInfo($id,$msg,$gi){
         $bf = prepare::getBattlefield($id,$gi);
-        $a = $bf->getBattlefieldInfo();
+        $a = $bf->getEnterBattlefieldInfo($id);
         $json = s2c::JSON("pre","enter_bf",$a);
         $range = $bf->getUserID();
         return s2c::outlet("selected",$range,$json);
@@ -56,7 +56,8 @@ class prepare {
         $a = $bf->getBattlefieldStartInfo();
         $json = s2c::JSON("pre","start_bf",$a);
         $range = $bf->getUserID();
-        return s2c::outlet("selected",$range,$json);
+        $gi->result[] = s2c::outlet("selected",$range,$json);
+        return 1;
     }
 }
 ?>
