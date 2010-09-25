@@ -217,6 +217,19 @@ class battlefield {
             $v->bufferCountdown($caster,$target,$msg,$gi);
         }
     }
+    public function getEnterBattlefieldInfo($id){
+        $a = array();
+        $a["no"] = $this->no;
+        $a["bf_name"] = $this->name;
+        $a["battleStart"] = $this->battleStart;
+        $a["newcomer"] = array($id=>$this->char[$id]->getName());
+        $a["roomer"] = array();
+        foreach($this->char as $k => $v){
+            if($k==$id) continue;
+            $a["roomer"][$k] = $v->getName();
+        }
+        return $a;
+    }
 
 
 }
