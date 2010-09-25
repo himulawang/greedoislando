@@ -22,6 +22,7 @@ var _GI_ = {
             var json = JSON.parse(msg.data);
             var string = msg.data;
             //output(string);
+            battle_info(json);
             var func = ["_GI_", json.type, json.data.cmd].join(".") + "("+string+")";
             $.globalEval(func);
         }
@@ -58,6 +59,7 @@ var _GI_ = {
             var op_num = 0;
             for(x in json.data.char){
                 if(x == mychar.id){
+                    mychar.charname = json.data.char[x].name;
                     mychar.hp = json.data.char[x].hp;
                     mychar.maxhp = json.data.char[x].maxhp;
                     mychar.speed = json.data.char[x].speed;
@@ -68,6 +70,7 @@ var _GI_ = {
                     $("#status_own > p:eq(4)").html("<p>Speedup:" + mychar.speedup + "</p>");
                     $("#status_own > p:eq(5)").html("<p>ActionPoint:" + mychar.actionPoint + "</p>");
                 }else{
+                    opchar.charname = json.data.char[x].name;
                     opchar.hp = json.data.char[x].hp;
                     opchar.maxhp = json.data.char[x].maxhp;
                     opchar.speed = json.data.char[x].speed;
@@ -110,15 +113,15 @@ var _GI_ = {
     batt : {
         set_action_point : function(json){
             var x;
-            for(x in json.data.char){
+            for(x in json.data){
                 if(x == mychar.id){
-                    var own_value = json.data.char[x] * 10;
+                    var own_value = json.data[x] * 10;
                     $("#own_ap").val(own_value);
-                    $("#status_own > p:eq(5)").html("<p>ActionPoint:" + json.data.char[x] + "</p>");
-                }else{
-                    var opp_value = json.data.char[x] * 10;
+                    $("#status_own > p:eq(5)").html("<p>ActionPoint:" + json.data[x] + "</p>");
+                }else if(x == opchar.id){
+                    var opp_value = json.data[x] * 10;
                     $("#opp_ap").val(opp_value);
-                    $("#status_oppo > p:eq(5)").html("<p>ActionPoint:" + json.data.char[x] + "</p>");
+                    $("#status_oppo > p:eq(5)").html("<p>ActionPoint:" + json.data[x] + "</p>");
                 }
             }
         },
@@ -323,6 +326,14 @@ function get_attackcardo(){
     ws1.send("sys",{cmd:"get_attackcardo"});
 }
 
+function get_defendcardo(){
+    ws1.send("sys",{cmd:"get_defendcardo"});
+}
+
+function get_specialcardo(){
+    ws1.send("sys",{cmd:"get_specialcardo"});
+}
+
 function action_type(number){
     ws1.send("batt",{cmd:"use_cardo",pos:number});
 }
@@ -352,6 +363,73 @@ var _CARDO_ = {
 
 function cardo_name(cardo_num){
     return _CARDO_[cardo_num].name;
+}
+
+var _BATTLEINFO_ = {
+    enter_bf : { info : "entered the battlefield" },
+    start_bf : { info : "start to fight" },
+    deal_cardo : { info : "gets new cards" },
+    gain_cardo : { info : "use the card" },
+    get_defendfield : { info : "gets the defendfield" },
+    cancel_defendfield : { info : "effect no more exists" },
+    get_hp : { info : "gets damage" },
+    get_buffer : { info : "gets buff" },
+    get_speedup : { info : "gets speedup" }
+
+}
+
+
+function battle_info(string){
+    var factor = string.data.cmd;
+    var now = time_process();
+    var player = "";
+    switch(factor){
+        case "enter_bf":
+            for(x in string.data.char){
+                player = string.data.char[x];
+            }
+            $("#battle_log").prepend("<p>" + now + " " + player + " " +  _BATTLEINFO_[factor].info + "</p>");
+            break;
+        case "start_bf":
+            for(x in string.data.char){
+                if(player){
+                    player = player + " & " + string.data.char[x].name;
+                }else{
+                    player =  string.data.char[x].name;
+                }
+            }
+            $("#battle_log").prepend("<p>" + now + " " + player + " " +  _BATTLEINFO_[factor].info + "</p>");
+            break;
+       case "deal_cardo":
+            for(x in string.data){
+                if(x != "cmd"){
+                    if(x == mychar.id){
+                        $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + "</p>");
+                    }else if(x == opchar.id){
+                        $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + "</p>");
+                    }
+                }
+            }
+            break;
+    }
+}
+
+function time_process(){
+    var date = new Date();
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    if(hour < 10){
+        hour = "0" + hour;
+    }
+    if(min < 10){
+        min = "0" + min;
+    }
+    if(sec < 10){
+        sec = "0" + sec;
+    }
+    var time = hour + ":" + min + ":" + sec;
+    return time;
 }
 
 $(function(){
