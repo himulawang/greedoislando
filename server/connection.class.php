@@ -1,7 +1,20 @@
 <?php
 
-class connection{
+class connection extends stdProcess{
+    function __construct($id,$msg,$gi){
+        parent::__construct($id,$msg,$gi);
+
+        $this->stdProcess["set_username"] = array();
+        $this->stdProcess["set_username"][] = "setUsername";
+        $this->stdProcess["set_username"][] = "getUsername";
+        $this->stdProcess["set_username"][] = "getUserList";
+        $this->stdProcess["set_username"][] = "getBattlefieldList";
+
+        if(!parent::verify()) return;
+        parent::run();
+    }
     public static function disconnect($id,$msg,$gi){
+        /*
         
         socket_close($gi->user[$id]->socket);//Delete User & Socket & Char
         $username = $gi->user[$id]->username;
@@ -24,41 +37,43 @@ class connection{
         $needDestroyBf = $bf->kickFieldChar($id);//Kick Char from battlefield
         if ($needDestroyBf) $gi->destroyBattlefield($bf_no);
         return 1;
+         */
     }
-    public static function setUsername($id,$data,$gi){
+    protected function setUsername(){
+        $data = $this->msg["data"];
         if(!isset($data["username"]) && !$data["username"]){
             console::error("Invaild Username");
             return;
         }
-        $gi->user[$id]->username = $data["username"];
+        $this->gi->user[$this->id]->username = $data["username"];
 
         return 1;
     }
-    public static function getUsername($id,$data,$gi){
+    protected function getUsername(){
         $a = array();
-        $a["id"] = $id;
-        $a["username"] = $gi->user[$id]->username;
+        $a["id"] = $this->id;
+        $a["username"] = $this->gi->user[$this->id]->username;
 
         $json = s2c::JSON("con","get_id",$a);
-        $gi->result[] = s2c::outlet("single",$id,$json);
+        $this->gi->result[] = s2c::outlet("selected",$this->id,$json);
         return 1;
     }
-    public static function getUserList($id,$data,$gi){
+    protected function getUserList(){
         $a = array();
-        foreach($gi->user as $k=>$v){
-            $a[$v->id] = $v->username;
+        foreach($this->gi->user as $k=>$v){
+            $a[$k] = $v->username;
         }
         $json = s2c::JSON("con","get_user_list",$a);
-        $gi->result[] = s2c::outlet("all",$id,$json);
+        $this->gi->result[] = s2c::outlet("all",$this->id,$json);
         return 1;
     }
-    public static function getBattlefieldList($id,$data,$gi){
+    protected function getBattlefieldList(){
         $a = array();
-        foreach($gi->bf as $k=>$v){
+        foreach($this->gi->bf as $k=>$v){
             $a[] = $v->getBattlefieldInfo();
         }
         $json = s2c::JSON("con","get_battlefieldlist",$a);
-        $gi->result[] = s2c::outlet("all",$id,$json);
+        $this->gi->result[] = s2c::outlet("all",$this->id,$json);
         return 1;
     }
 }

@@ -84,7 +84,6 @@ $s2c["pre"]["start_bf"][] = array("battleaction","getInitDealCardoInfo");
 
 $s2c["batt"]["use_cardo"] = array();
 $s2c["batt"]["use_cardo"][] = array("battleaction","getActionPoint");
-//$s2c["batt"]["use_cardo"][] = array("battleaction","getDealCardoInfo");
 
 
 
