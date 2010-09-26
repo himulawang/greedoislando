@@ -13,6 +13,7 @@ ob_implicit_flush(1);
 //Import Class
 require_once "websockethandshake.class.php";
 require_once "core.class.php";
+require_once "stdProcess.class.php";
 require_once "s2c.class.php";
 require_once "connection.class.php";
 require_once "prepare.class.php";
@@ -98,8 +99,19 @@ class WebSocket {
                         $string = self::unwrap($buffer);
                         //BufferedAmount
                         if($string==1) continue; 
+
                         console::write("Server Received: " . $string);
-                        $o = json_decode($string,1 /*Convert To Array*/);
+                        $msg = json_decode($string,1 /*Convert To Array*/);
+
+                        if(!isset($msg["type"])) continue;
+                        if($msg["type"]=="con") {
+                            $obj = new connection($id,$msg,$gi);
+                        }else if($msg["type"]=="pre"){
+                            $obj = new prepare($id,$msg,$gi);
+                        }
+
+                        unset($obj);
+/*
                         $packet = new packet($id,$o,$gi);
                         $packet->setProcess("c2s");
                         $packet->process();
@@ -110,6 +122,7 @@ class WebSocket {
                         $gi->getNewResult($result);
                         //var_dump($gi->result);
                         self::feedback($gi);
+ */
                     }
                 }
             }
@@ -159,20 +172,20 @@ class WebSocket {
         }
     }
 
-    public function sendSingle($id,$msg,$gi){
+    public function sendSingle($id,$msg,$gi){ //TODO Wait To be deleted
         $msg = $this->wrap($msg);
         if(!isset($gi->socket[$id])) return;
         socket_write($gi->socket[$id],$msg,strlen($msg));
     }
 
-    public function sendSelect($array,$msg,$gi){
+    public function sendSelected($array,$msg,$gi){
         $msg = $this->wrap($msg);
         if (is_array($array)) {
             foreach($array as $k=>$v){
                 if(!isset($gi->socket[$v])) continue;                
                 socket_write($gi->socket[$v],$msg,strlen($msg));
             }
-        }else{
+        }else if(is_string($array)){
             if(!isset($gi->socket[$array])) return;            
             socket_write($gi->socket[$array],$msg,strlen($msg));
         }
@@ -190,12 +203,12 @@ class WebSocket {
         foreach($returns as $k => $v){
             if(!$v || !is_array($v)) continue;
             list($sendtype,$id,$json,$other,$otherjson) = array_values($v);
-            if($sendtype == "single"){
+            if($sendtype == "single"){ //TODO DEL
                 self::sendSingle($id,$json,$gi);
             }else if($sendtype == "all"){
                 self::sendAll($json,$gi);
             }else if($sendtype == "selected"){
-                self::sendSelect($id,$json,$gi); //$id is an array
+                self::sendSelected($id,$json,$gi); //$id is an array
             }else if($sendtype == "diff"){
                 self::sendDiff($id,$json,$other,$otherjson,$gi);
             }
