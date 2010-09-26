@@ -6,7 +6,7 @@ class s2c {
         $a["type"] = $type;
         $a["data"] = array();
         $a["data"]["cmd"] = $cmd;
-        $a["data"]["json"] = $array;
+        $a["data"]["doc"] = $array;
         return json_encode( $a ); 
     }
     public static function outlet($sendtype,$id,$json,$other=null,$otherjson=null){
