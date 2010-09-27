@@ -49,7 +49,25 @@ class cardo {
     protected $type;
     protected $name;
 
+    protected $msg;
+    protected $pos;
+    protected $bf;
+    protected $caster;
+    protected $target;
+    protected $range;
+    protected $gi;
+
     //ref: https://spreadsheets0.google.com/ccc?key=tO-BC7MPXxXbvmuqiVzLDpg#gid=0
+
+    public function varEnvironment($msg,$pos,$bf,$caster,$target,$range,$gi){
+        $this->msg = $msg;
+        $this->pos = $pos;
+        $this->bf = $bf;
+        $this->caster = $caster;
+        $this->target = $target;
+        $this->range = $range;
+        $this->gi = $gi;
+    }
 
     public function getXXX(){
         return $this->xxx;
@@ -60,13 +78,13 @@ class cardo {
     public function getName(){
         return $this->name;
     }
-    public function getUseCardo($id,$range,$xxx,$pos,$gi){
+    public function getUseCardo(){
         $a = array();
-        $a["id"] = $id;
-        $a["pos"] = $pos;
-        $a["xxx"] = $xxx;
+        $a["id"] = $this->caster->getID();
+        $a["pos"] = $this->pos;
+        $a["xxx"] = $this->xxx;
         $json = s2c::JSON("batt","use_cardo",$a);
-        $gi->result[] = s2c::outlet("selected",$range,$json);
+        $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
 }
 

@@ -5,6 +5,7 @@ class battlefield {
     private $name; //battlefield name
     public $char = array(); //store char object
     public $battleStart = 0;
+    public $dealedCardo = array();
     private $timestamp;
 
     function __construct($id,$battlefieldname,$charname){
@@ -23,8 +24,22 @@ class battlefield {
     private function _setTimestamp(){
         $this->timestamp = time();
     }
+    public function resetDealedCardo($id=null){
+        if($id){
+            $this->dealedCardo[$id] = array();
+            $this->dealedCardo[$id]["positiveSide"] = array();
+            $this->dealedCardo[$id]["negativeSide"] = array();
+        }else{
+            $this->dealedCardo = array();
+            foreach($this->char as $k){
+                $this->dealedCardo[$k] = array();
+                $this->dealedCardo[$k]["positiveSide"] = array();
+                $this->dealedCardo[$k]["negativeSide"] = array();
+            }
+        }
+    }
 
-    public function setIdx($no){
+    public function setNo($no){
         $this->no = $no;
     }
 
@@ -141,28 +156,30 @@ class battlefield {
     }
 
     public function dealCardo($id){ 
-        if( !isset($this->char[$id]) ) return;
         $char = &$this->char[$id];
         
         if( $char->getCardoCount() >= GI_BattleCardoCount) return; 
         $cardo = &$char->cardo;
+        self::resetDealedCardo($id);
         for($i = 0; $i < GI_BattleCardoCount; ++$i){
             if( isset($cardo[$i]) ){
                 continue;
             }else{
                 $cardo[$i] = core::gain(51);
+                $this->dealedCardo[$id]["positiveSide"][$i] = $cardo[$i]->getXXX();
+                $this->dealedCardo[$id]["negativeSide"][$i] = 0;
             }
         }
         return 1;
     }
 
-    public function getDealCardoInfo($id){
-        $char = $this->char[$id];
+    public function getDealCardo($id){
+        $data = $this->dealedCardo;
         $a = array();
         $a["player"] = array();
-        $a["player"][$id] = $char->getCardo();
+        $a["player"][$id] = $data[$id]["positiveSide"];
         $a["other"] = array();
-        $a["other"][$id] = $char->getCardoObverse();
+        $a["other"][$id] = $data[$id]["negativeSide"];
         return $a;
     }
 
@@ -217,7 +234,7 @@ class battlefield {
             $v->bufferCountdown($caster,$target,$msg,$gi);
         }
     }
-    public function getEnterBattlefieldInfo($id){
+    public function getEnterBattlefield($id){
         $a = array();
         $a["no"] = $this->no;
         $a["bf_name"] = $this->name;
