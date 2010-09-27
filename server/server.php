@@ -16,6 +16,7 @@ require_once "core.class.php";
 require_once "s2c.class.php";
 
 require_once "stdProcess.class.php";
+require_once "system.class.php";
 require_once "connection.class.php";
 require_once "prepare.class.php";
 require_once "battle.class.php";
@@ -24,7 +25,6 @@ require_once "char.class.php";
 require_once "battleaction.class.php";
 require_once "battlefield.class.php";
 require_once "console.class.php";
-require_once "packet.class.php";
 require_once "process.php";
 
 require_once "cardo.class.php";
@@ -122,18 +122,6 @@ class WebSocket {
 
                         unset($obj);
                         self::feedback($gi);
-/*
-                        $packet = new packet($id,$o,$gi);
-                        $packet->setProcess("c2s");
-                        $packet->process();
-                        if(!$packet->verifyLastResult()) continue;
-                        $packet->setProcess("s2c");
-                        $packet->process();
-                        $result = $packet->getResult();
-                        $gi->getNewResult($result);
-                        //var_dump($gi->result);
-                        self::feedback($gi);
- */
                     }
                 }
             }
