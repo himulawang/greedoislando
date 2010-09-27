@@ -7,15 +7,29 @@ class prepare extends stdProcess{
 
         $this->stdProcess["create_bf"] = array();
         $this->stdProcess["create_bf"][] = "createBattlefield";
-        $this->stdProcess["create_bf"][] = "getBattlefield";
-        $this->stdProcess["create_bf"][] = "getBattlefieldRange";
-        $this->stdProcess["create_bf"][] = "getEnterBattlefieldInfo";
-        $this->stdProcess["create_bf"][] = "getBattlefieldList"; //TODO connection
+        $this->stdProcess["create_bf"][] = "varBattlefield";
+        $this->stdProcess["create_bf"][] = "varBattlefieldRange";
+        $this->stdProcess["create_bf"][] = "getEnterBattlefield";
+        $this->stdProcess["create_bf"][] = "getBattlefieldList";
+
+        $this->stdProcess["enter_bf"] = array();
+        $this->stdProcess["enter_bf"][] = "enterBattlefield";
+        $this->stdProcess["enter_bf"][] = "varBattlefieldRange";
+        $this->stdProcess["enter_bf"][] = "getEnterBattlefield";
+        $this->stdProcess["enter_bf"][] = "getBattlefieldList";
+
+        $this->stdProcess["start_bf"] = array();
+        $this->stdProcess["start_bf"][] = "startBattlefield";
+        $this->stdProcess["start_bf"][] = "varBattlefieldRange";
+        $this->stdProcess["start_bf"][] = "dealInitCardo";
+        $this->stdProcess["start_bf"][] = "getStartBattlefield";
+        $this->stdProcess["start_bf"][] = "getDealInitCardo";
+        $this->stdProcess["start_bf"][] = "getBattlefieldList";
 
         if(!parent::verify()) return;
         parent::run();
     }
-    protected function getBattlefield(){
+    protected function varBattlefield(){
         foreach($this->gi->bf as $k => $v){
             if ($v->checkCharExists($this->id)){
                 $this->bf = $v;
@@ -24,55 +38,71 @@ class prepare extends stdProcess{
         }
         return;
     }
-    protected function getBattlefieldRange(){
+    protected function varBattlefieldRange(){
         if(!$this->bf) return;
 
         $this->range = $this->bf->getUserID();
         return 1;
     }
     protected function createBattlefield(){
-        if(self::getBattlefield()) return; //check user has in room
+        if(self::varBattlefield()) return; //check user has in room
         
         $charName = $this->msg["data"]['char_name'];
         $bfName = $this->msg["data"]['bf_name'];
         $bf = new battlefield($this->id,$bfName,$charName);//Create battlefield
         $this->gi->bf[] = $bf;
         
-        $no = max(array_keys($this->gi->bf));//Get Max Idx
-        $this->gi->bf[$no]->setIdx($no);
+        $no = max(array_keys($this->gi->bf));//Get Max No
+        $this->gi->bf[$no]->setNo($no);
         return 1;
     }
-    public static function enterBattlefield($id,$msg,$gi){
-        if(is_int(prepare::getBattlefieldIndex($id,$gi))) return; //Check Char Has Prepared
-        $bf_no =@ $msg['bf_no'];
-        if(!isset($gi->bf[$bf_no])) return; //Check Battlefield Vaild
-        $bf = $gi->bf[$bf_no];
-        if($bf->getFieldCharCount() == 2) return; //Check Battlefield Char Count
-        if($bf->battleStart) return; //Check BattleStarted
-        //Prepare
-        $char_name = $msg["char_name"];
-        $bf->enterBattlefield($id,$char_name);
+    protected function enterBattlefield(){
+        if(self::varBattlefield()) return; //check user has in room
+        if( !( isset($this->msg["data"]["bf_no"]) && isset($this->msg["data"]["char_name"]) ) ) return; //verify post data
+        $bf_no = $this->msg["data"]["bf_no"];
+        $char_name = $this->msg["data"]["char_name"];
+
+        if( !isset($this->gi->bf[$bf_no]) ) return; //Check Battlefield Vaild
+        $this->bf = $this->gi->bf[$bf_no];
+
+        if($this->bf->getFieldCharCount() == 2) return; //Check Battlefield Char Count
+        if($this->bf->battleStart) return; //Check BattleStarted
+
+        $this->bf->enterBattlefield($this->id,$char_name);
         return 1;
     }
-    public static function startBattlefield($id,$msg,$gi){
-        $bf_no = prepare::getBattlefieldIndex($id,$gi);
-        if(!is_int($bf_no)) return; //Char not in battlefield
-        $bf = $gi->bf[$bf_no];
-        if (!$bf->startBattle()) return; //Battle Not Start Succeed
+    protected function startBattlefield(){
+        if( !self::varBattlefield() ) return; //check user has in room
+        if( !$this->bf->startBattle() ) return; //Battle Not Start Succeed
         return 1;
     }
-    protected function getEnterBattlefieldInfo(){
-        $a = $this->bf->getEnterBattlefieldInfo($this->id);
+    protected function dealInitCardo(){
+        foreach($this->range as $k => $v){
+            $this->bf->dealCardo($v);
+        }
+        return 1;
+    }
+    protected function getEnterBattlefield(){
+        $a = $this->bf->getEnterBattlefield($this->id);
         $json = s2c::JSON("pre","enter_bf",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
         return 1;
     }
-    protected function getStartBattlefieldInfo($id,$msg,$gi){
-        $bf = prepare::getBattlefield($id,$gi);
-        $a = $bf->getBattlefieldStartInfo();
+    protected function getStartBattlefield(){
+        $a = $this->bf->getBattlefieldStartInfo();
         $json = s2c::JSON("pre","start_bf",$a);
-        $range = $bf->getUserID();
-        $gi->result[] = s2c::outlet("selected",$range,$json);
+        $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
+        return 1;
+    }
+    protected function getDealInitCardo(){
+        foreach( $this->range as $v){
+            $data = $this->bf->getDealCardo($v);
+            $json = s2c::JSON("batt","deal_cardo",$data["player"]);
+            $other = $this->bf->getOpponentID($v);
+            $otherjson = s2c::JSON("batt","deal_cardo",$data["other"]);
+            $outlet = s2c::outlet("diff",$v,$json,$other,$otherjson);
+            $this->gi->result[] = $outlet;
+        }
         return 1;
     }
     protected function getBattlefieldList(){

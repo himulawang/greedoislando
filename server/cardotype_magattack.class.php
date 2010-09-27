@@ -1,33 +1,11 @@
 <?php
 
-class magattack extends cardo {
+class magattack extends attack {
     protected $type = 2;
     protected $typename = "Magic Attack Cardo";
     protected $name;
     protected $damage;
-
-    public function gain($caster,$target,$msg,$gi){
-        $id = $caster->getID();
-        $oppID = $target->getID();
-        $range = array($id,$oppID);
-
-        $target->doHarm($this->damage);
-
-        $xxx = $target->cancelDefendField();
-        if($xxx) self::getCancelDefendField($oppID,$range,$xxx,$gi);
-        
-        return battleaction::getOpponentHP($id,$msg,$gi);
-    }
-    public function getDamage(){
-        return $this->damage;
-    }
-    public function changeDamage($damage){
-        $this->damage = $damage;
-    }
-    protected function getCancelDefendField($id,$range,$xxx,$gi){
-        $json = s2c::JSON("batt","cancel-defendfield",array($id=>$xxx));
-        $gi->result[] = s2c::outlet("selected",$range,$json);
-    }
+    
 }
 
 ?>

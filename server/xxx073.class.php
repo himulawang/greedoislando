@@ -5,16 +5,11 @@ class xxx073 extends phydefend{
     public function effect($caster,$target,$cardo,$gi){ //Defend All Physical Damage
         if(get_parent_class($cardo)!="phyattack") return;
 
-        $xxx = $cardo->getXXX();
-
-        $oppID = $target->getID();
-        $range = array($caster->getID(),$oppID);
-        $fieldXXX = $target->cancelDefendField();
+        $canceledDefendField = $this->caster->cancelDefendField();
 
         $cardo->changeDamage(0);// Effect
-        parent::effectDefendField($oppID,$range,$fieldXXX,$gi);
-
-        parent::getCancelDefendField($oppID,$range,$fieldXXX,$gi); //Field Disappear
+        defend::effectDefendField($canceledDefendField);
+        defend::getCancelDefendField($canceledDefendField); //Field Disappear
 
         return 1;
     }

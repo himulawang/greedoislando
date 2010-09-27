@@ -13,10 +13,13 @@ ob_implicit_flush(1);
 //Import Class
 require_once "websockethandshake.class.php";
 require_once "core.class.php";
-require_once "stdProcess.class.php";
 require_once "s2c.class.php";
+
+require_once "stdProcess.class.php";
 require_once "connection.class.php";
 require_once "prepare.class.php";
+require_once "battle.class.php";
+
 require_once "char.class.php";
 require_once "battleaction.class.php";
 require_once "battlefield.class.php";
@@ -25,6 +28,8 @@ require_once "packet.class.php";
 require_once "process.php";
 
 require_once "cardo.class.php";
+require_once "cardotype_attack.class.php";
+require_once "cardotype_defend.class.php";
 require_once "cardotype_phyattack.class.php";
 require_once "cardotype_phydefend.class.php";
 require_once "cardotype_magattack.class.php";
@@ -92,9 +97,10 @@ class WebSocket {
                         }
                         self::doHandShake($id,$buffer,$gi);
                     }else{
-                        $r = $gi->addActionPoint();
-                        $gi->getNewResult($r);
+                        //AddActionPoint per second
+                        $second = new battle($id,array("type"=>"batt","data"=>array("cmd"=>"add_actionpoint")),$gi);
                         self::feedback($gi);
+                        unset($second);
 
                         $string = self::unwrap($buffer);
                         //BufferedAmount
@@ -108,9 +114,14 @@ class WebSocket {
                             $obj = new connection($id,$msg,$gi);
                         }else if($msg["type"]=="pre"){
                             $obj = new prepare($id,$msg,$gi);
+                        }else if($msg["type"]=="batt"){
+                            $obj = new battle($id,$msg,$gi);
+                        }else if($msg["type"]=="sys"){
+                            $obj = new battle($id,$msg,$gi);
                         }
 
                         unset($obj);
+                        self::feedback($gi);
 /*
                         $packet = new packet($id,$o,$gi);
                         $packet->setProcess("c2s");
@@ -192,8 +203,8 @@ class WebSocket {
     }
 
     public function sendDiff($id,$json,$other,$otherjson,$gi){
-        $this->sendSingle($id,$json,$gi);
-        $this->sendSelect($other,$otherjson,$gi);
+        $this->sendSelected($id,$json,$gi);
+        $this->sendSelected($other,$otherjson,$gi);
     }
 
     private function feedback($gi){
@@ -236,21 +247,6 @@ class gi {
     public $user = array();
     public $result = array(); //Store Unsent Result
 
-    public function addActionPoint(){
-        $returns = array();
-        foreach($this->bf as $k => $v){
-            if($v->battleStart){
-                $needFeedback = $v->addActionPoint();
-                if($needFeedback){
-                    $range = $v->getUserID();
-                    foreach($range as $idx=> $id){
-                        battleaction::getActionPoint($id,null,$this);
-                    }
-                }
-            }
-        }
-        return $returns;
-    }
     public function getNewResult($array){
         if(!$array) return;
         $this->result = array_merge($this->result,$array);

@@ -145,9 +145,8 @@ class char {
     public function getDefendField(){
         return $this->defendField;
     }
-    public function verifyExist($pos){
-        if (!isset($this->cardo[$pos])) return;
-        return 1;
+    public function checkCardoExist($pos){
+        return isset($this->cardo[$pos]) ? 1 : 0;
     }
 
 }

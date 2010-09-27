@@ -2,24 +2,22 @@
 class xxx082 extends magdefend{
     protected $xxx = 82;
     protected $name = "St. Cross Shield";
-    public function effect($caster,$target,$cardo,$gi){ //Defend 50% Magic Damage
+    public function effect(){ //Defend 50% Magic Damage
         if(get_parent_class($cardo)!="magattack") return;
 
-        $xxx = $cardo->getXXX();
+        $canceledDefendField = $this->caster->cancelDefendField();
 
-        $oppID = $target->getID();
-        $range = array($caster->getID(),$oppID);
-        $fieldXXX = $target->cancelDefendField();
-
-        parent::effectDefendField($oppID,$range,$fieldXXX,$gi);
-
-        parent::getCancelDefendField($oppID,$range,$fieldXXX,$gi); //Field Disappear
+        defend::effectDefendField($canceledDefendField);
+        defend::getCancelDefendField($canceledDefendField); //Field Disappear
 
         //Effect
-        $df = $caster->defendField; //If cast has defend field too
-        if($df) $df->effect($target,$caster,$cardo,$gi);
+        $df = $this->target->defendField;
+        if($df){ //If cast has defend field too
+            $this->df->varEnvironment($this->msg,$this->bf,$this->target,$this->caster,$this->range,$this->gi); //caster and target change position
+            $this->df->effect($cardo); //Defend Field Take Effect
+        }        
 
-        $gi->result[] = $cardo->gain($target,$caster,null,$gi);
+        $gi->result[] = $cardo->gain();
         $cardo->changeDamage(0);
         return 1;
     }
