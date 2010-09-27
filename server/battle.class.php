@@ -13,6 +13,15 @@ class battle extends prepare {
         $this->stdProcess["use_cardo"][] = "varBattlefieldRange";
         $this->stdProcess["use_cardo"][] = "useCardo";
 
+        $this->stdProcess["get_attackcardo"] = array();
+        $this->stdProcess["get_attackcardo"][] = "varAttackCardo";
+
+        $this->stdProcess["get_defendcardo"] = array();
+        $this->stdProcess["get_defendcardo"][] = "varDefendCardo";
+
+        $this->stdProcess["get_specialcardo"] = array();
+        $this->stdProcess["get_specialcardo"][] = "varSpecialCardo";
+
         if(!stdProcess::verify()) return;
         stdProcess::run();
     }
@@ -66,10 +75,43 @@ class battle extends prepare {
         
         return 1;
     }
+    protected function varAttackCardo(){
+        $id = $this->id;
+        if(!prepare::varBattlefield()) return; //check char in bf
+        $this->bf->getAttackCardo($id);
+        $this->bf->varAllCardo($id);
+        self::getDealCardo($id);
+        return 1;
+    }
+    protected function varDefendCardo(){
+        $id = $this->id;
+        if(!prepare::varBattlefield()) return; //check char in bf
+        $this->bf->getDefendCardo($id);
+        $this->bf->varAllCardo($id);
+        self::getDealCardo($id);
+        return 1;
+    }
+    protected function varSpecialCardo(){
+        $id = $this->id;
+        if(!prepare::varBattlefield()) return; //check char in bf
+        $this->bf->getSpecialCardo($id);
+        $this->bf->varAllCardo($id);
+        self::getDealCardo($id);
+        return 1;
+    }
     protected function getActionPoint($id){
         $actionPoint = $this->bf->char[$id]->getActionPoint();
         $json = s2c::JSON("batt","get_action_point",array($id=>$actionPoint));
         $this->gi->result[] = S2c::outlet("selected",$this->range,$json);
+        return 1;
+    }
+    protected function getDealCardo($id){
+        $data = $this->bf->getDealCardo($id);
+        $json = s2c::JSON("batt","deal_cardo",$data["player"]);
+        $other = $this->bf->getOpponentID($id);
+        $otherjson = s2c::JSON("batt","deal_cardo",$data["other"]);
+        $outlet = s2c::outlet("diff",$id,$json,$other,$otherjson);
+        $this->gi->result[] = $outlet;
         return 1;
     }
 

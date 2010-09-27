@@ -194,6 +194,9 @@ class battlefield {
         $cardo[3] = core::gain(61);
         $cardo[4] = core::gain(62);
         $cardo[5] = core::gain(53);
+
+        self::varAllCardo($id);
+
         return 1;
     }
     public function getDefendCardo($id){
@@ -207,6 +210,7 @@ class battlefield {
         $cardo[3] = core::gain(81);
         $cardo[4] = core::gain(82);
         $cardo[5] = core::gain(82);
+        self::varAllCardo($id);
         return 1;
     }
     public function getSpecialCardo($id){
@@ -220,7 +224,15 @@ class battlefield {
         $cardo[3] = core::gain(91);
         $cardo[4] = core::gain(91);
         $cardo[5] = core::gain(91);
+        self::varAllCardo($id);
         return 1;
+    }
+    public function varAllCardo($id){
+        $cardo = $this->char[$id]->cardo;
+        foreach($cardo as $k=>$v){
+            $this->dealedCardo[$id]["positiveSide"][$k] = $v->getXXX();
+            $this->dealedCardo[$id]["negativeSide"][$k] = 0;
+        }
     }
 
     public function getOpponentID($id){
