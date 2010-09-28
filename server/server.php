@@ -22,7 +22,6 @@ require_once "prepare.class.php";
 require_once "battle.class.php";
 
 require_once "char.class.php";
-require_once "battleaction.class.php";
 require_once "battlefield.class.php";
 require_once "console.class.php";
 require_once "process.php";
@@ -81,11 +80,11 @@ class WebSocket {
                     $bytes = socket_recv($socket,$buffer,2048,0);
                     $user = self::getUserBySocket($socket,$gi);
                     $id = $user->id;
-                    if($bytes==0){ 
-                        connection::disconnect($id,null,$gi);
-                        connection::getUserList($id,null,$gi);
-                        connection::getBattlefieldList($id,null,$gi);
-                        console::write($id . " Disconnect");
+                    if($bytes==0){
+                        $msg = array("type"=>"con","data"=>array("cmd"=>"disconnect"));
+                        $obj = new connection($id,$msg,$gi);
+                        unset($obj);
+                        self::feedback($gi);
                         continue;
                     }
 
@@ -164,20 +163,13 @@ class WebSocket {
         return;
     }
 
-    public function sendAll($msg,$gi){
+    private function sendAll($msg,$gi){
         $msg = $this->wrap($msg);
         foreach ($gi->user as $user) {
             socket_write($user->socket,$msg,strlen($msg));
         }
     }
-
-    public function sendSingle($id,$msg,$gi){ //TODO Wait To be deleted
-        $msg = $this->wrap($msg);
-        if(!isset($gi->socket[$id])) return;
-        socket_write($gi->socket[$id],$msg,strlen($msg));
-    }
-
-    public function sendSelected($array,$msg,$gi){
+    private function sendSelected($array,$msg,$gi){
         $msg = $this->wrap($msg);
         if (is_array($array)) {
             foreach($array as $k=>$v){
@@ -189,8 +181,7 @@ class WebSocket {
             socket_write($gi->socket[$array],$msg,strlen($msg));
         }
     }
-
-    public function sendDiff($id,$json,$other,$otherjson,$gi){
+    private function sendDiff($id,$json,$other,$otherjson,$gi){
         $this->sendSelected($id,$json,$gi);
         $this->sendSelected($other,$otherjson,$gi);
     }

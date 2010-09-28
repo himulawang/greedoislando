@@ -74,11 +74,6 @@ class char {
         return 1;
     }
 
-    function __tostring(){
-        $array = (array) $this;
-        return json_encode($array);
-    }
-
     public function getCharInfo(){
         $a["id"] = $this->id;
         $a["name"] = $this->name;

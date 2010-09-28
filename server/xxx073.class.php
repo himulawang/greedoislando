@@ -2,7 +2,7 @@
 class xxx073 extends phydefend{
     protected $xxx = 73;
     protected $name = "GFW";
-    public function effect($caster,$target,$cardo,$gi){ //Defend All Physical Damage
+    public function effect($cardo){ //Defend All Physical Damage
         if(get_parent_class($cardo)!="phyattack") return;
 
         $canceledDefendField = $this->caster->cancelDefendField();

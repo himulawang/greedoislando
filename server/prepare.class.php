@@ -76,6 +76,16 @@ class prepare extends stdProcess{
         if( !$this->bf->startBattle() ) return; //Battle Not Start Succeed
         return 1;
     }
+    protected function stopBattlefield(){
+        if( !self::varBattlefield() ) return; //check user has in room
+        $this->bf->stopBattle();
+        return 1;
+    }
+    protected function destroyBattlefield(){
+        if($this->bf->getFieldCharCount()) return;
+        unset($this->gi->bf[$this->bf->getNo()]);
+        return 1;
+    }
     protected function dealInitCardo(){
         foreach($this->range as $k => $v){
             $this->bf->dealCardo($v);
@@ -91,6 +101,11 @@ class prepare extends stdProcess{
     protected function getStartBattlefield(){
         $a = $this->bf->getBattlefieldStartInfo();
         $json = s2c::JSON("pre","start_bf",$a);
+        $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
+        return 1;
+    }
+    protected function getStopBattlefield(){
+        $json = s2c::JSON("pre","stop_bf",array("no"=>$this->bf->getNo(),"bf_name"=>$this->bf->getName()));
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
         return 1;
     }

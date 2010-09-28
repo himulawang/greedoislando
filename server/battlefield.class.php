@@ -42,6 +42,9 @@ class battlefield {
     public function setNo($no){
         $this->no = $no;
     }
+    public function getNo(){
+        return $this->no;
+    }
 
     public function checkCharExists($id){
         return isset($this->char[$id]) ? 1 : 0;
@@ -60,7 +63,6 @@ class battlefield {
     }
 
     public function useActionPoint($id){
-        if(!self::checkCharExists($id)) return;
         return $this->char[$id]->useActionPoint();
     }
 
@@ -93,7 +95,7 @@ class battlefield {
             return 1; //Stop Succeed
         }else{
             console::write("Battlefield {$this->name} hasn't started");
-            return 0; //Stop failed
+            return; //Stop failed
         }
     }
 
@@ -101,11 +103,11 @@ class battlefield {
         return count($this->char);
     }
 
-    public function getFieldName(){
+    public function getName(){
         return $this->name;
     }
 
-    public function kickFieldChar($id){
+    public function kickChar($id){
         //Kick Char
         if(self::checkCharExists($id)){
             $charname = $this->char[$id]->getName();
@@ -114,10 +116,7 @@ class battlefield {
         }else{
             console::write("Can't find char in battlefield" . $this->name);
         }
-        //Destory this field
-        if(self::getFieldCharCount()==0){
-            return 1; //need destory this field;
-        }
+
     }
 
     public function getActionPoint(){
@@ -241,9 +240,9 @@ class battlefield {
         $array = array_values($array);
         return $array[0];
     }
-    public function roundFinish($caster,$target,$msg,$gi){
+    public function roundFinish($caster){
         foreach($caster->buffer as $k=>$v){ //Count down buffer
-            $v->bufferCountdown($caster,$target,$msg,$gi);
+            $v->bufferCountdown();
         }
     }
     public function getEnterBattlefield($id){

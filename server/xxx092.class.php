@@ -5,30 +5,31 @@ class xxx092 extends special{
     protected $speedup = 2;
     protected $remainRound = 3;
 
-    public function gain($caster,$target,$msg,$gi){ // +2 Speed Keep 3 rounds
-        $caster->buffer[$this->xxx] = $this;
-        $caster->setSpeedUp($this->speedup);
-        $id = $caster->getID();
-        $oppID = $target->getID();
-        $range = array($id,$oppID);
-        parent::getBuffer($id,$range,$this->xxx,$gi);
-        battleaction::getSpeedUp($id,null,$gi);
+    public function gain(){ // +2 Speed Keep 3 rounds
+        $this->caster->buffer[$this->xxx] = $this;
+        $this->caster->setSpeedUp($this->speedup);
+        $this->getBuffer();
+        self::getSpeedUp();
+        return 1;
     }
-    public function bufferCountdown($caster,$target,$msg,$gi){
+    public function bufferCountdown(){
         if ($this->remainRound < 1) {
-            self::unbuffer($caster,$target,$msg,$gi);
+            self::unbuffer();
             return;
         }
+        $this->getRemainRound();
         --$this->remainRound;
     }
-    public function unbuffer($caster,$target,$msg,$gi){
-        $caster->setSpeedUp(0);
-        $id = $caster->getID();
-        $oppID = $target->getID();
-        $range = array($id,$oppID);
-        parent::getUnbuffer($id,$range,$this->xxx,$gi);
-        battleaction::getSpeedUp($id,null,$gi);
-        unset($caster->buffer[$this->xxx]);
+    protected function unbuffer(){
+        $this->caster->setSpeedUp(0);
+        parent::getUnbuffer();
+        self::getSpeedUp();
+        unset($this->caster->buffer[$this->xxx]);
+    }
+    protected function getSpeedUp(){
+        $json = s2c::JSON("batt","get_speedup",array($this->caster->getID() => $this->caster->getSpeedup()));
+        $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
+        return 1;
     }
 }
 ?>
