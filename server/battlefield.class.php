@@ -17,13 +17,6 @@ class battlefield {
         console::write("Battlefield {$this->name} has been destoryed");
     }
 
-    private function _getMulti(){
-        return time() - $this->timestamp;
-    }
-
-    private function _setTimestamp(){
-        $this->timestamp = time();
-    }
     public function resetDealedCardo($id=null){
         if($id){
             $this->dealedCardo[$id] = array();
@@ -50,18 +43,6 @@ class battlefield {
         return isset($this->char[$id]) ? 1 : 0;
     }
 
-    public function addActionPoint(){
-        $multi = self::_getMulti();
-        if($multi <= 0) { return 0; } //Check Need Add return need feedback
-        self::_setTimestamp();
-        $needFeedback = 0;
-        foreach($this->char as $k => &$v){
-            $_needFeedback = $v->addActionPoint($multi);
-            $needFeedback = $needFeedback || $_needFeedback;
-        }
-        return (int) $needFeedback;
-    }
-
     public function useActionPoint($id){
         return $this->char[$id]->useActionPoint();
     }
@@ -82,7 +63,9 @@ class battlefield {
         }
         if(!$this->battleStart){
             $this->battleStart = 1;
-            $this->timestamp = time(); //Time count for action point
+            foreach($this->char as $k=>$v){
+                $v->setTimestamp();//Time count for action point
+            }
             console::write("Battlefield {$this->name} has start fighting");
             return 1;
         }
@@ -220,7 +203,7 @@ class battlefield {
         $cardo[0] = core::gain(91);
         $cardo[1] = core::gain(92);
         $cardo[2] = core::gain(91);
-        $cardo[3] = core::gain(91);
+        $cardo[3] = core::gain(94);
         $cardo[4] = core::gain(91);
         $cardo[5] = core::gain(91);
         self::varAllCardo($id);

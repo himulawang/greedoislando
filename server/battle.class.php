@@ -2,11 +2,13 @@
 
 class battle extends prepare {
     protected $caster,$target;
+    protected $actionPointJustFull = array();
     function __construct($id,$msg,$gi){
         stdProcess::__construct($id,$msg,$gi);
 
-        $this->stdProcess["add_actionpoint"] = array();
-        $this->stdProcess["add_actionpoint"][] = "addActionPoint";
+        $this->stdProcess["server_heartbeat"] = array();
+        $this->stdProcess["server_heartbeat"][] = "addActionPoint";
+        $this->stdProcess["server_heartbeat"][] = "dealCardo";
 
         $this->stdProcess["use_cardo"] = array();
         $this->stdProcess["use_cardo"][] = "varInitBattle";
@@ -42,18 +44,23 @@ class battle extends prepare {
         $this->target = $this->bf->char[$oppID];
         return 1;
     }
-    protected function addActionPoint(){ //TODO ->perfect oriented char not bf
-        foreach($this->gi->bf as $k => $v){
+    protected function addActionPoint(){ 
+        foreach($this->gi->bf as $k => $v){ //bf
             $this->bf = $v;
             if($v->battleStart){
                 prepare::varBattlefieldRange();
-                $needFeedback = $v->addActionPoint();
-                if($needFeedback){
-                    foreach($this->range as $idx => $id){
-                        self::getActionPoint($id);
-                    }
+                foreach($this->range as $idx => $id){ //char
+                    $this->actionPointJustFull[$id] = $this->bf->char[$id]->addActionPoint();
+                    if($this->actionPointJustFull[$id]) self::getActionPoint($id);
                 }
             }
+        }
+        return 1;
+    }
+    protected function dealCardo(){
+        //DealCardo if has empty slot
+        foreach($this->actionPointJustFull as $id=>$v){
+            if( $v==1 /*need deal cardo*/&& $this->bf->dealCardo($id)) self::getDealCardo($id);
         }
         return 1;
     }

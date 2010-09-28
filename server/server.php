@@ -46,6 +46,7 @@ require_once "xxx081.class.php";
 require_once "xxx082.class.php";
 require_once "xxx091.class.php";
 require_once "xxx092.class.php";
+require_once "xxx094.class.php";
 
 
 class WebSocket {
@@ -97,7 +98,7 @@ class WebSocket {
                         self::doHandShake($id,$buffer,$gi);
                     }else{
                         //AddActionPoint per second
-                        $second = new battle($id,array("type"=>"batt","data"=>array("cmd"=>"add_actionpoint")),$gi);
+                        $second = new battle($id,array("type"=>"batt","data"=>array("cmd"=>"server_heartbeat")),$gi);
                         self::feedback($gi);
                         unset($second);
 
