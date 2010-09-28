@@ -10,11 +10,15 @@ class connection extends stdProcess{
         $this->stdProcess["set_username"][] = "getUserList";
         $this->stdProcess["set_username"][] = "getBattlefieldList";
 
+        $this->stdProcess["disconnect"] = array();
+        $this->stdProcess["disconnect"][] = "disconnect";
+
         if(!parent::verify()) return;
         parent::run();
     }
-    public static function disconnect($id,$msg,$gi){
-        /*
+    protected function disconnect(){
+        $gi = &$this->gi;
+        $id = &$this->id;
         
         socket_close($gi->user[$id]->socket);//Delete User & Socket & Char
         $username = $gi->user[$id]->username;
@@ -24,20 +28,10 @@ class connection extends stdProcess{
         $json = s2c::JSON("con","info_offline",array($id=>$username));
         $gi->result[] = s2c::outlet("all",$id,$json);
 
-        $bf_no = prepare::getBattlefieldIndex($id,$gi);//Get battlefield Fight
-        if(!is_int($bf_no)) return 1;
-        $bf = prepare::getBattlefield($id,$gi);//Stop fight
-        $bf->stopBattle();
+        $msg = array("type"=>"con","data"=>array("cmd"=>"kick_char"));
+        $obj = new battle($id,$msg,$gi);
 
-        $bf_name = $bf->getFieldName();
-        $range = $bf->getUserID();
-        $json = s2c::JSON("pre","stop_battle",array("no"=>$bf_no,"bf_name"=>$bf_name));
-        $gi->result[] = s2c::outlet("selected",$range,$json);
-        
-        $needDestroyBf = $bf->kickFieldChar($id);//Kick Char from battlefield
-        if ($needDestroyBf) $gi->destroyBattlefield($bf_no);
         return 1;
-         */
     }
     protected function setUsername(){
         $data = $this->msg["data"];

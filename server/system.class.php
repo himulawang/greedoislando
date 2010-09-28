@@ -5,24 +5,24 @@ class system extends stdProcess{
         parent::__construct($id,$msg,$gi);
 
         $this->stdProcess["get_attackcardo"] = array();
-        $this->stdProcess["get_attackcardo"][] = "getAttackCardo";        
+        $this->stdProcess["get_attackcardo"][] = "sysGetAttackCardo";        
         
         $this->stdProcess["get_defendcardo"] = array();
-        $this->stdProcess["get_defendcardo"][] = "getDefendCardo";        
+        $this->stdProcess["get_defendcardo"][] = "sysGetDefendCardo";        
         
         $this->stdProcess["get_specialcardo"] = array();
-        $this->stdProcess["get_specialcardo"][] = "getSpecialCardo";        
+        $this->stdProcess["get_specialcardo"][] = "sysGetSpecialCardo";        
         
         if(!parent::verify()) return;
         parent::run();
     }
-    protected function getAttackCardo(){
+    protected function sysGetAttackCardo(){
         $obj = new battle($this->id,$this->msg,$this->gi);
     }
-    protected function getDefendCardo(){
+    protected function sysGetDefendCardo(){
         $obj = new battle($this->id,$this->msg,$this->gi);
     }
-    protected function getSpecialCardo(){
+    protected function sysGetSpecialCardo(){
         $obj = new battle($this->id,$this->msg,$this->gi);
     }
 }
