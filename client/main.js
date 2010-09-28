@@ -162,3 +162,6 @@ function use_cardo(pos){
     ws1.send("batt",{cmd:"use_cardo",pos:pos});
 }
 
+function exchange(){
+    ws1.send("batt",{cmd:"use_cardo",pos:3,caster_pos:0});
+}

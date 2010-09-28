@@ -50,27 +50,34 @@ class char {
     }
 
     public function checkActionPointFull(){
-        return $this->actionPoint >= 10 ? 1 : 0;
+        return $this->actionPoint >= GI_BattleUseActionPoint ? 1 : 0;
     }
 
-    public function addActionPoint($multi){
-        //check ActionPointFull
-        if(self::checkActionPointFull()){ 
-            return 0; //Don need feedback
-        }
+    public function addActionPoint(){
+        if(self::checkActionPointFull()) return;
+
+        $multi = time() - $this->timestamp;
+        if($multi < 1) return;
+
+        self::setTimestamp();
 
         while ($multi > 0){
             $this->actionPoint += $this->speed + $this->speedup;
-            if(self::checkActionPointFull()){ return 1; }
+            if(self::checkActionPointFull()) return 1; //need deal cardo 
 
             --$multi;
         }
-        return 1;
+        if(self::checkActionPointFull()) return 1; //need deal cardo 
+        return 2; // actionPoint add but not full
     }
+    public function setTimestamp(){
+        $this->timestamp = time();
+    }    
 
     public function useActionPoint(){
         if(!self::checkActionPointFull()) return;
         $this->actionPoint = $this->actionPoint - GI_BattleUseActionPoint;
+        self::setTimestamp();
         return 1;
     }
 
