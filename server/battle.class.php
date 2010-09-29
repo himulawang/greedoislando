@@ -106,7 +106,7 @@ class battle extends prepare {
         $a[$id] = array();
         $a[$id]["id"] = $id;
         $a[$id]["action_point"] = $actionPoint;
-        $json = s2c::JSON("batt","get_action_point",array($a));
+        $json = s2c::JSON("batt","get_action_point",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
         return 1;
     }
