@@ -12,15 +12,30 @@ class defend extends cardo {
         return 1;
     }
     protected function effectDefendField($canceledDefendField){
-        $json = s2c::JSON("batt","effect_defendfield",array( $this->caster->getID() => $canceledDefendField ) );
+        $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["df"] = $canceledDefendField;
+        $json = s2c::JSON("batt","effect_defendfield",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
     protected function getCancelDefendField($canceledDefendField){
-        $json = s2c::JSON("batt","cancel_defendfield",array( $this->caster->getID() => $canceledDefendField ) );
+        $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["df"] = $canceledDefendField;
+        $json = s2c::JSON("batt","cancel_defendfield",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
     protected function getDefendField(){
-        $json = s2c::JSON("batt","get_defendfield",array( $this->caster->getID() => $this->xxx ) );
+        $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["df"] = $this->xxx;
+        $json = s2c::JSON("batt","get_defendfield",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }    
 }

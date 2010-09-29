@@ -111,13 +111,26 @@ class prepare extends stdProcess{
     }
     protected function getDealInitCardo(){
         foreach( $this->range as $v){
-            $data = $this->bf->getDealCardo($v);
-            $json = s2c::JSON("batt","deal_cardo",$data["player"]);
-            $other = $this->bf->getOpponentID($v);
-            $otherjson = s2c::JSON("batt","deal_cardo",$data["other"]);
-            $outlet = s2c::outlet("diff",$v,$json,$other,$otherjson);
-            $this->gi->result[] = $outlet;
+            self::getDealCardo($v);
         }
+        return 1;
+    }
+    protected function getDealCardo($id){
+        $data = $this->bf->getDealCardo($id);
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["cardo"] = $data["player"];
+        $json = s2c::JSON("batt","deal_cardo",$a);
+
+        $other = $this->bf->getOpponentID($id);
+        $b = array();
+        $b[$id] = array();
+        $b[$id]["id"] = $id;
+        $b[$id]["cardo"] = $data["other"];
+        $otherjson = s2c::JSON("batt","deal_cardo",$b);
+
+        $this->gi->result[] = s2c::outlet("diff",$id,$json,$other,$otherjson);;
         return 1;
     }
     protected function getBattlefieldList(){

@@ -9,16 +9,28 @@ class special extends cardo{
         $id = $this->caster->getID();
         $a = array();
         $a[$id] = array();
-        $a[$id][$this->xxx] = $this->remainRound;
+        $a[$id]["id"] = $id;
+        $a[$id]["buffer"] = $this->xxx;
+        $a[$id]["remain_round"] = $this->remainRound;
         $json = s2c::JSON("batt","get_buffer_remain_round",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
     protected function getBuffer(){
-        $json = s2c::JSON("batt","get_buffer",array($this->caster->getID() => $this->xxx));
+        $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["buffer"] = $this->xxx;
+        $json = s2c::JSON("batt","get_buffer",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
     protected function getUnbuffer(){
-        $json = s2c::JSON("batt","get_unbuffer",array($this->caster->getID() => $this->xxx));
+        $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["buffer"] = $this->xxx;
+        $json = s2c::JSON("batt","get_unbuffer",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
 }

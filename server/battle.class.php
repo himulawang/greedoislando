@@ -102,17 +102,12 @@ class battle extends prepare {
     }
     protected function getActionPoint($id){
         $actionPoint = $this->bf->char[$id]->getActionPoint();
-        $json = s2c::JSON("batt","get_action_point",array($id=>$actionPoint));
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["action_point"] = $actionPoint;
+        $json = s2c::JSON("batt","get_action_point",array($a));
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
-        return 1;
-    }
-    protected function getDealCardo($id){
-        $data = $this->bf->getDealCardo($id);
-        $json = s2c::JSON("batt","deal_cardo",$data["player"]);
-        $other = $this->bf->getOpponentID($id);
-        $otherjson = s2c::JSON("batt","deal_cardo",$data["other"]);
-        $outlet = s2c::outlet("diff",$id,$json,$other,$otherjson);
-        $this->gi->result[] = $outlet;
         return 1;
     }
     protected function sysGetAttackCardo(){

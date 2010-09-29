@@ -119,7 +119,9 @@ class battlefield {
         $a["battleStart"] = $this->battleStart;
         $a["char"] = array();
         foreach($this->char as $k => $v){
-            $a["char"][$k] = $v->getName();
+            $a["char"][$k] = array();
+            $a["char"][$k]["id"] = $k;
+            $a["char"][$k]["char_name"] = $v->getName();
         }
         return $a;
     }
@@ -158,10 +160,8 @@ class battlefield {
     public function getDealCardo($id){
         $data = $this->dealedCardo;
         $a = array();
-        $a["player"] = array();
-        $a["player"][$id] = $data[$id]["positiveSide"];
-        $a["other"] = array();
-        $a["other"][$id] = $data[$id]["negativeSide"];
+        $a["player"] = $data[$id]["positiveSide"];
+        $a["other"] = $data[$id]["negativeSide"];
         return $a;
     }
 
@@ -233,11 +233,15 @@ class battlefield {
         $a["no"] = $this->no;
         $a["bf_name"] = $this->name;
         $a["battleStart"] = $this->battleStart;
-        $a["newcomer"] = array($id=>$this->char[$id]->getName());
+        $a["newcomer"] = array();
+        $a["newcomer"]["id"] = $id;
+        $a["newcomer"]["char_name"] = $this->char[$id]->getName();
         $a["roomer"] = array();
         foreach($this->char as $k => $v){
             if($k==$id) continue;
-            $a["roomer"][$k] = $v->getName();
+            $a["roomer"][$k] = array();
+            $a["roomer"][$k]["id"] = $k;
+            $a["roomer"][$k]["char_name"] = $v->getName();
         }
         return $a;
     }
