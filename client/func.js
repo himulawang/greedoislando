@@ -4,7 +4,7 @@ var ws1;
 function char(data) {
     this.id = data.id;
     this.username = data.username;
-    this.charname = data.charname;
+    this.charname = data.char_name;
     this.hp = data.hp;
     this.maxhp = data.maxhp;
     this.speed = data.speed;
@@ -36,30 +36,24 @@ var _GI_ = {
 
     pre : {        
         enter_bf : function(json){
-            for(x in json.data.doc.newcomer){
-                if(x == mychar.id){
-                    mychar.charname = json.data.doc.newcomer[x];
-                    $("#status_own > p:eq(0)").html("<p>" + json.data.doc.newcomer[x] + "</p>");
-                    $("#status_own > p:eq(1)").html("<p>" + x + "</p>");
-                }else{
-                    opchar = new char(json.data.doc.newcomer);
-                    opchar.id = x;
-                    opchar.charname = json.data.doc.newcomer[x];
-                    $("#status_oppo > p:eq(0)").html("<p>" + json.data.doc.newcomer[x] + "</p>");
-                    $("#status_oppo > p:eq(1)").html("<p>" + x + "</p>");
-                }
+            if(json.data.doc.newcomer.id == mychar.id){
+                mychar.charname = json.data.doc.newcomer.char_name;
+                $("#status_own > p:eq(0)").html("<p>" + json.data.doc.newcomer.char_name + "</p>");
+                $("#status_own > p:eq(1)").html("<p>" + json.data.doc.newcomer.id + "</p>");
+            }else{
+                opchar = new char(json.data.doc.newcomer);
+                $("#status_oppo > p:eq(0)").html("<p>" + json.data.doc.newcomer.char_name + "</p>");
+                $("#status_oppo > p:eq(1)").html("<p>" + json.data.doc.newcomer.id + "</p>");
             }
             for(y in json.data.doc.roomer){
-                if(y == mychar.id){
-                    mychar.charname = json.data.doc.roomer[y];
-                    $("#status_own > p:eq(0)").html("<p>" + json.data.doc.roomer[y] + "</p>");
-                    $("#status_own > p:eq(1)").html("<p>" + y + "</p>");
+                if(json.data.doc.roomer[y].id == mychar.id){
+                    mychar.charname = json.data.doc.roomer[y].char_name;
+                    $("#status_own > p:eq(0)").html("<p>" + json.data.doc.roomer[y].char_name + "</p>");
+                    $("#status_own > p:eq(1)").html("<p>" + json.data.doc.roomer[y].id + "</p>");
                 }else{
                     opchar = new char(json.data.doc.roomer);
-                    opchar.id = y;
-                    opchar.charname = json.data.doc.roomer[y];
-                    $("#status_oppo > p:eq(0)").html("<p>" + json.data.doc.roomer[y] + "</p>");
-                    $("#status_oppo > p:eq(1)").html("<p>" + y + "</p>");
+                    $("#status_oppo > p:eq(0)").html("<p>" + json.data.doc.roomer[y].char_name + "</p>");
+                    $("#status_oppo > p:eq(1)").html("<p>" + json.data.doc.roomer[y].id + "</p>");
                 }
             }
         },
@@ -109,7 +103,7 @@ var _GI_ = {
             $("#user_online_list").empty();
             $("#user_online_list").append("<p>Online User List<span style='float:right;cursor:pointer;' onclick='list_online_player(2);'>X</span></p>");
             for(x in json.data.doc){
-                $("#user_online_list").append("<p>" + json.data.doc[x] + "</p>");
+                $("#user_online_list").append("<p>" + json.data.doc[x].username + "</p>");
             }
         },
 
@@ -128,14 +122,14 @@ var _GI_ = {
         get_action_point : function(json){
             var x;
             for(x in json.data.doc){
-                if(x == mychar.id){
-                    var own_value = json.data.doc[x] * 10;
+                if(json.data.doc[x].id == mychar.id){
+                    var own_value = json.data.doc[x].action_point * 10;
                     $("#own_ap").val(own_value);
-                    $("#status_own > p:eq(5)").html("<p>ActionPoint:" + json.data.doc[x] + "</p>");
-                }else if(x == opchar.id){
-                    var opp_value = json.data.doc[x] * 10;
+                    $("#status_own > p:eq(5)").html("<p>ActionPoint:" + json.data.doc[x].action_point + "</p>");
+                }else if(json.data.doc[x].id == opchar.id){
+                    var opp_value = json.data.doc[x].action_point * 10;
                     $("#opp_ap").val(opp_value);
-                    $("#status_oppo > p:eq(5)").html("<p>ActionPoint:" + json.data.doc[x] + "</p>");
+                    $("#status_oppo > p:eq(5)").html("<p>ActionPoint:" + json.data.doc[x].action_point + "</p>");
                 }
             }
         },
@@ -383,7 +377,7 @@ var _BATTLEINFO_ = {
     enter_bf : { info : "entered the battlefield" },
     start_bf : { info : "start to fight" },
     deal_cardo : { info : "gets some new cards" },
-    use_cardo : { info : "ready_to_fight the card" },
+    use_cardo : { info : "use the card" },
     get_defendfield : { info : "gets the defendfield" },
     cancel_defendfield : { info : "effect no more exists" },
     get_hp : { info : "Hp remains" },
@@ -430,7 +424,7 @@ function battle_info(string){
                 $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc.xxx].name + " " + _CARDO_[string.data.doc.xxx].description + "</p>");
             }
             break;
-       caready_to_fightse "get_defendfield":
+       case "get_defendfield":
             for(x in string.data.doc){
                 if(x == mychar.id){
                     $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x]].name + "</p>");
