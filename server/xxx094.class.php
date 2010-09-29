@@ -30,19 +30,24 @@ class xxx094 extends special {
         return 1;
     }
     protected function getExchangedCardo($caster_pos,$from,$to,$target_pos){
-        $a = array();
-        $a["pos"] = $caster_pos;
-        $a["from"] = $from;
-        $a["to"] = $to;
-
         $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["from"] = $from;
+        $a[$id]["from_pos"] = $caster_pos;
+        $a[$id]["to"] = $to;
+        $a[$id]["to_pos"] = $target_pos;
+
         $json = s2c::JSON("batt","exchange_cardo",$a);
 
         $b = array();
-        $b["pos"] = $target_pos;
-        $b["from"] = $to;
-        $b["to"] = $from;
         $other = $this->target->getID();
+        $b[$other]["id"] = $other;
+        $b[$other]["from"] = $to;
+        $b[$other]["from_pos"] = $target_pos;
+        $b[$other]["to"] = $from;
+        $b[$other]["to_pos"] = $caster_pos;
         $otherjson = s2c::JSON("batt","exchange_cardo",$b);
 
         $this->gi->result[] = s2c::outlet("diff",$id,$json,$other,$otherjson);

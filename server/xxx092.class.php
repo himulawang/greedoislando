@@ -27,7 +27,12 @@ class xxx092 extends special{
         unset($this->caster->buffer[$this->xxx]);
     }
     protected function getSpeedUp(){
-        $json = s2c::JSON("batt","get_speedup",array($this->caster->getID() => $this->caster->getSpeedup()));
+        $id = $this->caster->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["speed_up"] = $this->caster->getSpeedup();
+        $json = s2c::JSON("batt","get_speedup",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
         return 1;
     }

@@ -13,8 +13,11 @@ class xxx091 extends special{
     }
     protected function getActionPoint(){
         $id = $this->target->getID();
-        $actionPoint = $this->bf->char[$id]->getActionPoint();
-        $json = s2c::JSON("batt","get_action_point",array($id=>$actionPoint));
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["action_point"] = $this->bf->char[$id]->getActionPoint();
+        $json = s2c::JSON("batt","get_action_point",$a);
         $this->gi->result[] = S2c::outlet("selected",$this->range,$json);
         return 1;
     }

@@ -20,16 +20,30 @@ class attack extends cardo {
         $this->damage = $damage;
     }
     protected function getCancelDefendField($canceledDefendField){
-        $json = s2c::JSON("batt","cancel_defendfield",array( $this->target->getID() => $canceledDefendField) );
+        $id = $this->target->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["df"] = $canceledDefendField;
+        $json = s2c::JSON("batt","cancel_defendfield",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
     protected function getOpponentHP(){
-        $hp = $this->target->getHP();
-        $json = s2c::JSON("batt","get_hp",array( $this->target->getID() => $hp ) );
+        $id = $this->target->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["hp"] = $this->target->getHP();
+        $json = s2c::JSON("batt","get_hp",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
     protected function getEffectDamage(){
-        $json = s2c::JSON("batt","get_damage",array( $this->target->getID() => $this->damage) );
+        $id = $this->target->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["damage"] = $this->damage;
+        $json = s2c::JSON("batt","get_damage",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
 }

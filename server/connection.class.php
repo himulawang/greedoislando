@@ -55,7 +55,9 @@ class connection extends stdProcess{
     protected function getUserList(){
         $a = array();
         foreach($this->gi->user as $k=>$v){
-            $a[$k] = $v->username;
+            $a[$k] = array();
+            $a[$k]["id"] = $this->id;
+            $a[$k]["username"] = $v->username;
         }
         $json = s2c::JSON("con","get_user_list",$a);
         $this->gi->result[] = s2c::outlet("all",$this->id,$json);

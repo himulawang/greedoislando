@@ -79,10 +79,12 @@ class cardo {
         return $this->name;
     }
     public function getUseCardo(){
+        $id = $this->caster->getID();
         $a = array();
-        $a["id"] = $this->caster->getID();
-        $a["pos"] = $this->pos;
-        $a["xxx"] = $this->xxx;
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["pos"] = $this->pos;
+        $a[$id]["xxx"] = $this->xxx;
         $json = s2c::JSON("batt","use_cardo",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
     }
