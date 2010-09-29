@@ -51,7 +51,7 @@ var _GI_ = {
                     $("#status_own > p:eq(0)").html("<p>" + json.data.doc.roomer[y].char_name + "</p>");
                     $("#status_own > p:eq(1)").html("<p>" + json.data.doc.roomer[y].id + "</p>");
                 }else{
-                    opchar = new char(json.data.doc.roomer);
+                    opchar = new char(json.data.doc.roomer[y]);
                     $("#status_oppo > p:eq(0)").html("<p>" + json.data.doc.roomer[y].char_name + "</p>");
                     $("#status_oppo > p:eq(1)").html("<p>" + json.data.doc.roomer[y].id + "</p>");
                 }
@@ -140,16 +140,14 @@ var _GI_ = {
             var c_name;
             for(x in json.data.doc){
                 if(x == mychar.id){
-                    $("#own_cardo_in_hand").empty();
-                    for(y in json.data.doc[x]){
-                        c_name = cardo_name(json.data.doc[x][y]);
-                        $("#own_cardo_in_hand").append("<div style='border:1px solid #CCC;height:100px;width:75px;float:left;margin-left:5px;cursor:pointer; border-radius: 5px;' onclick='action_type(" + y + ");'>" + c_name + "</div>");
+                    for(y in json.data.doc[x].cardo){
+                        c_name = cardo_name(json.data.doc[x].cardo[y]);
+                        $("#own_cardo_in_hand_pos_" + y).replaceWith("<div id='own_cardo_in_hand_pos_" + y + "' class='cardo_in_hand' onclick='action_type(" + y + ");'>" + c_name + "</div>");
                     }
                 }else if(x == opchar.id){
-                    $("#oppo_cardo_in_hand").empty();
-                    for(y in json.data.doc[x]){
-                        c_name = cardo_name(json.data.doc[x][y]);
-                        $("#oppo_cardo_in_hand").append("<div style='border:1px solid #CCC;height:100px;width:75px;float:left;margin-left:5px; border-radius: 5px;'>" + c_name + "</div>");
+                    for(y in json.data.doc[x].cardo){
+                        c_name = cardo_name(json.data.doc[x].cardo[y]);
+                        $("#oppo_cardo_in_hand_pos_" + y).replaceWith("<div id='oppo_cardo_in_hand_pos_'" + y + " class='cardo_in_hand'>" + c_name + "</div>");
                     }
                 }
             }
@@ -159,12 +157,26 @@ var _GI_ = {
             var x;
             for(x in json.data.doc){
                 if(x == mychar.id){
-                    $("#status_own > p:eq(3)").html("<p>HP:" + json.data.doc[x] + " / " + mychar.maxhp + "</p>");
+                    $("#status_own > p:eq(2)").html("<p>HP:" + json.data.doc[x].hp + " / " + mychar.maxhp + "</p>");
                 }else if(x == opchar.id){
-                    $("#status_oppo > p:eq(2)").html("<p>HP:" + json.data.doc[x] + " / " + opchar.maxhp + "</p>");
+                    $("#status_oppo > p:eq(2)").html("<p>HP:" + json.data.doc[x].hp + " / " + opchar.maxhp + "</p>");
                 }
             }
-        }
+        },
+
+	use_cardo : function(json){
+	    //
+	},
+
+	get_speedup : function(json){
+	    for(x in json.data.doc){
+	    	if(x == mychar.id){
+		    $("#status_own > p:eq(4)").html("<p>Speedup:" + json.data.doc[x].speed_up + "</p>");
+		}else if(x == opchar.id){
+		    $("#status_oppo > p:eq(4)").html("<p>Speedup:" + json.data.doc[x].speed_up + "</p>");
+		}
+	    }
+	},
     },
 
     sys : {
@@ -342,8 +354,9 @@ function get_specialcardo(){
     ws1.send("sys",{cmd:"get_specialcardo"});
 }
 
-function action_type(number){
-    ws1.send("batt",{cmd:"use_cardo",pos:number});
+function action_type(num){
+    $("#own_cardo_in_hand_pos_" + num).fadeOut("slow");
+    ws1.send("batt",{cmd:"use_cardo",pos:num});
 }
 
 var _CARDO_ = {
@@ -359,7 +372,7 @@ var _CARDO_ = {
     ,81: { name:"K.E.D.F" , description:"and reduce 50% magic damage" }
     ,82: { name:"St. Cross Shield" , description:"and reverse magic damage" }
     ,91: { name:"Stone" , description:"and half opponent's ActionPoint" }
-    ,92: { name:"Cock Blood" , description:"and +2 speed keep 3 rounds" }
+    ,92: { name:"Cock Blood" , description:" +2 speed keep 3 rounds" }
     ,93: { name:"Run Away" , description:"and escaping from battlefield" }
     ,94: { name:"Exchange" , description:"and exchange one random opponent cardo with his selected cardo" }
     ,95: { name:"Real Exchange" , description:"and exchange one selected opponent cardo with his selected cardo" }
@@ -379,11 +392,14 @@ var _BATTLEINFO_ = {
     deal_cardo : { info : "gets some new cards" },
     use_cardo : { info : "use the card" },
     get_defendfield : { info : "gets the defendfield" },
+    effect_defendfield : { info : "effecr is now on & taking effect" },
     cancel_defendfield : { info : "effect no more exists" },
     get_hp : { info : "Hp remains" },
+    get_damage : { info : "gets damage" },
     get_buffer : { info : "gets buff" },
-    get_speedup : { info : "gets speedup" }
-
+    get_speedup : { info : "gets speedup" },
+    get_buffer_remain_round : { info : "remains" },
+    get_unbuffer : { info : "buff no more exists"}
 }
 
 
@@ -418,39 +434,87 @@ function battle_info(string){
             }
             break;
        case "use_cardo":
-            if(string.data.doc.id == mychar.id){
-                $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc.xxx].name + " " + _CARDO_[string.data.doc.xxx].description + "</p>");
-            }else if(string.data.doc.id == opchar.id){
-                $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc.xxx].name + " " + _CARDO_[string.data.doc.xxx].description + "</p>");
-            }
+	    for(x in string.data.doc){
+           	 if(x == mychar.id){
+           	     $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].xxx].name + " " + _CARDO_[string.data.doc[x].xxx].description + "</p>");
+           	 }else if(x == opchar.id){
+           	     $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].xxx].name + " " + _CARDO_[string.data.doc[x].xxx].description + "</p>");
+           	 }
+	    }
             break;
        case "get_defendfield":
             for(x in string.data.doc){
                 if(x == mychar.id){
-                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x]].name + "</p>");
+                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].df].name + "</p>");
                 }else if(x == opchar.id){
-                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x]].name + "</p>");
+                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].df].name + "</p>");
                 }
             }
             break;
+       case "effect_defendfield":
+	    for(x in string.data.doc){
+	    	if(x == mychar.id){
+                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].df].name + "</p>");
+                }else if(x == opchar.id){
+                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].df].name + "</p>");
+                }
+	    }
+	    break;
        case "cancel_defendfield":
             for(x in string.data.doc){
                 if(x == mychar.id){
-                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x]].name + "</p>");
+                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " + _CARDO_[string.data.doc[x].df].name + " " +  _BATTLEINFO_[factor].info + "</p>");
                 }else if(x == opchar.id){
-                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x]].name + "</p>");
+                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " + _CARDO_[string.data.doc[x].df].name + " " +  _BATTLEINFO_[factor].info + "</p>");
                 }
             }
             break;
        case "get_hp":
             for(x in string.data.doc){
                 if(x == mychar.id){
-                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + string.data.doc[x] + "</p>");
+                    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " +  _BATTLEINFO_[factor].info + " " + string.data.doc[x].hp + "</p>");
                 }else if(x == opchar.id){
-                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + string.data.doc[x] + "</p>");
+                    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " +  _BATTLEINFO_[factor].info + " " + string.data.doc[x].hp + "</p>");
                 }
             }
             break;
+       case "get_damage":
+            for(x in string.data.doc){
+	    	if(x == mychar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " + _BATTLEINFO_[factor].info + " " + string.data.doc[x].damage + "</p>");
+		}else if(x == opchar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " + _BATTLEINFO_[factor].info + " " + string.data.doc[x].damage + "</p>");
+		}
+	    }
+      	    break;
+       case "get_buffer" :
+	    for(x in string.data.doc){
+	    	if(x == mychar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " + _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].buffer].description + "</p>");
+		}else if(x == opchar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " + _BATTLEINFO_[factor].info + " " + _CARDO_[string.data.doc[x].buffer].description + "</p>");
+		}
+	    }
+       	    break;
+       case "get_buffer_remain_round":
+	    for(x in string.data.doc){
+	    	if(x == mychar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " + _CARDO_[string.data.doc[x].buffer].name + " " + _BATTLEINFO_[factor].info + " " + string.data.doc[x].remain_round + " rounds</p>");
+		}else if(x == opchar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " + _CARDO_[string.data.doc[x].buffer].name + " " + _BATTLEINFO_[factor].info + " " + string.data.doc[x].remain_round + " rounds</p>");
+		}
+	    }
+	    break;
+       case "get_unbuffer":
+	    for(x in string.data.doc){
+	    	if(x == mychar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + mychar.charname + " " + _CARDO_[string.data.doc[x].buffer].name + " " + _BATTLEINFO_[factor].info + "</p>");
+		}else if(x == opchar.id){
+		    $("#battle_log").prepend("<p>" + now + " " + opchar.charname + " " + _CARDO_[string.data.doc[x].buffer].name + " " + _BATTLEINFO_[factor].info + "</p>");
+		}
+	    }
+	    break;
+
     }
 }
 
