@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Greedo Islando Battle UI</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../jquery.websocket-0.0.1.js"></script>
+<script type="text/javascript" src="../func.js"></script>
+<script type="text/javascript" src="../effect.js"></script>
+</head>
+<body>
+	<div id='header'>Greedo Islando</div>
+
+    <!--<div id='console'>
+        <div class='cancel_title'>
+            <p onclick="hide_show_toggle('console',this)">Hide</p>
+        </div>
+        <p style='font-weight:bold;'>Console</p>
+        <p id='state'>State now</p>
+    </div>-->
+    
+    <div id='battle_field'>
+        <input type="button" value="Create Battle Field" onclick="create_battlefield_info(1);" id="create_bf" class="list_create_button"/>
+        <input type="button" value="List Battlefield" onclick="list_online_battle_field(1);" id="list_bf" class="list_create_button"/>
+        <input type="button" value="List User" onclick="list_online_player(1);" id="list_user" class="list_create_button"/>
+	<div id='create_ch' class='online_list'>
+		<p>Create Your Charater<span style='float:right;cursor:pointer;' onclick='create_battlefield_info(2)'>X</span></p>
+        	<p><span class='info_input'>UserName: </span><input type="text" id="user_name" class="text_input" value="Dya" readonly="readonly" ondblclick="change_name();"/></p>
+        	<!--<p><input type="button" value="Set Username" onclick="set_user_name();"/></p>-->
+		<p><span class='info_input'>CharacterName: </span><input type="text" id="char_name" class="text_input" value="Mage Dya" /></p>
+        	<p><span class='info_input'>BattleFieldName: </span><input type="text" id="bf_name" class="text_input" value="Bloody Hell" /></p>
+		<p>
+		<input type="button" value="Confirm" onclick="create_battlefield();" class="button char_name"/>
+		<input type="button" value="Back" onclick="create_battlefield_info(2);" class="button char_name"/>
+		</p>
+	</div>
+    <div id='battle_field_online_list' class='online_list'>
+        <p>Online BF List<span style='float:right;cursor:pointer;' onclick='list_online_battle_field(2)'>X</span></p>
+    </div>
+    <div id='user_online_list' class='online_list'>
+        <p>Online User List<span style='float:right;cursor:pointer;' onclick="list_online_player(2);">X</span></p>
+    </div>
+    </div>
+
+	<div id='battle_room'>
+		<div id='top_menu'>
+			<div id='logo'>Greedo Islando</div>
+			<div id='cardo_oppo'>
+            <p>Opponent's Cards</p>
+            <input type='range' min='0' max='100' value='0' class='ap_range' id='opp_ap'/>
+	    <div id='oppo_cardo_in_hand'>
+		    <div id='oppo_cardo_in_hand_pos_0' class='cardo_in_hand'></div>
+		    <div id='oppo_cardo_in_hand_pos_1' class='cardo_in_hand'></div>
+		    <div id='oppo_cardo_in_hand_pos_2' class='cardo_in_hand'></div>
+		    <div id='oppo_cardo_in_hand_pos_3' class='cardo_in_hand'></div>
+		    <div id='oppo_cardo_in_hand_pos_4' class='cardo_in_hand'></div>
+		    <div id='oppo_cardo_in_hand_pos_5' class='cardo_in_hand'></div>
+	    </div>
+            </div>
+			<div id='status_oppo'>
+                <p>oppCharname:<span></span></p>
+                <p>oppID:<span></span></p>
+                <p>Hp:<span></span></p>
+                <p>Speed:<span></span></p>
+                <p>Speedup:<span></span></p>
+                <p>ActionPoint:<span></span></p>
+            </div>
+		</div>
+		<div id='middle_menu'>
+			<div id='cardo_pool'>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+			<div id='battle_log'></div>
+			<div id='status_own'>
+				<p>Charname:<span></span></p>
+                <p>ID:<span></span></p>
+                <p>Hp:<span></span></p>
+                <p>Speed:<span></span></p>
+                <p>Speedup:<span></span></p>
+                <p>ActionPoint:<span></span></p>
+                <input type="button" value="Ready" onclick="bf_start()" class="button char_name" id="ready_to_fight" />
+			</div>
+			<div id='cardo_own'>
+            <p>Own Card</p>
+            <input type='range' min='0' max='100' value='0' class='ap_range' id='own_ap'/>
+	    <div id='own_cardo_in_hand'>
+		    <div id='own_cardo_in_hand_pos_0' class='cardo_in_hand'></div>
+		    <div id='own_cardo_in_hand_pos_1' class='cardo_in_hand'></div>
+		    <div id='own_cardo_in_hand_pos_2' class='cardo_in_hand'></div>
+		    <div id='own_cardo_in_hand_pos_3' class='cardo_in_hand'></div>
+		    <div id='own_cardo_in_hand_pos_4' class='cardo_in_hand'></div>
+		    <div id='own_cardo_in_hand_pos_5' class='cardo_in_hand'></div>
+	    </div>
+            </div>
+		</div>
+		<div id='bottom_menu'>
+			<div id='chat'><span>Chat log</span>
+				<div id='chat_log'></div>
+				<div id='chat_input'>
+					<input type='text' id='chat_input'/>
+					<div id='chat_confirm' onclick="chat();">Chat!</div>
+				</div>
+			</div>
+		</div>
+        <div id='sys_control'>
+            <input type="button" value="sys_Atk_Card" onclick="get_attackcardo()" class="button sys_control"/>
+            <input type="button" value="sys_Def_Card" onclick="get_defendcardo()" class="button sys_control"/>
+            <input type="button" value="sys_Spe_Card" onclick="get_specialcardo()" class="button sys_control"/>
+        </div>
+	</div>
+
+	<!--<div id='sys_func'>
+			<input type="button" value="Browser Support" onclick="test();"/>
+			<input type="button" value="connect" onclick="connect();"/>
+			<input type="button" value="disconnect" onclick="disconnect();"/>
+			<input type="button" value="send" onclick="sendhi();"/>
+			<input type="button" value="talk" onclick="talk();"/>
+			<input type="button" value="sys_list_user" onclick="sys_list_user();"/>
+			<input type="button" value="sys_list_char" onclick="sys_list_char();"/>
+			<input type="button" value="sys_list_socket" onclick="sys_list_socket();"/>
+			<input type="button" value="prepare" onclick="prepare();"/>
+			<input type="button" value="Battle Start" onclick="start();"/>
+	</div>-->
+
+
+</body>
+</html>
