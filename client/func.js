@@ -23,7 +23,7 @@ var _GI_ = {
             var string = msg.data;
             //output(string);
             battle_info(json);
-            var func = ["_GI_", json.type, json.data.cmd].join(".") + "("+string+")";
+            var func = ["_GI_", json.type, json.data.cmd].join(".") + "(" + string + ")";
             $.globalEval(func);
         }
     },
