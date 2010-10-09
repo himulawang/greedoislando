@@ -6,36 +6,28 @@
 <title>Greedo Islando CSS3 Playground</title>
 
 <script src="..\jquery-1.4.2.min.js"></script>
-<script>
-function deal_cardo(){
-    $("#source").addClass("an-deal-cardo");
-    setTimeout(function(){$("#source").removeClass("an-deal-cardo");},7500);
-}
-</script>
-
+<script src="main.js"></script>
 </head>
 <body>
+<div id="console"></div>
+<div id="ctrl">
+    <input type="range" max=380 min=-360 value=1 id="cardo1-range"><span id="cardo1-range-value"></span></input>
+</div>
 <div id="main">
-
-    <div id="target">
+    <div id="battlefield"> </div>
+    <div id="enemy"></div>
+    <div id="public"></div>
+    <div id="me">
+        <div id="cardo0" class="cardo"></div>
+        <div id="cardo1" class="cardo"></div>
+        <div id="cardo2" class="cardo"></div>
+        <div id="cardo3" class="cardo"></div>
+        <div id="cardo4" class="cardo"></div>
+        <div id="cardo5" class="cardo"></div>
     </div>
 
-    <div id="middle">
-        <div id="cardo">
-            <div id="source" onclick="deal_cardo();">Deal Cardo</div>
-        </div>
-        <div id="battlefield"></div>
-    </div>
-
-    <div id="own">
-        <span id="cardo0" class="cardo">0</span>
-        <span id="cardo1" class="cardo">0</span>
-        <span id="cardo2" class="cardo">0</span>
-        <span id="cardo3" class="cardo">0</span>
-        <span id="cardo4" class="cardo">0</span>
-        <span id="cardo5" class="cardo">0</span>
-    </div>
 
 </div>
+
 </body>
 </html>
