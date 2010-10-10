@@ -11,21 +11,62 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
 
 #battlefield{
     -webkit-transform: rotateX(90deg) translateZ(-140px);
-    background-color: #444444;
+    background-color: black;
     height: 100%;
     width: 100%;
+    opacity: 1;
+    background-image: -webkit-gradient(radial,
+                            20% 500, 1,
+                            50% 500, 800,
+                            from(rgba(255, 255, 255, 0.6)),
+                            to(rgba(255, 255, 255, 0)));
+    -webkit-transform-style: preserve-3d;
+    
+}
+
+#public {
+    position: absolute;
+    top: 45%;
+    left: 20%;
+    color: white;
+}
+
+#deliver {
+    height: 204px;
+    width: 130px;
+    border: 2px solid #FF0000;
 }
 
 .cardo{
-    height: 128px;
-    width: 128px;
+    height: 194px;
+    width: 120px;
     -webkit-box-shadow: 2px 2px 6px #444;
-    background-image: url("glass.gif");
+    background-image: url("cardo_reverse.png");
     position: absolute;
     left: 45%;
     -webkit-transition: -webkit-transform .3s ease-in-out;
 }
 
+.deliver-cardo{
+    height: 194px;
+    width: 120px;
+    -webkit-box-shadow: 2px 2px 6px #444;
+    background-image: url("cardo_reverse.png");
+    position: absolute;
+}
+
+#deliver-cardo0 { -webkit-transform: translateZ(0   ); }
+#deliver-cardo1 { -webkit-transform: translateZ(5px); }
+#deliver-cardo2 { -webkit-transform: translateZ(10px); }
+#deliver-cardo3 { -webkit-transform: translateZ(15px); }
+#deliver-cardo4 { -webkit-transform: translateZ(20px); }
+#deliver-cardo5 { -webkit-transform: translateZ(25px); }
+#deliver-cardo6 { -webkit-transform: translateZ(30px); }
+#deliver-cardo7 { -webkit-transform: translateZ(35px); }
+#deliver-cardo8 { -webkit-transform: translateZ(40px); }
+#deliver-cardo9 { -webkit-transform: translateZ(45px); }
+
+#deliver-cardo9:hover {cursor:pointer;}
 
 #me {
     -webkit-transform: translateZ(500px);
@@ -37,7 +78,6 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
     margin-right:auto;
     top: 45%;
     position: absolute;
-    opacity: .8;
 
     -webkit-animation: my-float 6s infinite ease-in-out;
 }
@@ -61,3 +101,23 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
 #cardo3:hover{ -webkit-transform: rotateY(-10deg) translateZ(-500px) scale3d(1.5,1.5,1.5); cursor: pointer; }
 #cardo4:hover{ -webkit-transform: rotateY(-30deg) translateZ(-500px) scale3d(1.5,1.5,1.5); cursor: pointer; }
 #cardo5:hover{ -webkit-transform: rotateY(-50deg) translateZ(-500px) scale3d(1.5,1.5,1.5); cursor: pointer; }
+
+.cardo-used{
+    -webkit-animation: cardo-used 2s 1 ease-in-out;
+}
+
+@-webkit-keyframes cardo-used {
+    0% { }
+    40% { -webkit-transform: rotateY( 0) translateZ(-500px); }
+    100% { -webkit-transform: translateZ(0px); }
+
+}
+
+.cardo-deliver{
+    -webkit-animation: cardo-deliver-step1 1s 1 ease-in-out;
+}
+
+@-webkit-keyframes cardo-deliver-step1{
+    0%{}
+    100%{ -webkit-transform: translateZ(45px) rotateX(-90deg) translateY(-150px)}
+}
