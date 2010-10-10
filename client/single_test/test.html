@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style>
+#per {
+    border: 1px solid #444;
+    width: 800px;
+    height: 800px;
+    -webkit-perspective: 800;
+}
+</style>
+<title>jQuery CSS3 Animation Test</title>
+<script src="jquery-1.4.2.min.js"></script>
+<script src="test.js"></script>
+</head>
+<body>
+<input type="range" min=-360 max=360 onchange="activex(this.value);" />
+<input type="range" min=-360 max=360 onchange="activey(this.value);" />
+<div id="per"></div>
+</body>
+</html>
