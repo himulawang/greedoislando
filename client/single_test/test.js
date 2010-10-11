@@ -1,8 +1,8 @@
 var a;
 var i=0;
 $(function(){
-    var cardo = function(idx){
-        this._idx = idx;
+    var cardo = function(id){
+        this._id = id;
         this.rotateX = 0;
         this.rotateY = 0;
         this.translateZ = 0;
@@ -11,6 +11,7 @@ $(function(){
 
         var cube = $(document.createElement("div"));
         cube.addClass("cube");
+        cube[0].id = this._id;
 
         var top = $(document.createElement("div"));
         var bottom = $(document.createElement("div"));
@@ -34,8 +35,8 @@ $(function(){
         });
 
         cube.css("position","absolute");
-        cube.css("top","50%");
-        cube.css("left","50%");
+        cube.css("top","20%");
+        cube.css("left","20%");
         cube.css("-webkit-translation","-webkit-transform 2s linear");
         cube.css("-webkit-transform-style","preserve-3d");
 
@@ -46,10 +47,10 @@ $(function(){
         front.css("height","194px").css("width","120px");
         back.css("height","194px").css("width","120px");
 
-        top.css("-webkit-transform","rotateX(90deg)");
-        bottom.css("-webkit-transform","rotateX(-90deg) translateZ(194px) rotate(180deg)");
-        left.css("-webkit-transform","rotateY(-90deg)");
-        right.css("-webkit-transform","rotateY(90deg) translateZ(120px)");
+        top.css("-webkit-transform","rotateX(90deg) translateZ(2px)");
+        bottom.css("-webkit-transform","rotateX(-90deg) translateZ(192px) rotate(180deg)");
+        left.css("-webkit-transform","rotateY(-90deg) translateZ(2px)");
+        right.css("-webkit-transform","rotateY(90deg) translateZ(118px)");
         front.css("-webkit-transform","translateZ(2px)");
         back.css("-webkit-transform"," rotateY(180deg) translateZ(2px)");
 
@@ -57,8 +58,21 @@ $(function(){
         $("#per").append(this._tempDoc);
 
     }
+    cardo.prototype = {
+        setRotateX : function(x){
+            this.rotateX = x;
+            this.render();
+        },
+        setRotateY : function(y){
+            this.rotateY = y;
+            this.render();
+        },
+        render : function(){
+            $("#"+this._id).css("-webkit-transform","rotateX("+this.rotateX+"deg) rotateY("+this.rotateY+"deg)");
+        }
+    }
 
-    a = new cardo(0);
+    a = new cardo("cardo0");
 /*
     setInterval(function(){
         ++i;
@@ -68,10 +82,10 @@ $(function(){
 });
 
 function activex(value){
-    $(".cube").css("-webkit-transform","rotateX("+value+"deg)");
+    a.setRotateX(value);
 }
 function activey(value){
-    $(".cube").css("-webkit-transform","rotateY("+value+"deg)");
+    a.setRotateY(value);
 }
 
 /*
