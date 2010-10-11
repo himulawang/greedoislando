@@ -36,17 +36,11 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
     width: 130px;
     border: 2px solid #FF0000;
 }
-
+/*
 .cardo{
-    height: 194px;
-    width: 120px;
-    -webkit-box-shadow: 2px 2px 6px #444;
-    background-image: url("cardo_reverse.png");
-    position: absolute;
-    left: 45%;
     -webkit-transition: -webkit-transform .3s ease-in-out;
 }
-
+  */  
 .deliver-cardo{
     height: 194px;
     width: 120px;
@@ -87,7 +81,7 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
     40% { top: 53%; }
     100% { top: 45%; }
 }
-
+/*
 #cardo0 { -webkit-transform: rotateY( 50deg) translateZ(-500px); }
 #cardo1 { -webkit-transform: rotateY( 30deg) translateZ(-500px); }
 #cardo2 { -webkit-transform: rotateY( 10deg) translateZ(-500px); }
@@ -101,7 +95,7 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
 #cardo3:hover{ -webkit-transform: rotateY(-10deg) translateZ(-500px) scale3d(1.5,1.5,1.5); cursor: pointer; }
 #cardo4:hover{ -webkit-transform: rotateY(-30deg) translateZ(-500px) scale3d(1.5,1.5,1.5); cursor: pointer; }
 #cardo5:hover{ -webkit-transform: rotateY(-50deg) translateZ(-500px) scale3d(1.5,1.5,1.5); cursor: pointer; }
-
+*/
 .cardo-used{
     -webkit-animation: cardo-used 2s 1 ease-in-out;
 }
