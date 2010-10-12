@@ -106,19 +106,28 @@ var cardo = function(id){
         _this.rotateY = a[idx][1];
         _this.translateZ = a[idx][2];
     }
-    this.mouseover = function(){
-        _this.scale3d = [1.3,1.3,1.3];
-        _this.render();
-    }
-    this.mouseout = function(){
-        _this.scale3d = [1,1,1];
-        _this.render();
-    }
     this.bindEvent = function(){
+        //hover
         $(_this._tempDoc.firstChild).mouseover(function(){
-            _this.mouseover();
+            _this.scale3d = [1.3,1.3,1.3];
+            _this.render();
         }).mouseout(function(){
-            _this.mouseout();
+            _this.scale3d = [1,1,1];
+            _this.render();
+        //click
+        }).click(function(){
+            var el = $(this);
+            el.unbind();
+            _this.rotateX = 0;
+            _this.rotateY = 0;
+            _this.translateZ = -800;
+            el.css("-webkit-transition","-webkit-transform 0.8s ease-in-out");
+            _this.render();
+            //TODO
+            setTimeout(function(){
+                el.css("-webkit-transition","opacity 0.8s ease-in-out");
+                el.css("opacity","0");
+            },800);
         });
     }
     this.append = function(el){
@@ -161,11 +170,12 @@ var cardo = function(id){
 
     $.each(a,function(i,n){
         n.css("position","absolute");
-        n.css("background-color","rgba(50,50,50,0.7)");
+        n.css("background-color","rgba(0,255,0,0.7)");
     });
 
     cube.css("position","absolute");
-    cube.css("left","45%");
+    cube.css("left","50%");
+    cube.css("top","70%");
     cube.css("cursor","pointer");
     cube.css("-webkit-transform-style","preserve-3d");
     cube.css("-webkit-transform-property","-webkit-transform");
@@ -181,15 +191,35 @@ var cardo = function(id){
     front.css("background-image","url('cardo_reverse.png')");
     back.css("height","194px").css("width","120px");
 
-    top.css("-webkit-transform","rotateX(90deg) translateZ(2px)");
-    bottom.css("-webkit-transform","rotateX(-90deg) translateZ(192px) rotate(180deg)");
-    left.css("-webkit-transform","rotateY(-90deg) translateZ(2px)");
-    right.css("-webkit-transform","rotateY(90deg) translateZ(118px)");
-    front.css("-webkit-transform","translateZ(2px)");
-    back.css("-webkit-transform"," rotateY(180deg) translateZ(2px)");
+    top.css("-webkit-transform","translate(-60px,-97px) rotateX(90deg) translateZ(2px)");
+    bottom.css("-webkit-transform","translate(-60px,-97px) rotateX(-90deg) translateZ(192px) rotate(180deg)");
+    left.css("-webkit-transform","translate(-60px,-97px) rotateY(-90deg) translateZ(2px)");
+    right.css("-webkit-transform","translate(-60px,-97px) rotateY(90deg) translateZ(118px)");
+    front.css("-webkit-transform","translate(-60px,-97px) translateZ(2px)");
+    back.css("-webkit-transform","translate(-60px,-97px) rotateY(180deg) translateZ(2px)");
 
     this._tempDoc.appendChild(cube[0]);
     this.bindEvent();
 
 }
 
+
+var animation = function(el,a){
+    /* a = [
+     * { //step 1
+     *  duration: 200
+     *  ,css : [
+     *      {"-webkit-transition":"-webkit-transform 0.8s ease-in-out"}
+     *      ,{"-webkit-transform":"translate(-60px,-97px) rotateY(180deg) translateZ(2px)"}
+     *  ]
+     * }
+     * ,{
+     *  duration: 800
+     *  ,css : [
+     *      {"-webkit-transition":"opacity 0.8s ease-in-out"}
+     *      ,{"opacity":"translate(-60px,-97px) rotateY(180deg) translateZ(2px)"}
+     *  ]
+     * }
+     *
+     * ]*/
+}
