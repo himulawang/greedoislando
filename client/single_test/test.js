@@ -31,12 +31,12 @@ $(function(){
 
         $.each(a,function(i,n){
             n.css("position","absolute");
-            n.css("background-color","rgba(50,50,50,0.7)");
+            n.css("background-color","rgba(0,0,200,0.7)");
         });
 
         cube.css("position","absolute");
-        cube.css("top","20%");
-        cube.css("left","20%");
+        cube.css("top","100%");
+        cube.css("left","100%");
         cube.css("-webkit-translation","-webkit-transform 2s linear");
         cube.css("-webkit-transform-style","preserve-3d");
 
@@ -47,12 +47,12 @@ $(function(){
         front.css("height","194px").css("width","120px");
         back.css("height","194px").css("width","120px");
 
-        top.css("-webkit-transform","rotateX(90deg) translateZ(2px)");
-        bottom.css("-webkit-transform","rotateX(-90deg) translateZ(192px) rotate(180deg)");
-        left.css("-webkit-transform","rotateY(-90deg) translateZ(2px)");
-        right.css("-webkit-transform","rotateY(90deg) translateZ(118px)");
-        front.css("-webkit-transform","translateZ(2px)");
-        back.css("-webkit-transform"," rotateY(180deg) translateZ(2px)");
+        top.css("-webkit-transform","translate(-60px,-97px) rotateX(90deg) translateZ(2px)");
+        bottom.css("-webkit-transform","translate(-60px,-97px) rotateX(-90deg) translateZ(192px) rotate(180deg)");
+        left.css("-webkit-transform","translate(-60px,-97px) rotateY(-90deg) translateZ(2px)");
+        right.css("-webkit-transform","translate(-60px,-97px) rotateY(90deg) translateZ(118px)");
+        front.css("-webkit-transform","translate(-60px,-97px) translateZ(2px)");
+        back.css("-webkit-transform","translate(-60px,-97px) rotateY(180deg) translateZ(2px)");
 
         this._tempDoc.appendChild(cube[0]);
         $("#per").append(this._tempDoc);
@@ -88,13 +88,6 @@ function activey(value){
     a.setRotateY(value);
 }
 
-/*
-<div id="cardo-mine-1">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-</div>
-*/
+var aa = document.createEvent("WebKitTransitionEvent");
+
+
