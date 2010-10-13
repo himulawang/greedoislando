@@ -90,4 +90,11 @@ function activey(value){
 
 var aa = document.createEvent("WebKitTransitionEvent");
 
+var cssNode = document.createElement("style");
+cssNode.id = "animation";
+document.getElementsByTagName("head")[0].appendChild(cssNode);
 
+var lastSheet = document.styleSheets[document.styleSheets.length - 1];
+lastSheet.insertRule("@-webkit-keyframes " + "test" + " { from { top: 0px; } to {top: " + 20 + "px;} }", lastSheet.cssRules.length);
+
+lastSheet.deleteRule(0);
