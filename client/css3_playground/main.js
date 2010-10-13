@@ -34,26 +34,9 @@ function cardo_deliver(){
 }
 
 $(function(){
-    //setInterval(active,50);
-    //getCardoMargin();
     $("#cardo1-range").change(function(){
         $("#cardo1").css("-webkit-transform","rotateY("+this.value+"deg) translateZ( -500px)");
         $("#cardo1-range-value").html(this.value);
-    });
-
-    $(".cardo").click(function(){
-        /*
-        var r = /^(cardo)(\d)$/.test(this.id);
-        if (!r) return;
-        var a = RegExp.$2;
-
-        var css = $(this).css("-webkit-transform");
-        $("#console").html(css);
-        */
-
-        var target = $(this);
-        target.addClass("cardo-used");
-        setTimeout(function(){target.remove()},2000);
     });
 
     cardo0 = new cardo("cardo0");
@@ -118,16 +101,25 @@ var cardo = function(id){
         }).click(function(){
             var el = $(this);
             el.unbind();
-            _this.rotateX = 0;
-            _this.rotateY = 0;
-            _this.translateZ = -800;
-            el.css("-webkit-transition","-webkit-transform 0.8s ease-in-out");
-            _this.render();
-            //TODO
-            setTimeout(function(){
-                el.css("-webkit-transition","opacity 0.8s ease-in-out");
-                el.css("opacity","0");
-            },800);
+            
+            var a = [
+                "0%{}"
+                ,"30%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) translateY(-70px);}"
+                ,"65%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) translateY(-70px);}"
+                //,"85%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1.1) translateY(-70px);}"
+                ,"100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) translateY(-300px);}"
+            ];
+
+            var last = [
+                "-webkit-transform"," rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) translateY(-300px)"
+            ];
+
+            var endCallback = function(){
+                el.remove();
+            }
+
+            var z = new animation(el,2,a,last,null,endCallback);
+            z.start();
         });
     }
     this.append = function(el){
@@ -204,22 +196,40 @@ var cardo = function(id){
 }
 
 
-var animation = function(el,a){
-    /* a = [
-     * { //step 1
-     *  duration: 200
-     *  ,css : [
-     *      {"-webkit-transition":"-webkit-transform 0.8s ease-in-out"}
-     *      ,{"-webkit-transform":"translate(-60px,-97px) rotateY(180deg) translateZ(2px)"}
-     *  ]
-     * }
-     * ,{
-     *  duration: 800
-     *  ,css : [
-     *      {"-webkit-transition":"opacity 0.8s ease-in-out"}
-     *      ,{"opacity":"translate(-60px,-97px) rotateY(180deg) translateZ(2px)"}
-     *  ]
-     * }
-     *
-     * ]*/
+var animation = function(el,duration,a/* keyframes */,last /* stop on last frame*/,startCallback,endCallback){
+    /*
+        var a = [
+            "0%{}"
+            ,"30%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-500px) scale3d(1,1,1);}"
+            ,"65%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-500px) scale3d(1,1,1);}"
+            ,"85%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1.1) translateY(-70px);}"
+            ,"100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) translateY(-300px);}"
+        ];
+    */
+    var _this = this;
+    this.duration = duration;
+    this.style = document.styleSheets[1];
+    this.name = "key" + Date.now();
+    this.idx = this.style.cssRules.length;
+    this.keyframes = "@-webkit-keyframes " + this.name + " {" + a.join(" ") + " }";
+    this.last = last;
+    this.startCallback = $.isFunction(startCallback) ? startCallback : function(){};
+    this.endCallback = $.isFunction(endCallback) ? endCallback : function(){};
+
+    this.start = function(){
+
+        _this.startCallback();
+
+        _this.style.insertRule(_this.keyframes, _this.idx);
+        el.css("-webkit-transition","");
+        el.css("-webkit-animation", _this.name + " 1 " + _this.duration + "s " + "ease-in-out");
+
+        setTimeout(function(){
+            _this.style.deleteRule(_this.idx);
+            el.css(_this.last[0],_this.last[1]);
+            setTimeout(function(){_this.endCallback()},1000);
+        },duration * 1000);
+    }
+
 }
+
