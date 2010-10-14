@@ -39,6 +39,7 @@ $(function(){
         $("#cardo1-range-value").html(this.value);
     });
 
+/*
     cardo0 = new cardo("cardo0");
     cardo1 = new cardo("cardo1");
     cardo2 = new cardo("cardo2");
@@ -51,8 +52,86 @@ $(function(){
     cardo3.append($("#me"));
     cardo4.append($("#me"));
     cardo5.append($("#me"));
+    */
+
+    test = new _Model_Cube_();
+    test.shape(120,194,4);
+    test.appendTo($("#me"));
+
 
 });
+
+var _Model_Cube_ = function(){
+    var _this = this;
+    //this.container = document.createDocumentFragment();
+
+    this.shape = function(x,y,z){
+        _this.cube = $(document.createElement("div"));
+        _this.top = $(document.createElement("div"));
+        _this.bottom = $(document.createElement("div"));
+        _this.left = $(document.createElement("div"));
+        _this.right = $(document.createElement("div"));
+        _this.front = $(document.createElement("div"));
+        _this.back = $(document.createElement("div"));
+
+        _this.cube.append(_this.top);
+        _this.cube.append(_this.bottom);
+        _this.cube.append(_this.left);
+        _this.cube.append(_this.right);
+        _this.cube.append(_this.front);
+        _this.cube.append(_this.back);
+
+        var a = [_this.top,_this.bottom,_this.left,_this.right,_this.front,_this.back];
+
+        $.each(a,function(i,n){
+            n.css("position","absolute");
+            n.css("background-color","rgba(0,255,0,0.7)");
+        });
+
+        _this.cube.css("position","absolute");
+        _this.cube.css("-webkit-transform-style","preserve-3d");
+        _this.cube.css("-webkit-transition","-webkit-transform .2s ease-in-out");
+
+        _this.top.css("height",z+"px").css("width",x+"px");
+        _this.bottom.css("height",z+"px").css("width",x+"px");
+        _this.left.css("height",y+"px").css("width",z+"px");
+        _this.right.css("height",y+"px").css("width",z+"px");
+        _this.front.css("height",y+"px").css("width",x+"px");
+        _this.back.css("height",y+"px").css("width",x+"px");
+
+        j = Math.floor(x / 2);
+        k = Math.floor(y / 2);
+        l = Math.floor(z / 2);
+
+        _this.top.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateX(90deg) translateZ("+l+"px)");
+        _this.bottom.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateX(-90deg) translateZ(192px) rotate(180deg)");
+        _this.left.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(-90deg) translateZ("+l+"px)");
+        _this.right.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(90deg) translateZ("+(j-l)+"px)");
+        _this.front.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) translateZ("+l+"px)");
+        _this.back.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(180deg) translateZ("+l+"px)");
+
+    _this.cube.css("left","50%");
+    _this.cube.css("top","70%");
+    _this.cube.css("cursor","pointer");
+    _this.cube.css("-webkit-transform","translateZ(-500px)");
+    _this.front.css("background-image","url('cardo_reverse.png')");
+
+        //_this.container.appendChild(_this.cube[0]);    
+    }
+
+    this.appendTo = function(el){
+        el.append(_this.cube);
+        //_this.render();
+    }
+
+    /*
+    */
+
+
+
+
+
+}
 
 var cardo = function(id){
     var _this = this;
@@ -101,17 +180,17 @@ var cardo = function(id){
         }).click(function(){
             var el = $(this);
             el.unbind();
-            
+            //el.addClass("use");
             var a = [
                 "0%{}"
-                ,"30%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) translateY(-70px);}"
-                ,"65%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) translateY(-70px);}"
-                //,"85%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1.1) translateY(-70px);}"
-                ,"100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) translateY(-300px);}"
+                ,"30%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) ;}"
+                ,"65%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) ;}"
+                ,"85%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1.1) ;}"
+                ,"100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) ;}"
             ];
 
             var last = [
-                "-webkit-transform"," rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) translateY(-300px)"
+                "-webkit-transform"," rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) "
             ];
 
             var endCallback = function(){
@@ -195,17 +274,10 @@ var cardo = function(id){
 
 }
 
+/*
 
-var animation = function(el,duration,a/* keyframes */,last /* stop on last frame*/,startCallback,endCallback){
-    /*
-        var a = [
-            "0%{}"
-            ,"30%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-500px) scale3d(1,1,1);}"
-            ,"65%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-500px) scale3d(1,1,1);}"
-            ,"85%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1.1) translateY(-70px);}"
-            ,"100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) translateY(-300px);}"
-        ];
-    */
+var animation = function(el,duration,a,last ,startCallback,endCallback){
+
     var _this = this;
     this.duration = duration;
     this.style = document.styleSheets[1];
@@ -218,18 +290,24 @@ var animation = function(el,duration,a/* keyframes */,last /* stop on last frame
 
     this.start = function(){
 
-        _this.startCallback();
+        //_this.startCallback();
 
         _this.style.insertRule(_this.keyframes, _this.idx);
-        el.css("-webkit-transition","");
+        //el.css("-webkit-transition","");
         el.css("-webkit-animation", _this.name + " 1 " + _this.duration + "s " + "ease-in-out");
+
 
         setTimeout(function(){
             _this.style.deleteRule(_this.idx);
             el.css(_this.last[0],_this.last[1]);
-            setTimeout(function(){_this.endCallback()},1000);
+            //setTimeout(function(){_this.endCallback()},1000);
         },duration * 1000);
+
     }
 
 }
+        */
 
+var animation = function(){
+    
+}
