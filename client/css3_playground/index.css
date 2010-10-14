@@ -107,6 +107,18 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
 
 }
 
+@-webkit-keyframes use{
+    0%{}
+    30%{webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) ;}
+    65%{webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) ;}
+    85%{webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1) ;}
+    100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1)}
+}
+
+.use{
+    -webkit-animation: use 2s 1 ease-in-out;
+}
+
 .cardo-deliver{
     -webkit-animation: cardo-deliver-step1 1s 1 ease-in-out;
 }
