@@ -63,7 +63,7 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
 #deliver-cardo9:hover {cursor:pointer;}
 
 #me {
-    -webkit-transform: translateZ(500px);
+    -webkit-transform: translateZ(400px);
     -webkit-transform-style: preserve-3d;
     border: 1px solid red;
     height: 200px;
