@@ -54,16 +54,15 @@ $(function(){
     cardo5.append($("#me"));
     */
 
-    test = new _Model_Cube_();
-    test.shape(120,194,4);
+    test = new my_cardo();
     test.appendTo($("#me"));
 
 
 });
 
+//Create A 6 side cube by using CSS3 3D Transform
 var _Model_Cube_ = function(){
     var _this = this;
-    //this.container = document.createDocumentFragment();
 
     this.shape = function(x,y,z){
         _this.cube = $(document.createElement("div"));
@@ -111,12 +110,11 @@ var _Model_Cube_ = function(){
         _this.back.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(180deg) translateZ("+l+"px)");
 
     _this.cube.css("left","50%");
-    _this.cube.css("top","70%");
+    //_this.cube.css("top","70%");
     _this.cube.css("cursor","pointer");
-    _this.cube.css("-webkit-transform","translateZ(-500px)");
+    _this.cube.css("-webkit-transform","translateZ(-400px) rotateY(45deg)");
     _this.front.css("background-image","url('cardo_reverse.png')");
 
-        //_this.container.appendChild(_this.cube[0]);    
     }
 
     this.appendTo = function(el){
@@ -133,6 +131,62 @@ var _Model_Cube_ = function(){
 
 }
 
+
+var _Model_Cardo_ = function(){
+    var _this = this;
+    this.rotateX = 0;
+    this.rotateY = 0;
+    this.rotateZ = 0;
+    this.translateZ = 0;
+    this.scale3d = [1,1,1];
+
+    this.shape(120,194,4);
+
+    this.setRotateX = function(x){
+        _this.rotateX = x;
+        _this.render();
+    }
+    this.setRotateY = function(y){
+        _this.rotateY = y;
+        _this.render();
+    }
+    this.setRotateZ = function(z){
+        _this.rotateZ = z;
+        _this.render();
+    }
+    this.setTranslateZ = function(z){
+        _this.translateZ = z;
+        _this.render();
+    }
+    this.render = function(){
+        var css = "rotateX(" + _this.rotateX + "deg) ";
+        css += "rotateY(" + _this.rotateY + "deg) ";
+        css += "rotateZ(" + _this.rotateZ + "deg) ";
+        css += "translateZ(" + _this.translateZ + "px) ";
+        //css += "scale3d("+_this.scale3d.join(",")+") ";
+        $("#console").html(_this._id + css);
+        _this.cube.css("-webkit-transform",css);
+    }
+}
+//extends from _Model_Cube_
+_Model_Cardo_.prototype = new _Model_Cube_();
+
+var my_cardo = function(){
+    var _this = this;
+    this.setID = function(id){
+        _this.cube.attr("id",id);
+    }
+    this.addClass = function(class){
+        _this.cube.addClass(class);
+    }
+    this.removeClass = function(class){
+        _this.cube.removeClass(class);
+    }
+}
+//extends from my_cardo
+my_cardo.prototype = new _Model_Cardo_();
+
+/*
 var cardo = function(id){
     var _this = this;
     this._id = id;
@@ -146,14 +200,6 @@ var cardo = function(id){
     if (!r) return;
     this._idx = RegExp.$2;
 
-    this.setRotateX = function(x){
-        _this.rotateX = x;
-        _this.render();
-    }
-    this.setRotateY = function(y){
-        _this.rotateY = y;
-        _this.render();
-    }
     this.setDefaultPosition = function(){
         var idx = _this._idx;
         var a = [ //[x,y,z]
@@ -204,14 +250,6 @@ var cardo = function(id){
     this.append = function(el){
         el.append(_this._tempDoc);
         _this.render();
-    }
-    this.render = function(){
-        var css = "rotateX(" + _this.rotateX + "deg) ";
-        css += "rotateY(" + _this.rotateY + "deg) ";
-        css += "translateZ(" + _this.translateZ + "px) ";
-        css += "scale3d("+_this.scale3d.join(",")+") ";
-        $("#console").html(_this._id + css);
-        $("#"+_this._id).css("-webkit-transform",css);
     }
 
     this.setDefaultPosition();
