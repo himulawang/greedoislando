@@ -6,29 +6,29 @@
 <title>Greedo Islando CSS3 Playground</title>
 
 <script src="..\jquery-1.4.2.min.js"></script>
+<script src="class.js"></script>
 <script src="main.js"></script>
 <style id="animation"></style>
 </head>
 <body>
 <div id="console"></div>
 <div id="ctrl">
-    <input type="range" max=380 min=-360 value=1 id="cardo1-range"><span id="cardo1-range-value"></span></input>
-    <input type="button" value="deliver cardo" onclick="cardo_deliver();"></input>
+    <input type="range" max=1000 min=-1000 value=1 onchange="change_translateX(this);"/><span id="translateX">translateX</span>
+    <input type="range" max=1000 min=-1000 value=1 onchange="change_translateY(this);"/><span id="translateY">translateY</span>
+    <input type="range" max=1000 min=-1000 value=1 onchange="change_translateZ(this);"/><span id="translateZ">translateZ</span>
+    <br/>
+    <input type="range" max=380 min=-360 value=1 onchange="change_rotateX(this);"/><span id="rotateX">rotateX</span>
+    <input type="range" max=380 min=-360 value=1 onchange="change_rotateY(this);"/><span id="rotateY">rotateY</span>
+    <input type="range" max=380 min=-360 value=1 onchange="change_rotateZ(this);"/><span id="rotateZ">rotateZ</span>
+    <input type="range" max=3.0 min=0.2 value=1.0 onchange="change_scale3d(this);"/><span id="scale3d">scale3d</span>
+    <input type="button" value="deliver cardo" onclick="deliver();"></input>
+    <input type="button" value="use all" onclick="use_all();"></input>
+    <input type="button" value="default pos" onclick="default_pos();"></input>
 </div>
 <div id="main">
     <div id="battlefield">
-        <div id="public">aaaaa
+        <div id="public">
             <div id="deliver">
-                <div id="deliver-cardo0" class="deliver-cardo"></div>
-                <div id="deliver-cardo1" class="deliver-cardo"></div>
-                <div id="deliver-cardo2" class="deliver-cardo"></div>
-                <div id="deliver-cardo3" class="deliver-cardo"></div>
-                <div id="deliver-cardo4" class="deliver-cardo"></div>
-                <div id="deliver-cardo5" class="deliver-cardo"></div>
-                <div id="deliver-cardo6" class="deliver-cardo"></div>
-                <div id="deliver-cardo7" class="deliver-cardo"></div>
-                <div id="deliver-cardo8" class="deliver-cardo"></div>
-                <div id="deliver-cardo9" class="deliver-cardo"></div>
             </div>
         </div>
     </div>
