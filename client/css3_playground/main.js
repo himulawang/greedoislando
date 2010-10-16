@@ -1,351 +1,365 @@
-var i = 0;
-var j = 200;
+var my_cardo_slot = [];
 
-function active(){
-    ++i;
-    ++i;
-    $("#battlefield").css("-webkit-transform","rotateX("+i+"deg) translateZ( -140px)");
-    $("#console").html(i);
+var el;
+function select(a){
+    el = a;
 }
 
-function getCardoMargin(){
-    var width = $("#me").innerWidth();
-    var margin = ( width - 6 * 128 ) / 12;
-    margin = Math.floor(margin);
-    $(".cardo").css("margin-left",margin).css("margin-right",margin);
-
-    $("#console").html(margin);
+function change_translateX(t){ el.setTranslateX(t.value).render(); }
+function change_translateY(t){ el.setTranslateY(t.value).render(); }
+function change_translateZ(t){ el.setTranslateZ(t.value).render(); }
+function change_rotateX(t){ el.setRotateX(t.value).render(); }
+function change_rotateY(t){ el.setRotateY(t.value).render(); }
+function change_rotateZ(t){ el.setRotateZ(t.value).render(); }
+function change_scale3d(t){ el.setScale3d(t.value+","+t.value+","+t.value).render(); }
+function default_pos(){
+    el.setDefaultPosition(el.idx).render();
 }
 
-function cardo_deliver(){
-    var target = $("#deliver-cardo9");
-    target.addClass("cardo-deliver");
-    setTimeout(
-        function(){
-            target.removeClass("cardo-deliver");
-
-            var c = target.clone();
-            c.addClass("cardo").attr("id","cardo1");
-            $("#cardo0").after(c)
-
+function use_all(){
+    for(var i in my_cardo_slot){
+        if(my_cardo_slot[i]!==null){
+            my_cardo_slot[i].anUse();
+            my_cardo_slot[i] = null;
         }
-        ,1000
-    );
+    }
+}
+
+function deliver(){
+    var idx = null;
+    for(var i in my_cardo_slot){
+        if(my_cardo_slot[i]===null){
+            idx = i;
+            break;
+        }
+    }
+
+    if(idx===null) return;
+
+    var new_cardo = new _Cardo_My_(idx);
+    my_cardo_slot[idx] = new_cardo;
+
+    var cardo = new _Cardo_Public_(10).appendTo($("#deliver"));
+    cardo.addFrame("-webkit-transform","",10,10);
+    cardo.addFrame("-webkit-transform","translateY(-300px) translateZ(300px) rotateX(-60deg)",500,200);
+    cardo.addFrame("-webkit-transform","translateX(250px) rotateY(2deg) translateZ(400px) scale3d(1.5,1.5,1.5)",500,100);
+    cardo.execFrame();
+
+    cardo.endFrameCB(function(){
+        cardo.initFrame();
+        cardo.addFrame("-webkit-transform","",10,10);
+        cardo.addFrame("opacity","0",700,200);
+        cardo.execFrame();
+        cardo.endFrameCB(function(){
+            cardo.remove();
+            new_cardo.appendTo($("#me"));
+            new_cardo.addFrame("opacity","0",1,0);
+            new_cardo.addFrame("opacity","1",700,0);
+            new_cardo.execFrame();
+        });
+    });
+
 }
 
 $(function(){
-    $("#cardo1-range").change(function(){
-        $("#cardo1").css("-webkit-transform","rotateY("+this.value+"deg) translateZ( -500px)");
-        $("#cardo1-range-value").html(this.value);
+
+    var cardo0 = new _Cardo_My_(0).appendTo($("#me"));
+    var cardo1 = new _Cardo_My_(1).appendTo($("#me"));
+    var cardo2 = new _Cardo_My_(2).appendTo($("#me"));
+    var cardo3 = new _Cardo_My_(3).appendTo($("#me"));
+    var cardo4 = new _Cardo_My_(4).appendTo($("#me"));
+    var cardo5 = new _Cardo_My_(5).appendTo($("#me"));
+
+    my_cardo_slot = [cardo0,cardo1,cardo2,cardo3,cardo4,cardo5];
+
+    p0 = new _Cardo_Public_(0).appendTo($("#deliver"));
+    p1 = new _Cardo_Public_(1).appendTo($("#deliver"));
+    p2 = new _Cardo_Public_(2).appendTo($("#deliver"));
+    p3 = new _Cardo_Public_(3).appendTo($("#deliver"));
+    p4 = new _Cardo_Public_(4).appendTo($("#deliver"));
+    p5 = new _Cardo_Public_(5).appendTo($("#deliver"));
+    p6 = new _Cardo_Public_(6).appendTo($("#deliver"));
+    p7 = new _Cardo_Public_(7).appendTo($("#deliver"));
+    p8 = new _Cardo_Public_(8).appendTo($("#deliver"));
+    p9 = new _Cardo_Public_(9).appendTo($("#deliver"));
+    p10 = new _Cardo_Public_(10).appendTo($("#deliver"));
+
+    p10.click(function(){
+    
     });
-
-/*
-    cardo0 = new cardo("cardo0");
-    cardo1 = new cardo("cardo1");
-    cardo2 = new cardo("cardo2");
-    cardo3 = new cardo("cardo3");
-    cardo4 = new cardo("cardo4");
-    cardo5 = new cardo("cardo5");
-    cardo0.append($("#me"));
-    cardo1.append($("#me"));
-    cardo2.append($("#me"));
-    cardo3.append($("#me"));
-    cardo4.append($("#me"));
-    cardo5.append($("#me"));
-    */
-
-    test = new my_cardo();
-    test.appendTo($("#me"));
-
-
 });
 
 //Create A 6 side cube by using CSS3 3D Transform
-var _Model_Cube_ = function(){
-    var _this = this;
+var _Model_Cube_ = Class.extend({
+    map : {
+        translateX : function(x,el){ el.setTranslateX(x); }
+        ,translateY : function(y,el){ el.setTranslateY(y); }
+        ,translateZ : function(z,el){ el.setTranslateZ(z); }
+        ,rotateX : function(x,el){ el.setRotateX(x); }
+        ,rotateY : function(y,el){ el.setRotateY(y); }
+        ,rotateZ : function(z,el){ el.setRotateZ(z); }
+        ,scale3d : function(str,el){ el.setScale3d(str); }
+    }
+    ,shape : function(x,y,z){
+        this.xyz = {};
+        this.xyz["x"] = x;
+        this.xyz["y"] = y;
+        this.xyz["z"] = z;
+        this.cube = $(document.createElement("div"));
+        this.top = $(document.createElement("div"));
+        this.bottom = $(document.createElement("div"));
+        this.left = $(document.createElement("div"));
+        this.right = $(document.createElement("div"));
+        this.front = $(document.createElement("div"));
+        this.back = $(document.createElement("div"));
 
-    this.shape = function(x,y,z){
-        _this.cube = $(document.createElement("div"));
-        _this.top = $(document.createElement("div"));
-        _this.bottom = $(document.createElement("div"));
-        _this.left = $(document.createElement("div"));
-        _this.right = $(document.createElement("div"));
-        _this.front = $(document.createElement("div"));
-        _this.back = $(document.createElement("div"));
+        this.cube.append(this.top);
+        this.cube.append(this.bottom);
+        this.cube.append(this.left);
+        this.cube.append(this.right);
+        this.cube.append(this.front);
+        this.cube.append(this.back);
 
-        _this.cube.append(_this.top);
-        _this.cube.append(_this.bottom);
-        _this.cube.append(_this.left);
-        _this.cube.append(_this.right);
-        _this.cube.append(_this.front);
-        _this.cube.append(_this.back);
-
-        var a = [_this.top,_this.bottom,_this.left,_this.right,_this.front,_this.back];
+        var a = [this.top,this.bottom,this.left,this.right,this.front,this.back];
 
         $.each(a,function(i,n){
             n.css("position","absolute");
             n.css("background-color","rgba(0,255,0,0.7)");
         });
 
-        _this.cube.css("position","absolute");
-        _this.cube.css("-webkit-transform-style","preserve-3d");
-        _this.cube.css("-webkit-transition","-webkit-transform .2s ease-in-out");
+        this.cube.css("position","absolute");
+        this.cube.css("-webkit-transform-style","preserve-3d");
+        this.cube.css("-webkit-transition","-webkit-transform 200ms ease-in-out");
 
-        _this.top.css("height",z+"px").css("width",x+"px");
-        _this.bottom.css("height",z+"px").css("width",x+"px");
-        _this.left.css("height",y+"px").css("width",z+"px");
-        _this.right.css("height",y+"px").css("width",z+"px");
-        _this.front.css("height",y+"px").css("width",x+"px");
-        _this.back.css("height",y+"px").css("width",x+"px");
+        this.top.css("height",z+"px").css("width",x+"px");
+        this.bottom.css("height",z+"px").css("width",x+"px");
+        this.left.css("height",y+"px").css("width",z+"px");
+        this.right.css("height",y+"px").css("width",z+"px");
+        this.front.css("height",y+"px").css("width",x+"px");
+        this.back.css("height",y+"px").css("width",x+"px");
 
-        j = Math.floor(x / 2);
-        k = Math.floor(y / 2);
-        l = Math.floor(z / 2);
+        var j = Math.floor(x / 2);
+        var k = Math.floor(y / 2);
+        var l = Math.floor(z / 2);
+        this.xyz["j"] = j;
+        this.xyz["k"] = k;
+        this.xyz["l"] = l;
 
-        _this.top.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateX(90deg) translateZ("+l+"px)");
-        _this.bottom.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateX(-90deg) translateZ(192px) rotate(180deg)");
-        _this.left.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(-90deg) translateZ("+l+"px)");
-        _this.right.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(90deg) translateZ("+(j-l)+"px)");
-        _this.front.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) translateZ("+l+"px)");
-        _this.back.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(180deg) translateZ("+l+"px)");
+        this.top.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateX(90deg) translateZ("+l+"px)");
+        this.bottom.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateX(-90deg) translateZ("+(y-l)+"px) rotate(180deg)");
+        this.left.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(-90deg) translateZ("+l+"px)");
+        this.right.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(90deg) translateZ("+(x-l)+"px)");
+        this.front.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) translateZ("+l+"px)");
+        this.back.css("-webkit-transform","translate(-"+j+"px,-"+k+"px) rotateY(180deg) translateZ("+l+"px)");
 
-    _this.cube.css("left","50%");
-    //_this.cube.css("top","70%");
-    _this.cube.css("cursor","pointer");
-    _this.cube.css("-webkit-transform","translateZ(-400px) rotateY(45deg)");
-    _this.front.css("background-image","url('cardo_reverse.png')");
+    this.cube.css("left","50%");
+    this.cube.css("cursor","pointer");
 
+        return this;
+    }
+    ,setTranslateX : function(x){ this.translateX = x; return this;}
+    ,setTranslateY : function(y){ this.translateY = y; return this;}
+    ,setRotateX : function(x){ this.rotateX = x; return this;}
+    ,setRotateY : function(y){ this.rotateY = y; return this;}
+    ,setRotateZ : function(z){ this.rotateZ = z; return this;}
+    ,setTranslateZ : function(z){ this.translateZ = z; return this;}
+    ,setScale3d : function(str){ this.scale3d = str; return this;}
+    ,render : function(){
+        var css = "";
+        css += "translateX(" + this.translateX + "px) ";
+        css += "translateY(" + this.translateY + "px) ";
+        css += "rotateX(" + this.rotateX + "deg) ";
+        css += "rotateY(" + this.rotateY + "deg) ";
+        css += "rotateZ(" + this.rotateZ + "deg) ";
+        css += "translateZ(" + this.translateZ + "px) ";
+        css += "scale3d(" + this.scale3d + ") ";
+        $("#console").html(css);
+        this.cube.css("-webkit-transform",css);
+        return this;
     }
 
-    this.appendTo = function(el){
-        el.append(_this.cube);
-        //_this.render();
+    ,appendTo : function(el){ $(el).append(this.cube); return this; }
+    ,remove : function(){ this.cube.remove(); return this; }
+    ,setID : function(id){ this.cube.attr("id",id); return this; }
+    ,addClass : function(class){ this.cube.addClass(class); return this; }
+    ,removeClass : function(class){ this.cube.removeClass(class); return this; }
+    ,getCssTransform : function(){
+        var cssText = this.cube[0].style.cssText;
+        if(/(\w*)(-webkit-transform: )([^;]*)(;)(\w*)/.test(cssText)){
+            var v = RegExp.$3;
+        }else{
+            var v = "error";
+        }
+        $("#console").html(v);
+        return this;
     }
-
-    /*
-    */
-
-
-
-
-
-}
-
-
-var _Model_Cardo_ = function(){
-    var _this = this;
-    this.rotateX = 0;
-    this.rotateY = 0;
-    this.rotateZ = 0;
-    this.translateZ = 0;
-    this.scale3d = [1,1,1];
-
-    this.shape(120,194,4);
-
-    this.setRotateX = function(x){
-        _this.rotateX = x;
-        _this.render();
+    ,dblclick : function(fn){
+        this.cube.dblclick(fn);
+        return this;
     }
-    this.setRotateY = function(y){
-        _this.rotateY = y;
-        _this.render();
+    ,click : function(fn){
+        this.cube.click(fn);
+        return this;
     }
-    this.setRotateZ = function(z){
-        _this.rotateZ = z;
-        _this.render();
-    }
-    this.setTranslateZ = function(z){
-        _this.translateZ = z;
-        _this.render();
-    }
-    this.render = function(){
-        var css = "rotateX(" + _this.rotateX + "deg) ";
-        css += "rotateY(" + _this.rotateY + "deg) ";
-        css += "rotateZ(" + _this.rotateZ + "deg) ";
-        css += "translateZ(" + _this.translateZ + "px) ";
-        //css += "scale3d("+_this.scale3d.join(",")+") ";
-        $("#console").html(_this._id + css);
-        _this.cube.css("-webkit-transform",css);
-    }
-}
-//extends from _Model_Cube_
-_Model_Cardo_.prototype = new _Model_Cube_();
+});
 
-var my_cardo = function(){
-    var _this = this;
-    this.setID = function(id){
-        _this.cube.attr("id",id);
+var _Model_Cardo_ = _Model_Cube_.extend({
+    init : function(){
+        this.running = false;
+        this.startFrameFn = function(){};
+        this.endFrameFn = function(){};
+        this.initFrame();
+        return this;
     }
-    this.addClass = function(class){
-        _this.cube.addClass(class);
+    ,setDefaultPosition : function(idx){
+        this.setIndex(idx);
+        this.setTranslateX(this.defaultPosition[idx][0]);
+        this.setTranslateY(this.defaultPosition[idx][1]);
+        this.setRotateX(this.defaultPosition[idx][2]);
+        this.setRotateY(this.defaultPosition[idx][3]);
+        this.setRotateZ(this.defaultPosition[idx][4]);
+        this.setTranslateZ(this.defaultPosition[idx][5]);
+        this.setScale3d(this.defaultPosition[idx][6].join(","));
+        this.render();
+        return this;
     }
-    this.removeClass = function(class){
-        _this.cube.removeClass(class);
+    ,setIndex : function(idx){ this.idx = idx; return this; }
+    ,addFrame : function(prop,v,ms,pause_ms){
+        this.keyframe.push([prop,v,ms,pause_ms]);
+        return this;
     }
-}
-//extends from my_cardo
-my_cardo.prototype = new _Model_Cardo_();
-
-/*
-var cardo = function(id){
-    var _this = this;
-    this._id = id;
-    this.rotateX = 0;
-    this.rotateY = 0;
-    this.rotateZ = 0;
-    this.translateZ = 0;
-    this.scale3d = [1,1,1];
-
-    var r = /^(cardo)(\d)$/.test(id);
-    if (!r) return;
-    this._idx = RegExp.$2;
-
-    this.setDefaultPosition = function(){
-        var idx = _this._idx;
-        var a = [ //[x,y,z]
-            [0,50,-500]
-            ,[0,30,-500]
-            ,[0,10,-500]
-            ,[0,-10,-500]
-            ,[0,-30,-500]
-            ,[0,-50,-500]
-        ];
-        _this.rotateX = a[idx][0];
-        _this.rotateY = a[idx][1];
-        _this.translateZ = a[idx][2];
+    ,initFrame : function(){
+        if(this.running) return false;
+        this.keyframe = [];
+        this.nowFrame = null;
+        return this;
     }
-    this.bindEvent = function(){
-        //hover
-        $(_this._tempDoc.firstChild).mouseover(function(){
-            _this.scale3d = [1.3,1.3,1.3];
-            _this.render();
-        }).mouseout(function(){
-            _this.scale3d = [1,1,1];
-            _this.render();
-        //click
-        }).click(function(){
-            var el = $(this);
-            el.unbind();
-            //el.addClass("use");
-            var a = [
-                "0%{}"
-                ,"30%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) ;}"
-                ,"65%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-400px) scale3d(1,1,1) ;}"
-                ,"85%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-300px) scale3d(1.1,1.1,1.1) ;}"
-                ,"100%{-webkit-transform: rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) ;}"
-            ];
+    ,execFrame : function(){
+        if(this.running) return this;
+        this.startFrameFn();
+        this.running = true;
+        this.loopFrame();
+        return this;
+    }
+    ,loopFrame : function(){
+        if(!this.running) return; //not running
 
-            var last = [
-                "-webkit-transform"," rotateX(0) rotateY(0) translateZ(-700px) scale3d(1,1,1) "
-            ];
+        if(this.nowFrame === null){
+            this.nowFrame = 0;
+        }else{
+            ++this.nowFrame;
+        }
+        
+        if(this.nowFrame >= this.keyframe.length){ //reach the last frame
+            this.stopFrame();
+            return;
+        }
 
-            var endCallback = function(){
-                el.remove();
+        var prop = this.keyframe[this.nowFrame][0];
+        var v = this.keyframe[this.nowFrame][1];
+        var ms = this.keyframe[this.nowFrame][2];
+        var pause_ms = this.keyframe[this.nowFrame][3];
+
+        if(prop==="-webkit-transform"){
+            var a = v.split(" ");
+            for(var i in a){
+                var str = a[i];
+                if(/(\w+)(\()([-]?\d+|[0-1]?.\d+,[0-1]?.\d+,[0-1]?.\d+)(\w*)(\))/.test(str)){
+                    this.map[RegExp.$1](RegExp.$3,this);
+                }
             }
+            this.render();
+        }else{
+            this.cube.css(prop,v);
+        }
 
-            var z = new animation(el,2,a,last,null,endCallback);
-            z.start();
+        this.cube.css("-webkit-transition", prop +" "+ms+"ms ease-in-out");
+
+        var _this = this;
+
+        setTimeout(function(){_this.loopFrame()},ms + pause_ms);
+    }
+    ,stopFrame : function(){
+        this.running = false;
+        this.nowFrame = null;
+        this.endFrameFn();
+        return this;
+    }
+    ,pauseFrame : function(){ this.running = false; return this; }
+    ,startFrameCB : function(fn){ this.startFrameFn = fn; return this; }
+    ,endFrameCB : function(fn){ this.endFrameFn = fn; return this; }
+});
+
+var _Cardo_My_ = _Model_Cardo_.extend({
+    init : function(idx){
+        this._super();
+        this.shape(120,194,4);
+        this.defaultPosition = [
+        //translateX translateY rotateX rotateY rotateZ translateZ scale3d
+            [0,0,0,50,0,-400,[1,1,1]]
+            ,[0,0,0,30,0,-400,[1,1,1]]
+            ,[0,0,0,10,0,-400,[1,1,1]]
+            ,[0,0,0,-10,0,-400,[1,1,1]]
+            ,[0,0,0,-30,0,-400,[1,1,1]]
+            ,[0,0,0,-50,0,-400,[1,1,1]]
+        ];
+        this.front.css("background-image","url('cardo_reverse.png')");
+        this.back.css("background-image","url('glass.gif')");
+        this.setDefaultPosition(idx);
+
+        var _this = this;
+this.dblclick(function(){_this.anUse();});
+this.click(function(){
+    _this.getCssTransform();
+    select(_this);
+});
+        return this;
+    }
+    ,anUse : function(){
+        if(!this.initFrame()) return;
+        this.addFrame("-webkit-transform","rotateY(0deg) translateZ(-100px)",500,500);
+        this.addFrame("-webkit-transform","rotateY(0deg) translateY(-400px) translateZ(-800px)",500,500);
+
+        this.endFrameCB(function(){
+            this.cube.remove();
+            my_cardo_slot[this.idx] = null;
         });
-    }
-    this.append = function(el){
-        el.append(_this._tempDoc);
-        _this.render();
+        this.execFrame();
+        return this;
     }
 
-    this.setDefaultPosition();
+});
 
-    //init
-    this._tempDoc = document.createDocumentFragment();
-
-    var cube = $(document.createElement("div"));
-    cube.addClass("cardo");
-    cube[0].id = this._id;
-
-    var top = $(document.createElement("div"));
-    var bottom = $(document.createElement("div"));
-    var left = $(document.createElement("div"));
-    var right = $(document.createElement("div"));
-    var front = $(document.createElement("div"));
-    var back = $(document.createElement("div"));
-
-    cube.append(top);
-    cube.append(bottom);
-    cube.append(left);
-    cube.append(right);
-    cube.append(front);
-    cube.append(back);
-
-    var a = [top,bottom,left,right,front,back];
-
-    $.each(a,function(i,n){
-        n.css("position","absolute");
-        n.css("background-color","rgba(0,255,0,0.7)");
-    });
-
-    cube.css("position","absolute");
-    cube.css("left","50%");
-    cube.css("top","70%");
-    cube.css("cursor","pointer");
-    cube.css("-webkit-transform-style","preserve-3d");
-    cube.css("-webkit-transform-property","-webkit-transform");
-    cube.css("-webkit-transform-duration",".3s");
-    cube.css("-webkit-transform-timing-function","ease-in-out");
-    cube.css("-webkit-transition","-webkit-transform .2s ease-in-out");
-
-    top.css("height","4px").css("width","120px");
-    bottom.css("height","4px").css("width","120px");
-    left.css("height","194px").css("width","4px");
-    right.css("height","194px").css("width","4px");
-    front.css("height","194px").css("width","120px");
-    front.css("background-image","url('cardo_reverse.png')");
-    back.css("height","194px").css("width","120px");
-
-    top.css("-webkit-transform","translate(-60px,-97px) rotateX(90deg) translateZ(2px)");
-    bottom.css("-webkit-transform","translate(-60px,-97px) rotateX(-90deg) translateZ(192px) rotate(180deg)");
-    left.css("-webkit-transform","translate(-60px,-97px) rotateY(-90deg) translateZ(2px)");
-    right.css("-webkit-transform","translate(-60px,-97px) rotateY(90deg) translateZ(118px)");
-    front.css("-webkit-transform","translate(-60px,-97px) translateZ(2px)");
-    back.css("-webkit-transform","translate(-60px,-97px) rotateY(180deg) translateZ(2px)");
-
-    this._tempDoc.appendChild(cube[0]);
-    this.bindEvent();
-
-}
-
-/*
-
-var animation = function(el,duration,a,last ,startCallback,endCallback){
-
-    var _this = this;
-    this.duration = duration;
-    this.style = document.styleSheets[1];
-    this.name = "key" + Date.now();
-    this.idx = this.style.cssRules.length;
-    this.keyframes = "@-webkit-keyframes " + this.name + " {" + a.join(" ") + " }";
-    this.last = last;
-    this.startCallback = $.isFunction(startCallback) ? startCallback : function(){};
-    this.endCallback = $.isFunction(endCallback) ? endCallback : function(){};
-
-    this.start = function(){
-
-        //_this.startCallback();
-
-        _this.style.insertRule(_this.keyframes, _this.idx);
-        //el.css("-webkit-transition","");
-        el.css("-webkit-animation", _this.name + " 1 " + _this.duration + "s " + "ease-in-out");
-
-
-        setTimeout(function(){
-            _this.style.deleteRule(_this.idx);
-            el.css(_this.last[0],_this.last[1]);
-            //setTimeout(function(){_this.endCallback()},1000);
-        },duration * 1000);
-
+var _Cardo_Public_ = _Model_Cardo_.extend({
+    init : function(idx){
+        this._super();
+        this.shape(120,194,4);
+        this.defaultPosition = [
+        //translateX translateY rotateX rotateY rotateZ translateZ scale3d
+            [0,this.xyz["k"],0,0,0,0,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,4,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,8,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,12,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,16,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,20,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,24,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,28,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,32,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,36,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,40,[1,1,1]]
+        ]
+        this.front.css("background-image","url('cardo_reverse.png')");
+        this.back.css("background-image","url('glass.gif')");
+        this.setDefaultPosition(idx);
+var _this = this;
+this.click(function(){
+    _this.getCssTransform();
+    select(_this);
+});
+        return this;
     }
-
-}
-        */
-
-var animation = function(){
+    ,anDeliver : function(){
+        
+    }
     
-}
+});
