@@ -1,9 +1,116 @@
-*{margin:0;padding:0;color:#424200;font-family: å¾®è½¯é›…é»‘, Verdana, é»‘ä½“, Arial, Helvetica, sans-serif;list-style:none;font-size:13px;}
-body {background:#FFF;}
-#greedo {height:60px;width:1024px;border-radius: 3px;-moz-border-radius: 3px;background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));background: -moz-linear-gradient(top, #fff, #ddd);border: 1px solid #bbb;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;margin:10px auto;text-align:center;font-size:16px;line-height:60px;}
-#islando {height:800px;width:1024px;border-radius: 3px;-moz-border-radius: 3px;border: 1px solid #bbb;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;margin:10px auto;}
-#login {height:200px;width:240px;margin:200px auto;}
-.text_input {height:25px;width:240px;border:1px solid #CCC;}
-.button {-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;padding:5px;margin-top:5px;border-radius: 3px;-moz-border-radius: 3px;background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));background: -moz-linear-gradient(top, #fff, #ddd);border: 1px solid #bbb;cursor:pointer;}
-.index_login {width:105px;margin:10px 0 0 10px;}
-#welcome-title {text-align:center;height:20px;}
+* {
+	margin:0;
+	padding:0;
+	color:#424200;
+	font-family:Î¢ÈíÑÅºÚ, Verdana, ºÚÌå, Arial, Helvetica, sans-serif;
+	list-style:none;
+	font-size:13px;
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	background:#FFF;
+}
+
+input {
+	margin:3px auto;
+}
+
+#greedo {
+	height:60px;
+	width:1024px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
+	background: -moz-linear-gradient(top, #fff, #ddd);
+	border: 1px solid #bbb;
+	-moz-box-shadow:5px 2px 3px #AAA;
+	-webkit-box-shadow:5px 2px 3px #AAA;
+	margin:10px auto;
+	text-align:center;
+	font-size:16px;
+	line-height:60px;
+}
+
+#islando {
+	height:800px;
+	width:1024px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	border: 1px solid #bbb;
+	-moz-box-shadow:5px 2px 3px #AAA;
+	-webkit-box-shadow:5px 2px 3px #AAA;
+	margin:10px auto;
+}
+
+#login-div {
+	height:200px;
+	width:240px;
+	margin:200px auto;
+}
+
+.text-input {
+	height:25px;
+	width:240px;
+	border:1px solid #CCC;
+}
+
+.button {
+	-moz-box-shadow:5px 2px 3px #AAA;
+	-webkit-box-shadow:5px 2px 3px #AAA;
+	padding:5px;
+	margin-top:5px;
+	border-radius: 3px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
+	background: -moz-linear-gradient(top, #fff, #ddd);
+	border: 1px solid #bbb;
+	cursor:pointer;
+}
+
+.index-login {
+	width:105px;
+	margin:10px 0 0 10px;
+}
+
+#welcome-title {
+	text-align:center;
+	height:20px;
+}
+
+#user-list-info {
+	
+}
+
+#bf-list-info {
+	width: 350px;
+	-webkit-transform: translateX(305px);
+}
+
+#bf-info {
+	width: 350px;
+	-webkit-transform: translateX(660px);
+}
+
+.list-info {
+	border: 1px solid #bbb;
+	height: 785px;
+	width: 300px;
+	margin: 5px;
+	position: absolute;
+}
+
+#avatar {
+	border: 1px solid #bbb;
+	padding: 3px;
+	height: 200px;
+	width: 150px;
+	border-radius: 3px;
+}
+
+.avatar-1 {
+	height:200px;
+	width:150px;
+}

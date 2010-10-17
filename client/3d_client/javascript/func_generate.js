@@ -1,26 +1,68 @@
-function generate_login_interface(){
-    $("#islando").append("<div id='welcome-title'></div><div id='login'><div id='username'><p>USERNAME: </p><input type='text' id='username' class='text_input' value='' /></div><div id='username'><p>PASSWORD: </p><input type='password' id='password' class='text_input' value='' /></div><div id='login_func_button'><input type='button' value='LOGIN' class='button index_login'/><input type='button' value='CANCEL' class='button index_login' onclick='active(\"welcome-title\");'/></div></div>");
-}
+$(function(){
+    generate_login_interface();
+});
 
-var msg = "This is a Game produced by ilaempire members. Welcome to our world [Greed Island]. Enjoy urselves and have fun!";
+var _GI_username;
 
-function text_generate_obo(msg,id){
-    var printed_text_length = $("#" + id).html().length;
-    if(printed_text_length >= msg.length){
-        window.clearInterval(s);
-        return;
+var generate_login_interface = function(){
+    $("#islando").append("<div id='welcome-title'></div><div id='login-div'><div><p>USERNAME: </p><input type='text' id='username' class='text-input' value='' /></div><div><p>PASSWORD: </p><input type='password' id='password' class='text-input' value='' /></div><div id='login-func-button'><input type='button' value='LOGIN' class='button index-login' id='login'/><input type='button' value='WELCOME' class='button index-login' onclick='slide_show();'/></div></div>");
+    
+    var cookieset = checkCookie("_GI_username");
+    if(cookieset){
+       	_GI_username = getCookie("_GI_username");
+       	$("#username").val(_GI_username);
     }
 
-    char = msg.charAt(printed_text_length);
-    text_generate(char,id);
+    $("#login").click(function(){
+	if(!$("#username").val()){
+	    return;
+	}
+	
+
+	_GI_username_input = $("#username").val();
+        if(_GI_username_input != getCookie("_GI_username")){
+            setCookie("_GI_username",_GI_username_input,"1");
+        }
+
+	$("#islando").empty();
+	$("#islando").append("<div id='user-list-info' class='list-info'></div>");
+	$("#islando").append("<div id='bf-list-info' class='list-info'></div>");
+	$("#islando").append("<div id='bf-info' class='list-info'></div>");
+	$("#user-list-info").append("<div id='avatar'></div>");
+	$("#avatar").append("<img src='../images/images.jpg' class='avatar-1' />");
+	
+    });
+
 }
 
-function active(id){
-    var s = setInterval("text_generate_obo(msg,'"+id+"')",10);
+var s = [];
+
+function slide_show(){
+    var a;
+    a = new text_generate.obo("This is a Game produced by ilaempire members. Welcome to our world [Greed Island]. Enjoy urselves and have fun!","welcome-title");
 }
 
-function text_generate(char,id){
-    $("#" + id).append(char);
+var text_generate = {
+    obo : function(msg,id){
+        //Variable
+        var _this = this;
+        this.msg = msg;
+        this.el = $("#" + id);
+        this.idx;
+        _this.el.empty();
+        _this.idx = s.push( setInterval(function(){ _this.obo(); },10) );
+
+        this.obo = function(){
+            var len = _this.el.html().length;
+            if(len >= msg.length){
+                window.clearInterval(s[_this.idx - 1]);
+                return;
+            }
+
+            char = msg.charAt(len);
+            _this.el.append(char);
+        }
+    }
 }
 
 
