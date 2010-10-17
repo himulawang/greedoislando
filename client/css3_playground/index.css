@@ -1,6 +1,13 @@
 ﻿html {height: 100%; margin: 0;}
 
-body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; height: 100%;}
+body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; height: 100%;
+    background: url("background1.jpg") no-repeat;
+    background-size: 100% 100%;
+    background-attachment: fixed;
+
+    color: white;
+}
+
 
 #main{
     width: 100%;
@@ -11,15 +18,17 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
 
 #battlefield{
     -webkit-transform: rotateX(90deg) translateZ(-140px);
-    background-color: black;
     height: 100%;
     width: 100%;
     opacity: 1;
+    /*
     background-image: -webkit-gradient(radial,
                             20% 500, 1,
                             50% 500, 800,
                             from(rgba(255, 255, 255, 0.6)),
                             to(rgba(255, 255, 255, 0)));
+    background-color: black;
+                            */
     -webkit-transform-style: preserve-3d;
     
 }
@@ -56,9 +65,51 @@ body {font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif; h
     -webkit-animation: my-float 6000ms infinite ease-in-out;
 }
 
+#background{
+    -webkit-transform-style: preserve-3d;
+    position: absolute;
+    height: 0px;
+    width: 100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
 @-webkit-keyframes my-float{
     0% { top: 70%; }
     40% { top: 58%; }
     100% { top: 70%; }
+}
+
+
+
+@-webkit-keyframes fade {
+    0%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@-webkit-keyframes drop
+{
+    0%   { -webkit-transform: translate(0px, -50px); }
+    100% { -webkit-transform: translate(0px, 650px); }
+}
+
+@-webkit-keyframes fall1 {
+    0%   { -webkit-transform: rotate(45deg); }
+    50%  { -webkit-transform: rotate(-10deg); }
+    100% { -webkit-transform: rotate(45deg);}
+}
+
+@-webkit-keyframes fall2 {
+    0%   { -webkit-transform: rotate(0deg); }
+    50%  { -webkit-transform: rotate(-10deg); }
+    100% { -webkit-transform: rotate(0deg);}
+}
+
+@-webkit-keyframes fall3 {
+    0%   { -webkit-transform: rotate(10deg) rotateX(0deg) rotateY(30deg); }
+    30%  { -webkit-transform: rotate(-30deg) rotateX(-45deg) rotateY(0deg); }
+    60%  { -webkit-transform: rotate(30deg) rotateX(45deg) rotateY(-30deg); }
+    100% { -webkit-transform: rotate(10deg) rotateX(0deg) rotateY(30deg); }
 }
 
