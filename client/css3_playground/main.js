@@ -47,8 +47,8 @@ function deliver(){
 
     cardo.endFrameCB(function(){
         cardo.initFrame();
-        cardo.addFrame("-webkit-transform","",10,10);
-        cardo.addFrame("opacity","0",700,200);
+        cardo.addFrame("","",10,0);
+        cardo.addFrame("opacity","0",700,0);
         cardo.execFrame();
         cardo.endFrameCB(function(){
             cardo.remove();
@@ -87,6 +87,9 @@ $(function(){
     p10.click(function(){
     
     });
+
+    var background = new _Background_Fall_(20);
+
 });
 
 //Create A 6 side cube by using CSS3 3D Transform
@@ -201,6 +204,10 @@ var _Model_Cube_ = Class.extend({
         this.cube.click(fn);
         return this;
     }
+    ,hover : function(fn1,fn2){
+        this.cube.hover(fn1,fn2);
+        return this;
+    }
 });
 
 var _Model_Cardo_ = _Model_Cube_.extend({
@@ -293,7 +300,7 @@ var _Model_Cardo_ = _Model_Cube_.extend({
 var _Cardo_My_ = _Model_Cardo_.extend({
     init : function(idx){
         this._super();
-        this.shape(120,194,4);
+        this.shape(120,194,8);
         this.defaultPosition = [
         //translateX translateY rotateX rotateY rotateZ translateZ scale3d
             [0,0,0,50,0,-400,[1,1,1]]
@@ -303,7 +310,8 @@ var _Cardo_My_ = _Model_Cardo_.extend({
             ,[0,0,0,-30,0,-400,[1,1,1]]
             ,[0,0,0,-50,0,-400,[1,1,1]]
         ];
-        this.front.css("background-image","url('cardo_reverse.png')");
+        this.front.css("background-image","url('cardo1.png')");
+        this.front.css("background-size","100% 100%");
         this.back.css("background-image","url('glass.gif')");
         this.setDefaultPosition(idx);
 
@@ -313,17 +321,45 @@ this.click(function(){
     _this.getCssTransform();
     select(_this);
 });
+this.hover(function(){
+    _this.anMouseOn();
+},function(){
+    _this.anMouseOut();
+});
         return this;
     }
     ,anUse : function(){
         if(!this.initFrame()) return;
         this.addFrame("-webkit-transform","rotateY(0deg) translateZ(-100px)",500,500);
         this.addFrame("-webkit-transform","rotateY(0deg) translateY(-400px) translateZ(-800px)",500,500);
+        this.addFrame("opacity","0",500,0);
 
         this.endFrameCB(function(){
             this.cube.remove();
             my_cardo_slot[this.idx] = null;
         });
+        this.execFrame();
+        return this;
+    }
+    ,anMouseOn : function(){
+        if(!this.initFrame()) {
+            this.addFrame("-webkit-transform","scale3d(1.2,1.2,1.2)",100,0);
+            return;
+        }else{
+            this.addFrame("","",1,0);
+            this.addFrame("-webkit-transform","scale3d(1.2,1.2,1.2)",100,0);
+        }
+        this.execFrame();
+        return this;
+    }
+    ,anMouseOut : function(){
+        if(!this.initFrame()) {
+            this.addFrame("-webkit-transform","scale3d(1.0,1.0,1.0)",10,0);
+            return;
+        }else{
+            this.addFrame("","",1,0);
+            this.addFrame("-webkit-transform","scale3d(1.0,1.0,1.0)",10,0);
+        }
         this.execFrame();
         return this;
     }
@@ -333,22 +369,23 @@ this.click(function(){
 var _Cardo_Public_ = _Model_Cardo_.extend({
     init : function(idx){
         this._super();
-        this.shape(120,194,4);
+        this.shape(120,194,8);
         this.defaultPosition = [
         //translateX translateY rotateX rotateY rotateZ translateZ scale3d
-            [0,this.xyz["k"],0,0,0,0,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,4,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,8,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,12,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,16,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,20,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,24,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,28,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,32,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,36,[1,1,1]]
-            ,[0,this.xyz["k"],0,0,0,40,[1,1,1]]
+            [0,this.xyz["k"],0,0,0,this.xyz["z"]*0,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*1,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*2,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*3,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*4,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*5,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*6,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*7,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*8,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*9,[1,1,1]]
+            ,[0,this.xyz["k"],0,0,0,this.xyz["z"]*10,[1,1,1]]
         ]
-        this.front.css("background-image","url('cardo_reverse.png')");
+        this.front.css("background-image","url('cardo1.png')");
+        this.front.css("background-size","100% 100%");
         this.back.css("background-image","url('glass.gif')");
         this.setDefaultPosition(idx);
 var _this = this;
@@ -363,3 +400,69 @@ this.click(function(){
     }
     
 });
+
+var core = {
+    rand : function(low,high){ return low + Math.floor(Math.random() * (high - low)); } //[low,high)
+}
+
+var _Model_Background_ = Class.extend({
+    shape : function(x,y,image,low,high){ //x = width; y = height; image = patch/name.png; low = first image idx; high = last image idx;
+        var div = $(document.createElement("div"));
+        var img = $(document.createElement("img"));
+
+        var a = image.split(".");
+        img[0].src = a[0] + core.rand(low,high + 1) + "." + a[1];
+
+        div.css("position","absolute");
+        div.css("width",x+"px");
+        div.css("height",y+"px");
+        img.css("position","absolute");
+        img.css("width",x+"px");
+        img.css("height",y+"px");
+
+        div.append(img);
+
+        return div;
+    }
+});
+
+var _Background_Fall_ = _Model_Background_.extend({
+    init : function(count){
+        this.background = [];
+        var div;
+        for(var i = 0; i < count; ++i){
+            div = this.shape(50,50,"realLeaf.png",1,4);
+            div = this.create(div);
+            $("#background").append(div);
+            this.background.push(div);
+        }
+    }
+    ,create : function(div){
+        var dropDuration = core.rand(5000,11000) + "ms";
+        var dropDelay = core.rand(0, 5000) + "ms";
+
+        div.css("top","-100px");
+        div.css("left", core.rand(50,90) + "%");
+
+        div.css("-webkit-animation-name","fade,drop");
+        div.css("-webkit-animation-duration",dropDuration + ", "+dropDuration);
+        div.css("-webkit-animation-iteration-count","infinite");
+        div.css("-webkit-animation-timing-function","ease-in-out");
+
+        div.css("-webkit-animation-delay",dropDelay + ", "+dropDelay);
+        div.css("-webkit-animation-direction","normal");
+        
+        var img = $("img",div);
+        var name = "fall" + core.rand(1,4);
+        img.css("-webkit-animation-name",name);
+        img.css("-webkit-animation-duration",core.rand(4000, 8000)+"ms");
+        img.css("-webkit-animation-iteration-count","infinite");
+        img.css("-webkit-animation-timing-function","ease-in-out");
+        //img.css("-webkit-animation-direction","alternate");
+        img.css("-webkit-transform-origin","50% -100%");
+
+        return div;
+    }
+});
+
+
