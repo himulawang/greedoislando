@@ -33,3 +33,7 @@ function disconnect(){
 function write_log(info){
 	$("#console").append("<p>" + info + "</p>");
 }
+
+function set_character(username){
+    ws.send("con",{cmd:"set_username",username:username});
+}

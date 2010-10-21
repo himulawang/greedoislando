@@ -61,15 +61,58 @@ var text_generate = {
     }
 }
 
-var set_slide = function(obj){
-    $(".dialog").remove();
-    var _this = obj;
-    $("#islando").append("<div class='dialog'></div>");
-    var dialog = $(".dialog");
-    var pos = _this.offset();
-    var top = pos.top + 35;
-    var left = pos.left;
-    dialog.css("top", top);
-    dialog.css("left", left);
-    return dialog;
+var set_dialog = function(obj){
+    var v = $(".dialog").html();
+    if(v != null){
+        return;
+    }else{
+        var _this = obj;
+        $("#islando").append("<div class='dialog'></div>");
+        var dialog = $(".dialog");
+        var pos = _this.offset();
+        var top = pos.top + 70;
+        var left = pos.left;
+        dialog.css("top", top);
+        dialog.css("left", left);
+        return dialog;
+    }    
 }
+
+var cancel_dialog = function(){
+    var v = $(".dialog").html();
+    if(v != null){
+        $(".dialog").fadeOut("200",function(){
+            $(this).remove();        
+        });
+        return;
+    }
+}
+
+var set_character_name = function(){
+    var c_name = $("#char-name").val();
+    if(c_name){
+        cancel_dialog();
+        $("#avatar").empty();
+        var str = "<img src='../images/" + c_name + ".jpg' class='avatar-1' />";
+    	$("#avatar").append(str);
+        var ch = new text_generate.obo("Hello, " + c_name + "! Welcome to the world of Greedo Island , u are now available to fight!","char-set-des");
+    }else{
+        alert("Plz Enter A Character Name");
+        return;
+    }
+}
+
+var set_room = function(){
+    
+}
+
+var dialog_toggle = function(obj){
+    var id = obj.attr("id");
+    if(id == "yes"){
+        set_character_name();
+    }else if(id == "no"){
+        cancel_dialog();
+    }
+}
+
+

@@ -61,7 +61,7 @@ p {
 }
 
 .button {
-	-webkit-box-shadow:5px 2px 3px #AAAAAA;
+	-webkit-box-shadow:1px 2px 3px #AAAAAA;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
 	padding:5px;
 	margin-top:5px;
@@ -87,12 +87,18 @@ p {
 #bf-list-info {
     border: 1px solid #BBBBBB;
 	width: 350px;
+    border-radius: 3px;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
 	-webkit-transform: translateX(305px);
 }
 
 #bf-info {
     border: 1px solid #BBBBBB;
 	width: 350px;
+    border-radius: 3px;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
 	-webkit-transform: translateX(660px);
 }
 
@@ -115,6 +121,8 @@ p {
 	width: 150px;
 	border-radius: 3px;
     float: left;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
 }
 
 .avatar-1 {
@@ -124,11 +132,9 @@ p {
 
 #char-des-1 {
     width: 135px;
-    height: 200px;
-    border: 1px solid #BBBBBB;
+    height: 206px;
     float: left;
     margin-left: 5px;
-    padding: 3px 0;
 }
 
 #char-des-2 {
@@ -138,6 +144,9 @@ p {
     border: 1px solid #BBBBBB;
     padding: 3px 0;
     margin-top: 5px;
+    border-radius: 3px;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
 }
 
 #online-player-list {
@@ -153,7 +162,7 @@ p {
     border: 1px solid #BBBBBB;
     border-radius: 3px;
     background: #FFFFFF;
-    -webkit-box-shadow:5px 2px 3px #AAAAAA;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
     z-index: 100;
     padding: 5px;
@@ -165,4 +174,46 @@ p {
 
 .no {
     margin-left: 20px;
+}
+
+#set-character {
+    width: 135px;
+    margin-top: 0;
+}
+
+#set-room {
+    width: 135px;
+    margin-top: 3px;
+}
+
+#char-set-des {
+    padding: 2px;
+    border: 1px solid #BBBBBB;
+    border-radius: 3px;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
+    margin-top: 3px;
+    height: 130px;
+}
+
+#online-player-list {
+    border: 1px solid #BBBBBB;
+    border-radius: 3px;
+    background: #FFFFFF;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
+}
+
+.list {
+    margin-top: 3px;
+}
+
+.block-title {
+    color: #444444;
+    font-weight: bold;
+    padding: 2px;
+    border-radius: 3px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#EEEEEE));
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    text-shadow:1px 1px 1px #CCCCCC;
 }

@@ -26,7 +26,9 @@ var generate_login_interface = function(){
         $("#a-game").fadeOut("slow",function(){
             generate_setup_interface();
         }).delay(20).fadeIn("slow");
-	    
+
+        connect();
+        
     });
 
     var cookieset = checkCookie("_GI_username");
@@ -35,31 +37,37 @@ var generate_login_interface = function(){
        	$("#username").val(_GI_username);
         $("#login").trigger('click');
     }
-
-    
 }
 
 var generate_setup_interface = function(){
+    set_character(_GI_username);
     $("#a-game").empty();
     str = "<div id='user-list-info' class='list-info'></div>";
-    str += "<div id='bf-list-info' class='list-info'></div>";
-    str += "<div id='bf-info' class='list-info'></div>";
+    str += "<div id='bf-list-info' class='list-info'><p class='block-title'>Online Room</p><div id='b-list' class='list'></div></div>";
+    str += "<div id='bf-info' class='list-info'><p class='block-title'>Room Detail</p><div id='b-detail' class='list'></div></div>";
     $("#a-game").append(str);
-    str = "<div id='char-info'><div id='avatar'></div><div id='char-des-1'></div><div id='char-des-2'></div></div><div id='online-player-list'></div>";
+    str = "<div id='char-info'><div id='avatar'></div><div id='char-des-1'></div><div id='char-des-2'></div></div><div id='online-player-list'><p class='block-title'>Online Player</p><div id='p-list' class='list'></div></div>";
 	$("#user-list-info").append(str);
-    str = "<img src='../images/images.jpg' class='avatar-1' />";
-	$("#avatar").append(str);
-    str = "<p>" + _GI_username + "</p>";
-    str += "<input type='button' value='Set Character' id='set-character' class='button set-info' />";
+    str = "<input type='button' value='Set Character' id='set-character' class='button set-info' />";
+    str += "<input type='button' value='Set Room' id='set-room' class='button set-info' />";
+    str += "<div id='char-set-des'></div>";
     $("#char-des-1").append(str);
 
-    $("#set-character").bind("click",function(){
-        var _this = set_slide($(this));
-        str = "<input type='text' value='' id='char-name' class='text-input' />";
-        str += "<p><input type='button' value='Confirm' class='button set-info yes' id='yes'/>";
-        str += "<input type='button' value='Cancel' class='button set-info no' /></p>";
+    $("#set-character").click(function(){
+        var _this = set_dialog($(this));
+        str = "<input type='text' value='killua' id='char-name' class='text-input' />";
+        str += "<p><input type='button' value='Set' class='button set-info yes' id='yes' />";
+        str += "<input type='button' value='Cancel' class='button set-info no' id='no' /></p>";
         _this.append(str);
-        _this.slideDown("slow");
+        _this.fadeIn("slow");
+
+        $(".set-info").click(function(){
+            dialog_toggle($(this));
+        });
+    });
+
+    $("#set-room").click(function(){
+        
     });
 }
 
