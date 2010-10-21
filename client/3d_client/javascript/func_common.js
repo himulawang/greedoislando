@@ -29,3 +29,47 @@ var checkCookie = function(c_name){
     }
     return val;
 }
+
+
+var s = [];
+
+var slide_show = function(){
+    var a;
+    a = new text_generate.obo("This is a Game produced by ilaempire members. Welcome to our world [Greed Island]. Enjoy urselves and have fun!","welcome-title");
+}
+
+var text_generate = {
+    obo : function(msg,id){
+        //Variable
+        var _this = this;
+        this.msg = msg;
+        this.el = $("#" + id);
+        this.idx;
+        _this.el.empty();
+        _this.idx = s.push( setInterval(function(){ _this.obo(); },10) );
+
+        this.obo = function(){
+            var len = _this.el.html().length;
+            if(len >= msg.length){
+                window.clearInterval(s[_this.idx - 1]);
+                return;
+            }
+
+            char = msg.charAt(len);
+            _this.el.append(char);
+        }
+    }
+}
+
+var set_slide = function(obj){
+    $(".dialog").remove();
+    var _this = obj;
+    $("#islando").append("<div class='dialog'></div>");
+    var dialog = $(".dialog");
+    var pos = _this.offset();
+    var top = pos.top + 35;
+    var left = pos.left;
+    dialog.css("top", top);
+    dialog.css("left", left);
+    return dialog;
+}

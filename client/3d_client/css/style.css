@@ -1,34 +1,33 @@
-* {
-	margin:0;
-	padding:0;
-	color:#424200;
-	font-family:Î¢ÈíÑÅºÚ, Verdana, ºÚÌå, Arial, Helvetica, sans-serif;
-	list-style:none;
-	font-size:13px;
-}
-
+ï»¿
 html {
 	height: 100%;
 }
 
 body {
-	background:#FFF;
+	background:#FFFFFF;
+    color:#424200;
+	font-family:å¾®è½¯é›…é»‘, Verdana, é»‘ä½“, Arial, Helvetica, sans-serif;
+    font-size:13px;
 }
 
 input {
-	margin:3px auto;
+    color:#424200;
+	font-family:å¾®è½¯é›…é»‘, Verdana, é»‘ä½“, Arial, Helvetica, sans-serif;
+    font-size:13px;
+}
+
+p {
+    margin: 0;
 }
 
 #greedo {
 	height:60px;
 	width:1024px;
 	border-radius: 3px;
-	-moz-border-radius: 3px;
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
-	background: -moz-linear-gradient(top, #fff, #ddd);
-	border: 1px solid #bbb;
-	-moz-box-shadow:5px 2px 3px #AAA;
-	-webkit-box-shadow:5px 2px 3px #AAA;
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
+	background: -moz-linear-gradient(top, #FFFFFF, #DDDDDD);
+	border: 1px solid #BBBBBB;
+	-webkit-box-shadow:5px 2px 3px #AAAAAA;
 	margin:10px auto;
 	text-align:center;
 	font-size:16px;
@@ -39,11 +38,14 @@ input {
 	height:800px;
 	width:1024px;
 	border-radius: 3px;
-	-moz-border-radius: 3px;
-	border: 1px solid #bbb;
-	-moz-box-shadow:5px 2px 3px #AAA;
-	-webkit-box-shadow:5px 2px 3px #AAA;
+	border: 1px solid #BBBBBB;
+	-webkit-box-shadow:5px 2px 3px #AAAAAA;
 	margin:10px auto;
+}
+
+#a-game {
+    height:100%;
+    width:100%;
 }
 
 #login-div {
@@ -55,18 +57,16 @@ input {
 .text-input {
 	height:25px;
 	width:240px;
-	border:1px solid #CCC;
+	border:1px solid #CCCCCC;
 }
 
 .button {
-	-moz-box-shadow:5px 2px 3px #AAA;
-	-webkit-box-shadow:5px 2px 3px #AAA;
+	-webkit-box-shadow:5px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
 	padding:5px;
 	margin-top:5px;
 	border-radius: 3px;
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
-	background: -moz-linear-gradient(top, #fff, #ddd);
-	border: 1px solid #bbb;
+	border: 1px solid #BBBBBB;
 	cursor:pointer;
 }
 
@@ -85,32 +85,84 @@ input {
 }
 
 #bf-list-info {
+    border: 1px solid #BBBBBB;
 	width: 350px;
 	-webkit-transform: translateX(305px);
 }
 
 #bf-info {
+    border: 1px solid #BBBBBB;
 	width: 350px;
 	-webkit-transform: translateX(660px);
 }
 
 .list-info {
-	border: 1px solid #bbb;
 	height: 785px;
 	width: 300px;
 	margin: 5px;
 	position: absolute;
 }
 
+#char-info {
+    height: 310px;
+    width: 100%;
+}
+
 #avatar {
-	border: 1px solid #bbb;
+	border: 1px solid #BBBBBB;
 	padding: 3px;
 	height: 200px;
 	width: 150px;
 	border-radius: 3px;
+    float: left;
 }
 
 .avatar-1 {
 	height:200px;
 	width:150px;
+}
+
+#char-des-1 {
+    width: 135px;
+    height: 200px;
+    border: 1px solid #BBBBBB;
+    float: left;
+    margin-left: 5px;
+    padding: 3px 0;
+}
+
+#char-des-2 {
+    width: 100%;
+    height: 90px;
+    float: left;
+    border: 1px solid #BBBBBB;
+    padding: 3px 0;
+    margin-top: 5px;
+}
+
+#online-player-list {
+    height: 470px;
+    border: 1px solid #BBBBBB;
+    width:100%;
+    margin-top: 5px;
+}
+
+.dialog {
+    display: none;
+    position: absolute;
+    border: 1px solid #BBBBBB;
+    border-radius: 3px;
+    background: #FFFFFF;
+    -webkit-box-shadow:5px 2px 3px #AAAAAA;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
+    z-index: 100;
+    padding: 5px;
+}
+
+.set-info {
+    width: 110px;
+}
+
+.no {
+    margin-left: 20px;
 }
