@@ -15,7 +15,7 @@ var _GI_ = {
 		globalProcess : function(msg){
 			var json = JSON.parse(msg.data);
 			var string = msg.data;
-            //write_log(string);
+            write_log(string);
 			var func = ["_GI_", json.type , json.data.cmd].join(".") + "(" + string + ")";
 			$.globalEval(func);		
 		}
@@ -31,17 +31,30 @@ var _GI_ = {
             var list = $("#p-list");
             list.empty();
             for(x in json.data.doc){
-                list.append("<p>" + json.data.doc[x].username + "</p>");
+                list.append("<div class='online-player-block'>" + json.data.doc[x].username + "</div>");
             }
         },
 
         get_battlefieldlist : function(json){
             var x;
+            var room = [];
             $("#b-list").empty();
             for(x in json.data.doc){
-                $("#b-list").append("<p>Room No." + json.data.doc[x].no + " " + json.data.doc[x].bf_name + "<span style='float:right;cursor:pointer;' onclick='enter_bf("+ json.data.doc[x].no +");'>Enter</span></p>");
+                $("#b-list").append("<div class='online-room-block'>Room No." + json.data.doc[x].no + " " + json.data.doc[x].bf_name + "</div>");
             }
+
+            $(".online-room-block").bind("click",function(){
+                var selected = $(".online-room-block").filter(".selected");
+                if(selected){
+                    selected.removeClass("selected");
+                }
+                $(this).addClass("selected");
+                
+                
+
+            });
         }
 
     }
 }
+

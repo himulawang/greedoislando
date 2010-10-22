@@ -1,4 +1,5 @@
 $(function(){
+    connect();
     generate_login_interface();
 });
 
@@ -13,6 +14,7 @@ var generate_login_interface = function(){
     $("#a-game").append(str);
 
     $("#login").bind('click',function(){
+
 	    if(!$("#username").val()){
 	        return;
 	    }
@@ -23,12 +25,11 @@ var generate_login_interface = function(){
             _GI_username = _GI_username_input;
         }
         
-        $("#a-game").fadeOut("slow",function(){
-            generate_setup_interface();
-        }).delay(20).fadeIn("slow");
-
-        connect();
-        
+        if(ws.readyState == 1){
+            $("#a-game").fadeOut("slow",function(){
+                generate_setup_interface();
+            }).delay(20).fadeIn("slow");
+        }
     });
 
     var cookieset = checkCookie("_GI_username");
@@ -66,9 +67,7 @@ var generate_setup_interface = function(){
         });
     });
 
-    $("#set-room").click(function(){
-        
-    });
+    
 }
 
 

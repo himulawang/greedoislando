@@ -211,9 +211,35 @@ p {
 .block-title {
     color: #444444;
     font-weight: bold;
-    padding: 2px;
+    padding: 5px;
     border-radius: 3px;
     background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#EEEEEE));
     -webkit-box-shadow:1px 2px 3px #AAAAAA;
     text-shadow:1px 1px 1px #CCCCCC;
+}
+
+.online-player-block {
+    text-align: center;
+    width: 280px;
+    margin: 3px 0 0 3px;
+    padding: 5px;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px;
+    float:left;
+    cursor: pointer;
+}
+
+.online-room-block {
+    width: 330px;
+    margin: 3px 0 0 3px;
+    padding: 5px;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px;
+    float:left;
+    cursor: pointer;
+}
+
+.selected {
+    border: 2px solid #FFA500;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
 }
