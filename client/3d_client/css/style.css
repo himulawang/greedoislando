@@ -6,13 +6,13 @@ html {
 body {
 	background:#FFFFFF;
     color:#424200;
-	font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size:13px;
 }
 
 input {
     color:#424200;
-	font-family:微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size:13px;
 }
 
@@ -32,6 +32,9 @@ p {
 	text-align:center;
 	font-size:16px;
 	line-height:60px;
+    font-weight: bold;
+    -webkit-box-shadow:1px 2px 3px #AAAAAA;
+    text-shadow:1px 1px 1px #CCCCCC;
 }
 
 #islando {
@@ -193,7 +196,8 @@ p {
     -webkit-box-shadow:1px 2px 3px #AAAAAA;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DDDDDD));
     margin-top: 3px;
-    height: 130px;
+    height: 136px;
+    word-wrap: break-word;
 }
 
 #online-player-list {
@@ -242,4 +246,46 @@ p {
 .selected {
     border: 2px solid #FFA500;
     -webkit-box-shadow:1px 2px 3px #AAAAAA;
+}
+
+.b-detail {
+    
+}
+
+.room-name {
+    
+}
+
+#enemy {
+    height: 260px;
+    width: 1024px;
+    border: 1px solid #CCCCCC;
+}
+
+#bf-console {
+    height: 510px;
+    width: 1024px;
+    border: 1px solid #CCCCCC;
+}
+
+#me {
+    -webkit-transform-style: preserve-3d;
+    height: 0px;
+    width: 1024px;
+    margin-left:auto;
+    margin-right:auto;
+    position: absolute;
+    -webkit-animation: my-float 5000ms infinite ease-in-out;
+    -webkit-perspective: 800;
+    -webkit-transform: translateY(100px);
+}
+
+@-webkit-keyframes my-float{
+    0% { top: 73%; }
+    40% { top: 62%; }
+    100% { top: 73%; }
+}
+
+#room-name-title {
+    
 }
