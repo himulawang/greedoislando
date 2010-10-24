@@ -62,36 +62,36 @@ var text_generate = {
 }
 
 var set_dialog = function(obj){
-    var v = $(".dialog").html();
-    if(v != null){
-        return;
-    }else{
+        $(".dialog").slideUp("200");
+        $(".dialog").remove();
         var _this = obj;
         $("#islando").append("<div class='dialog'></div>");
         var dialog = $(".dialog");
         var pos = _this.offset();
-        var top = pos.top + 70;
+        var top = pos.top + 65;
         var left = pos.left;
         dialog.css("top", top);
         dialog.css("left", left);
         return dialog;
-    }    
 }
 
 var cancel_dialog = function(){
     var v = $(".dialog").html();
     if(v != null){
-        $(".dialog").fadeOut("200",function(){
+        $(".dialog").slideUp("200",function(){
             $(this).remove();        
         });
         return;
     }
 }
 
+var mychar_name;
+
 var set_character_name = function(){
     var c_name = $("#char-name").val();
     if(c_name){
         cancel_dialog();
+        mychar.charname = c_name;
         $("#avatar").empty();
         var str = "<img src='../images/" + c_name + ".jpg' class='avatar-1' />";
     	$("#avatar").append(str);
@@ -103,16 +103,32 @@ var set_character_name = function(){
 }
 
 var set_room = function(){
-    
+    var bf_name = $("#room-name").val();
+    if(mychar.charname){
+        cancel_dialog();
+        ws.send("pre",{cmd:"create_bf",bf_name:bf_name,char_name:mychar.charname});
+    }else{
+        alert("Plz Enter A Character Name");
+    }
 }
 
-var dialog_toggle = function(obj){
+var dialog_toggle = function(obj,val){
     var id = obj.attr("id");
     if(id == "yes"){
-        set_character_name();
+        if(val == "Set Char"){
+            set_character_name();
+        }else if(val == "Set Room"){
+            set_room();
+        }
     }else if(id == "no"){
         cancel_dialog();
     }
 }
 
-
+var enter_bf = function(room_no){
+    if(mychar.charname){
+        ws.send("pre",{cmd:"enter_bf",bf_no:room_no,char_name:mychar.charname});
+    }else{
+        alert("Plz Enter A Character Name");
+    }
+}

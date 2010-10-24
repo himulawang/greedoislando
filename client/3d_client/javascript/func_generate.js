@@ -26,9 +26,9 @@ var generate_login_interface = function(){
         }
         
         if(ws.readyState == 1){
-            $("#a-game").fadeOut("slow",function(){
+            $("#a-game").fadeOut("200",function(){
                 generate_setup_interface();
-            }).delay(20).fadeIn("slow");
+            }).delay(20).fadeIn("200");
         }
     });
 
@@ -47,7 +47,7 @@ var generate_setup_interface = function(){
     str += "<div id='bf-list-info' class='list-info'><p class='block-title'>Online Room</p><div id='b-list' class='list'></div></div>";
     str += "<div id='bf-info' class='list-info'><p class='block-title'>Room Detail</p><div id='b-detail' class='list'></div></div>";
     $("#a-game").append(str);
-    str = "<div id='char-info'><div id='avatar'></div><div id='char-des-1'></div><div id='char-des-2'></div></div><div id='online-player-list'><p class='block-title'>Online Player</p><div id='p-list' class='list'></div></div>";
+    str = "<div id='char-info'><div id='avatar'></div><div id='char-des-1'></div><div id='char-des-2'>reservation</div></div><div id='online-player-list'><p class='block-title'>Online Player</p><div id='p-list' class='list'></div></div>";
 	$("#user-list-info").append(str);
     str = "<input type='button' value='Set Character' id='set-character' class='button set-info' />";
     str += "<input type='button' value='Set Room' id='set-room' class='button set-info' />";
@@ -57,17 +57,41 @@ var generate_setup_interface = function(){
     $("#set-character").click(function(){
         var _this = set_dialog($(this));
         str = "<input type='text' value='killua' id='char-name' class='text-input' />";
-        str += "<p><input type='button' value='Set' class='button set-info yes' id='yes' />";
+        str += "<p><input type='button' value='Set Char' class='button set-info yes' id='yes' />";
         str += "<input type='button' value='Cancel' class='button set-info no' id='no' /></p>";
         _this.append(str);
-        _this.fadeIn("slow");
+        _this.slideDown("200");
 
         $(".set-info").click(function(){
-            dialog_toggle($(this));
+            dialog_toggle($(this),$(this).val());
         });
     });
 
-    
+    $("#set-room").click(function(){
+        var _this = set_dialog($(this));
+        str = "<input type='text' value='Greed Jealous Hate' id='room-name' class='text-input' />";
+        str += "<p><input type='button' value='Set Room' class='button set-info yes' id='yes' />";
+        str += "<input type='button' value='Cancel' class='button set-info no' id='no' /></p>";
+        _this.append(str);
+        _this.slideDown("200");
+
+        $(".set-info").click(function(){
+            dialog_toggle($(this),$(this).val());
+        });
+    }); 
 }
 
-
+var generate_battle_field = function(){
+    $("#a-game").empty();
+    str = "<div id='room-name-title' class='block-title'></div>";
+    str += "<div id='enemy'></div>";
+    str += "<div id='bf-console'></div>";
+    str += "<div id='me'></div>";
+    $("#a-game").append(str);
+    var cardo0 = new _Cardo_My_(0).appendTo($("#me"));
+    var cardo1 = new _Cardo_My_(1).appendTo($("#me"));
+    var cardo2 = new _Cardo_My_(2).appendTo($("#me"));
+    var cardo3 = new _Cardo_My_(3).appendTo($("#me"));
+    var cardo4 = new _Cardo_My_(4).appendTo($("#me"));
+    var cardo5 = new _Cardo_My_(5).appendTo($("#me"));
+}
