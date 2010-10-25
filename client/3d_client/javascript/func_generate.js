@@ -84,10 +84,12 @@ var generate_setup_interface = function(){
 var generate_battle_field = function(){
     $("#a-game").empty();
     str = "<div id='room-name-title' class='block-title'></div>";
-    str += "<div id='enemy'></div>";
-    str += "<div id='bf-console'></div>";
+    str += "<div id='enemy'><div id='enemy-upper-layer'></div><div id='enemy-lower-layer'></div></div>";
+    str += "<div id='bf-console'><div id='bf-console-upper-layer'></div><div id='bf-console-lower-layer'></div></div>";
     str += "<div id='me'></div>";
     $("#a-game").append(str);
+    str = "<div id='enemy-action-bar'></div><div id='me-action-bar'></div>";
+    $("#enemy-lower-layer").append(str);
     var cardo0 = new _Cardo_My_(0).appendTo($("#me"));
     var cardo1 = new _Cardo_My_(1).appendTo($("#me"));
     var cardo2 = new _Cardo_My_(2).appendTo($("#me"));
