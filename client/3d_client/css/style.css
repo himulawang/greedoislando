@@ -296,17 +296,6 @@ p {
 #enemy-lower-layer {
     width: 100%;
     height: 45px;
-    border: 1px solid #CCCCCC;
-}
-
-#enemy-action-bar {
-    width: 300px;
-    height: 25px;
-    border-radius: 3px;
-    background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#EEEEEE));
-    -webkit-box-shadow:1px 2px 3px #AAAAAA;
-    border: 1px solid #CCCCCC;
-    float: left;
 }
 
 #bf-console-upper-layer {
@@ -315,12 +304,41 @@ p {
     border: 1px solid #CCCCCC;
 }
 
-#me-action-bar {
-    width: 300px;
+#enemy-info-right {
+    padding: 5px;;
+    height: 250px;
+    width: 225px;
+    float: right;
+}
+
+#action-avatar {
+    width: 1022px;
     height: 25px;
+    border-radius: 3px;
+    float: left;
+}
+
+#action-bar {
+    width: 1022px;
+    height: 15px;
     border-radius: 3px;
     background: -webkit-gradient(linear, left top, left bottom, from(#DDDDDD), to(#EEEEEE));
     -webkit-box-shadow:1px 2px 3px #AAAAAA;
     border: 1px solid #CCCCCC;
-    float: right;
+    float: left;
 }
+
+#me-info-left {
+    padding: 5px;
+    height: 260px;
+    width: 225px;
+    float: left;
+}
+
+#ready-to-fight {
+    width: 120px;
+    height: 20px;
+    padding-top: 10px;
+    text-align: center;
+}
+

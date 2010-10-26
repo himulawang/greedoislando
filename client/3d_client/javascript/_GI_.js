@@ -15,9 +15,9 @@ var _GI_ = {
 		globalProcess : function(msg){
 			var json = JSON.parse(msg.data);
 			var string = msg.data;
-            write_log(string);
+            //write_log(string);
 			var func = ["_GI_", json.type , json.data.cmd].join(".") + "(" + string + ")";
-			$.globalEval(func);		
+			$.globalEval(func);
 		}
 	},
 
@@ -81,7 +81,62 @@ var _GI_ = {
             generate_battle_field();
             str = json.data.doc.bf_name;
             $("#room-name-title").append(str);
-        }     
+        },
+
+        start_bf : function(json){
+            var x;
+            var str;
+
+            $("#me-info-left").fadeOut("50",function(){
+                $("#me").fadeIn("50");
+                $("#ready-to-fight").remove();
+                for(x in json.data.doc.char){
+                    str = "<div class='char-attr-info'>ID: " + json.data.doc.char[x].id + "</div>";
+                    str += "<div class='char-attr-info'>Name: " + json.data.doc.char[x].name + "</div>";
+                    str += "<div class='char-attr-info'>HP: <span id='me-current-hp'>" + json.data.doc.char[x].hp + "</span> / " + json.data.doc.char[x].maxhp + "</div>";
+                    str += "<div class='char-attr-info'>Speed: <span id='me-current-speed'>" + json.data.doc.char[x].speed + "</span></div>";
+                    str += "<div class='char-attr-info'>Speedup: <span id='me-current-speedup'>" + json.data.doc.char[x].speedup + "</span></div>";
+                    str += "<div class='char-attr-info'>ActionPoint: <span id='me-current-actionpoint'>" + json.data.doc.char[x].actionPoint + "</span></div>";
+                    if(x == mychar.id){
+                        $("#me-info-left").append(str);
+                    }else{
+                        $("#enemy-info-right").append(str);
+                    }
+                }
+            }).delay("10").fadeIn("50");
+        }
+    },
+
+    batt : {
+        deal_cardo : function(json){
+            var x,y,str,func;
+            for(x in json.data.doc){
+                if(x == mychar.id){
+                    for(y in json.data.doc[x].cardo){
+                        str = json.data.doc[x].cardo[y];
+                        if(y == 0){
+                            cardo0.front.empty();
+                            cardo0.front.append(str);
+                        }else if(y == 1){
+                            cardo1.front.empty();
+                            cardo1.front.append(str);
+                        }else if(y == 2){
+                            cardo2.front.empty();
+                            cardo2.front.append(str);
+                        }else if(y == 3){
+                            cardo3.front.empty();
+                            cardo3.front.append(str);
+                        }else if(y == 4){
+                            cardo4.front.empty();
+                            cardo4.front.append(str);
+                        }else if(y == 5){
+                            cardo5.front.empty();
+                            cardo5.front.append(str);
+                        }
+                    }
+                }
+            }
+        }       
     }
 }
 

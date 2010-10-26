@@ -9,7 +9,7 @@ class core {
             if($seed <=$sum) return $k;
         }
     }
-    public static function gain($xxx){ //Gain a new cardo
+    public static function gain($xxx=null){ //Gain a new cardo
         global $CARDOPROBABILITY;
 
         if(!$xxx) $xxx = core::random($CARDOPROBABILITY);

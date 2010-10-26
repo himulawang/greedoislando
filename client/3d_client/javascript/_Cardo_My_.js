@@ -36,6 +36,8 @@ this.cube.hover(function(){
             $(this.cube).remove();
             my_cardo_slot[this.idx] = null;
         });
+        
+        use_cardo(this.idx);
 
         this.cube.startFrame();
         return this;

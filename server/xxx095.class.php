@@ -1,14 +1,14 @@
 <?php
 
-class xxx094 extends special {
-    protected $xxx = 94;
-    protected $name = "exchange";
+class xxx095 extends special {
+    protected $xxx = 95;
+    protected $name = "real exchange";
 
-    public function gain(){ //exchange one random opponent cardo with my selected cardo
+    public function gain(){ //exchange one selected opponent's cardo with my selected cardo
         if(!self::verify()) return;
 
         $caster_pos = $this->msg["data"]["caster_pos"];
-        $target_pos = array_rand($this->target->cardo);
+        $target_pos = $this->msg["data"]["target_pos"];
 
         $clone = clone $this->caster->cardo[$caster_pos];
         $this->caster->cardo[$caster_pos] = $this->target->cardo[$target_pos];
@@ -22,11 +22,11 @@ class xxx094 extends special {
     }
     protected function verify(){
         $msg = $this->msg["data"];
-        if(!isset($msg["caster_pos"])) return;
+        if(! (isset($msg["caster_pos"]) && isset($msg["target_pos"])) ) return;
         $pos = $msg["caster_pos"];
         if($pos == $this->pos) return; //select cardo has same pos with this exchange cardo
-        if(!isset($this->caster->cardo[$pos])) return; //select cardo not exists
-        if(!$this->target->getCardoCount()) return; //target has no cardo
+        if(!isset($this->caster->cardo[$pos])) return; //my select cardo not exists
+        if(!isset($this->target->cardo[$msg["target_pos"]])) return; //target select cardo not exists
         return 1;
     }
     protected function getExchangedCardo($caster_pos,$from,$to,$target_pos){
@@ -39,7 +39,7 @@ class xxx094 extends special {
         $a[$id]["to"] = $to;
         $a[$id]["to_pos"] = $target_pos;
 
-        $json = s2c::JSON("batt","exchange_cardo",$a);
+        $json = s2c::JSON("batt","real_exchange_cardo",$a);
 
         $b = array();
         $other = $this->target->getID();
@@ -48,11 +48,9 @@ class xxx094 extends special {
         $b[$other]["from_pos"] = $target_pos;
         $b[$other]["to"] = $from;
         $b[$other]["to_pos"] = $caster_pos;
-        $otherjson = s2c::JSON("batt","exchange_cardo",$b);
+        $otherjson = s2c::JSON("batt","real_exchange_cardo",$b);
 
         $this->gi->result[] = s2c::outlet("diff",$id,$json,$other,$otherjson);
         return 1;
     }
 }
-
-?>
