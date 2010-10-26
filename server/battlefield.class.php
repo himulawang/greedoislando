@@ -149,7 +149,7 @@ class battlefield {
             if( isset($cardo[$i]) ){
                 continue;
             }else{
-                $cardo[$i] = core::gain(51);
+                $cardo[$i] = core::gain();
                 $this->dealedCardo[$id]["positiveSide"][$i] = $cardo[$i]->getXXX();
                 $this->dealedCardo[$id]["negativeSide"][$i] = 0;
             }
@@ -202,10 +202,10 @@ class battlefield {
         $cardo = &$char->cardo;
         $cardo[0] = core::gain(91);
         $cardo[1] = core::gain(92);
-        $cardo[2] = core::gain(91);
+        $cardo[2] = core::gain(97);
         $cardo[3] = core::gain(94);
-        $cardo[4] = core::gain(91);
-        $cardo[5] = core::gain(91);
+        $cardo[4] = core::gain(95);
+        $cardo[5] = core::gain(96);
         self::varAllCardo($id);
         return 1;
     }

@@ -59,6 +59,7 @@ var _Model_Cube_ = Class.extend({
 this.cube.css("left","50%");
 this.cube.css("cursor","pointer");
 
+
         return this;
     }
     ,appendTo : function(el){

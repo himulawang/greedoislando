@@ -81,6 +81,13 @@ var generate_setup_interface = function(){
     }); 
 }
 
+var cardo0;
+var cardo1;
+var cardo2;
+var cardo3;
+var cardo4;
+var cardo5;
+
 var generate_battle_field = function(){
     $("#a-game").empty();
     str = "<div id='room-name-title' class='block-title'></div>";
@@ -88,12 +95,27 @@ var generate_battle_field = function(){
     str += "<div id='bf-console'><div id='bf-console-upper-layer'></div><div id='bf-console-lower-layer'></div></div>";
     str += "<div id='me'></div>";
     $("#a-game").append(str);
-    str = "<div id='enemy-action-bar'></div><div id='me-action-bar'></div>";
+    str = "<div id='enemy-info-left'></div><div id='enemy-info-right'></div>";
+    $("#enemy-upper-layer").append(str);
+    str = "<div id='action-avatar'></div><div id='action-bar'></div>";
     $("#enemy-lower-layer").append(str);
-    var cardo0 = new _Cardo_My_(0).appendTo($("#me"));
-    var cardo1 = new _Cardo_My_(1).appendTo($("#me"));
-    var cardo2 = new _Cardo_My_(2).appendTo($("#me"));
-    var cardo3 = new _Cardo_My_(3).appendTo($("#me"));
-    var cardo4 = new _Cardo_My_(4).appendTo($("#me"));
-    var cardo5 = new _Cardo_My_(5).appendTo($("#me"));
+    str = "<div id='me-info-left'></div>";
+    $("#bf-console-lower-layer").append(str);
+    str = "<div id='ready-to-fight' class='button'>Ready</div>";
+    $("#me-info-left").append(str);
+
+    $("#me").ready(function(){
+        $("#me").css("display","none");
+        cardo0 = new _Cardo_My_(0).appendTo($("#me"));
+        cardo1 = new _Cardo_My_(1).appendTo($("#me"));
+        cardo2 = new _Cardo_My_(2).appendTo($("#me"));
+        cardo3 = new _Cardo_My_(3).appendTo($("#me"));
+        cardo4 = new _Cardo_My_(4).appendTo($("#me"));
+        cardo5 = new _Cardo_My_(5).appendTo($("#me"));
+    });
+
+    $("#ready-to-fight").click(function(){
+        bf_start();
+    });
+    
 }

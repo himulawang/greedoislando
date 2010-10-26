@@ -37,3 +37,11 @@ function write_log(info){
 function set_character(username){
     ws.send("con",{cmd:"set_username",username:username});
 }
+
+function bf_start(){
+    ws.send("pre",{cmd:"start_bf"});
+}
+
+function use_cardo(num){
+    ws.send("batt",{cmd:"use_cardo",pos:num});
+}
