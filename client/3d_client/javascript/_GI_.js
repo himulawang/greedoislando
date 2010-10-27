@@ -113,26 +113,10 @@ var _GI_ = {
             for(x in json.data.doc){
                 if(x == mychar.id){
                     for(y in json.data.doc[x].cardo){
+                        my_cardo_slot[y] = new _Cardo_My_(y).appendTo($("#me"));
                         str = json.data.doc[x].cardo[y];
-                        if(y == 0){
-                            cardo0.front.empty();
-                            cardo0.front.append(str);
-                        }else if(y == 1){
-                            cardo1.front.empty();
-                            cardo1.front.append(str);
-                        }else if(y == 2){
-                            cardo2.front.empty();
-                            cardo2.front.append(str);
-                        }else if(y == 3){
-                            cardo3.front.empty();
-                            cardo3.front.append(str);
-                        }else if(y == 4){
-                            cardo4.front.empty();
-                            cardo4.front.append(str);
-                        }else if(y == 5){
-                            cardo5.front.empty();
-                            cardo5.front.append(str);
-                        }
+                        my_cardo_slot[y].front.empty();
+                        my_cardo_slot[y].front.append(str);
                     }
                 }
             }

@@ -1,0 +1,43 @@
+* {color:#424200;font-family: 微软雅黑, Verdana, 黑体, Arial, Helvetica, sans-serif;list-style:none;font-size:13px;}
+html{margin:0;padding:0;height:100%;width:100%;}
+body {background:#FFF;-webkit-perspective: 800;}
+#greedo {height:60px;width:1024px;border-radius: 3px;-moz-border-radius: 3px;background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));background: -moz-linear-gradient(top, #fff, #ddd);border: 1px solid #bbb;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;margin:10px auto;text-align:center;font-size:16px;line-height:60px;}
+#islando {height:800px;width:1024px;border-radius: 3px;-moz-border-radius: 3px;border: 1px solid #bbb;-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;margin:10px auto;-webkit-transform: rotateX(0deg) translateZ(0);-webkit-transform-style: preserve-3d;}
+#login {height:200px;width:240px;margin:200px auto;}
+.text-input {height:25px;width:240px;border:1px solid #CCC;}
+.button {-moz-box-shadow:5px 2px 3px #AAA;-webkit-box-shadow:5px 2px 3px #AAA;padding:5px;margin-top:5px;border-radius: 3px;-moz-border-radius: 3px;background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));background: -moz-linear-gradient(top, #fff, #ddd);border: 1px solid #bbb;cursor:pointer;}
+.index-login {width:105px;margin:10px 0 0 10px;}
+#welcome-title {text-align:center;height:25px;padding:5px;}
+#title-information {font-size:15px;padding:5px;background: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#FFF));background: -moz-linear-gradient(top, #EEE, #FFF);height:25px;}
+.main-content-frame {background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#EEE));background: -moz-linear-gradient(top, #FFF, #EEE);width:100%;height:760px;}
+.character {height: 236px;width: 151px;-webkit-box-shadow: 2px 2px 6px #444;-webkit-transition: -webkit-transform .3s ease-in-out;border-radius: 3px;border: 2px solid #DDD;padding:2px;-webkit-box-shadow: 2px 2px 6px #444;position: absolute;left: 45%;-webkit-transition: -webkit-transform .3s ease-in-out;}
+
+#character-0 { -webkit-transform:translateZ(-500px) translateX(-450px); }
+#character-1 { -webkit-transform:translateZ(-500px) translateX(-280px); }
+#character-2 { -webkit-transform:translateZ(-500px) translateX(-110px); }
+#character-3 { -webkit-transform:translateZ(-500px) translateX(60px); }
+#character-4 { -webkit-transform:translateZ(-500px) translateX(230px); }
+#character-5 { -webkit-transform:translateZ(-500px) translateX(400px); }
+
+#character-0:hover{ -webkit-transform:translateZ(-500px) translateX(-450px) scale3d(1.1,1.1,1.1); cursor: pointer; z-index:100;}
+#character-1:hover{ -webkit-transform:translateZ(-500px) translateX(-280px) scale3d(1.1,1.1,1.1); cursor: pointer; z-index:100;}
+#character-2:hover{ -webkit-transform:translateZ(-500px) translateX(-110px) scale3d(1.1,1.1,1.1); cursor: pointer; z-index:100;}
+#character-3:hover{ -webkit-transform:translateZ(-500px) translateX(60px) scale3d(1.1,1.1,1.1); cursor: pointer; z-index:100;}
+#character-4:hover{ -webkit-transform:translateZ(-500px) translateX(230px) scale3d(1.1,1.1,1.1); cursor: pointer; z-index:100;}
+#character-5:hover{ -webkit-transform:translateZ(-500px) translateX(400px) scale3d(1.1,1.1,1.1); cursor: pointer; z-index:100;}
+
+#character-avatar {-webkit-transform: translateZ(500px);-webkit-transform-style: preserve-3d;width: 100%;height:700px;}
+#character-introduction {width: 80%;height:700px;position: absolute;left: 200px;}
+#character-button {width: 100%;height:60px;}
+.character-select {width:105px;margin-left:10px;}
+.character-select:hover { -webkit-transform: scale3d(1.1,1.1,1.1);-webkit-transition: -webkit-transform .5s ease-in-out;}
+
+@-webkit-keyframes my-float{
+    0% { top: 45%; }
+    40% { top: 53%; }
+    100% { top: 45%; }
+}
+
+.selected {-moz-box-shadow:0px 0px 5px #FFCC33;-webkit-box-shadow:0px 0px 10px #FFCC33;border:2px solid #FFCC33;}
+.selected-confirm {-webkit-transform:translateZ(-500px) translateX(-450px) !important;-webkit-transition: -webkit-transform 1s ease-in-out;}
+.character-img {height: 100%;width: 100%;}
