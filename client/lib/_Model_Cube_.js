@@ -59,6 +59,7 @@ w._Model_Cube_ = Class.extend({
 
 this.cube.css("left","50%");
 this.cube.css("cursor","pointer");
+this.cube.css("opacity",".7");
 
         return this;
     }
