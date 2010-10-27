@@ -1,6 +1,7 @@
 $(function(){
     connect();
     generate_login_interface();
+    my_cardo_slot = [];
 });
 
 var _GI_username;
@@ -81,13 +82,6 @@ var generate_setup_interface = function(){
     }); 
 }
 
-var cardo0;
-var cardo1;
-var cardo2;
-var cardo3;
-var cardo4;
-var cardo5;
-
 var generate_battle_field = function(){
     $("#a-game").empty();
     str = "<div id='room-name-title' class='block-title'></div>";
@@ -106,12 +100,6 @@ var generate_battle_field = function(){
 
     $("#me").ready(function(){
         $("#me").css("display","none");
-        cardo0 = new _Cardo_My_(0).appendTo($("#me"));
-        cardo1 = new _Cardo_My_(1).appendTo($("#me"));
-        cardo2 = new _Cardo_My_(2).appendTo($("#me"));
-        cardo3 = new _Cardo_My_(3).appendTo($("#me"));
-        cardo4 = new _Cardo_My_(4).appendTo($("#me"));
-        cardo5 = new _Cardo_My_(5).appendTo($("#me"));
     });
 
     $("#ready-to-fight").click(function(){
