@@ -1,7 +1,7 @@
-//My cardo position
+//Enemy cardo position
 /* CSS
-#me {
-    -webkit-transform: translateZ(400px);
+#enemy {
+    -webkit-transform: rotateX(-15deg) translateZ(-1000px);
     -webkit-transform-style: preserve-3d;
     height: 1px;
     width: 100%;
@@ -9,28 +9,29 @@
     margin-right:auto;
     position: absolute;
 
-    -webkit-animation: my-float 6000ms infinite ease-in-out;
+    -webkit-animation: enemy-float 12000ms infinite ease-in-out;
 }
 
-@-webkit-keyframes my-float{
-    0% { top: 70%; }
-    40% { top: 58%; }
-    100% { top: 70%; }
+@-webkit-keyframes enemy-float{
+    0% { top: 1%; }
+    40% { top: 11%; }
+    100% { top: 1%; }
 }
+
  */
 (function(w){
-w._Cardo_My_ = _Model_Cardo_.extend({
+w._Cardo_Enemy_ = _Model_Cardo_.extend({
     init : function(idx){
         this._super();
         this.shape(120,194,8);
         this.defaultPosition = [
         //translateX translateY rotateX rotateY rotateZ translateZ scale3d
-            [0,0,0,50,0,-400,[1,1,1]]
-            ,[0,0,0,30,0,-400,[1,1,1]]
-            ,[0,0,0,10,0,-400,[1,1,1]]
-            ,[0,0,0,-10,0,-400,[1,1,1]]
-            ,[0,0,0,-30,0,-400,[1,1,1]]
-            ,[0,0,0,-50,0,-400,[1,1,1]]
+            [0,0,0,230,0,-400,[1,1,1]]
+            ,[0,0,0,210,0,-400,[1,1,1]]
+            ,[0,0,0,190,0,-400,[1,1,1]]
+            ,[0,0,0,170,0,-400,[1,1,1]]
+            ,[0,0,0,150,0,-400,[1,1,1]]
+            ,[0,0,0,130,0,-400,[1,1,1]]
         ];
         this.front.css({
             "background" : "-webkit-gradient(linear, left top, left bottom, from(#EEEEEE), to(#CCCCCC))"
