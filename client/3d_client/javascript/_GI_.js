@@ -1,7 +1,7 @@
 var char = function(data){
     this.id = data.id;
     this.username = data.username;
-    this.charname = data.char_name;
+    this.charname = data.name;
     this.hp = data.hp;
     this.maxhp = data.maxhp;
     this.speed = data.speed;
@@ -91,15 +91,21 @@ var _GI_ = {
                 $("#me").fadeIn("50");
                 $("#ready-to-fight").remove();
                 for(x in json.data.doc.char){
-                    str = "<div class='char-attr-info'>ID: " + json.data.doc.char[x].id + "</div>";
-                    str += "<div class='char-attr-info'>Name: " + json.data.doc.char[x].name + "</div>";
-                    str += "<div class='char-attr-info'>HP: <span id='me-current-hp'>" + json.data.doc.char[x].hp + "</span> / " + json.data.doc.char[x].maxhp + "</div>";
-                    str += "<div class='char-attr-info'>Speed: <span id='me-current-speed'>" + json.data.doc.char[x].speed + "</span></div>";
-                    str += "<div class='char-attr-info'>Speedup: <span id='me-current-speedup'>" + json.data.doc.char[x].speedup + "</span></div>";
-                    str += "<div class='char-attr-info'>ActionPoint: <span id='me-current-actionpoint'>" + json.data.doc.char[x].actionPoint + "</span></div>";
                     if(x == mychar.id){
+                        str = "<div class='char-attr-info'>ID: " + json.data.doc.char[x].id + "</div>";
+                        str += "<div class='char-attr-info'>Name: " + json.data.doc.char[x].name + "</div>";
+                        str += "<div class='char-attr-info'>HP: <span id='me-current-hp'>" + json.data.doc.char[x].hp + "</span> / " + json.data.doc.char[x].maxhp + "</div>";
+                        str += "<div class='char-attr-info'>Speed: <span id='me-current-speed'>" + json.data.doc.char[x].speed + "</span></div>";
+                        str += "<div class='char-attr-info'>Speedup: <span id='me-current-speedup'>" + json.data.doc.char[x].speedup + "</span></div>";
+                        str += "<div class='char-attr-info'>ActionPoint: <span id='me-current-actionpoint'>" + json.data.doc.char[x].actionPoint + "</span></div>";
                         $("#me-info-left").append(str);
                     }else{
+                        str = "<div class='char-attr-info'>ID: " + json.data.doc.char[x].id + "</div>";
+                        str += "<div class='char-attr-info'>Name: " + json.data.doc.char[x].name + "</div>";
+                        str += "<div class='char-attr-info'>HP: <span id='enemy-current-hp'>" + json.data.doc.char[x].hp + "</span> / " + json.data.doc.char[x].maxhp + "</div>";
+                        str += "<div class='char-attr-info'>Speed: <span id='enemy-current-speed'>" + json.data.doc.char[x].speed + "</span></div>";
+                        str += "<div class='char-attr-info'>Speedup: <span id='enemy-current-speedup'>" + json.data.doc.char[x].speedup + "</span></div>";
+                        str += "<div class='char-attr-info'>ActionPoint: <span id='enemy-current-actionpoint'>" + json.data.doc.char[x].actionPoint + "</span></div>";
                         $("#enemy-info-right").append(str);
                     }
                 }
@@ -118,9 +124,48 @@ var _GI_ = {
                         my_cardo_slot[y].front.empty();
                         my_cardo_slot[y].front.append(str);
                     }
+                }else{
+                    for(y in json.data.doc[x].cardo){
+                        enemy_cardo_slot[y] = new _Cardo_Enemy_(y).appendTo($("#enemy-info-left"));
+                    }
                 }
             }
-        }       
+        },
+
+        get_action_point : function(json){
+            var x;
+            for(x in json.data.doc){
+                if(x == mychar.id){
+                    $("#me-current-actionpoint").empty();
+                    $("#me-current-actionpoint").append(json.data.doc[x].action_point);
+                }else{
+                    $("#enemy-current-actionpoint").empty();
+                    $("#enemy-current-actionpoint").append(json.data.doc[x].action_point);
+                }
+            }
+        },
+
+        get_damage : function(json){
+            
+        },
+
+        get_hp : function(json){
+            var x;
+            for(x in json.data.doc){
+                if(x == mychar.id){
+                    $("#me-current-hp").empty();
+                    $("#me-current-hp").append(json.data.doc[x].hp);
+                }else{
+                    $("#enemy-current-hp").empty();
+                    $("#enemy-current-hp").append(json.data.doc[x].hp);
+                }
+            }
+        }
     }
 }
 
+var char_judge = function(id){
+    if(id == mychar.id){
+        
+    }
+}

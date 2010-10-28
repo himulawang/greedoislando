@@ -23,15 +23,15 @@
 w._Cardo_Enemy_ = _Model_Cardo_.extend({
     init : function(idx){
         this._super();
-        this.shape(120,194,8);
+        this.shape(60,97,4);
         this.defaultPosition = [
         //translateX translateY rotateX rotateY rotateZ translateZ scale3d
-            [0,0,0,230,0,-400,[1,1,1]]
-            ,[0,0,0,210,0,-400,[1,1,1]]
-            ,[0,0,0,190,0,-400,[1,1,1]]
-            ,[0,0,0,170,0,-400,[1,1,1]]
-            ,[0,0,0,150,0,-400,[1,1,1]]
-            ,[0,0,0,130,0,-400,[1,1,1]]
+            [0,0,0,230,0,-220,[1,1,1]]
+            ,[0,0,0,210,0,-220,[1,1,1]]
+            ,[0,0,0,190,0,-220,[1,1,1]]
+            ,[0,0,0,170,0,-220,[1,1,1]]
+            ,[0,0,0,150,0,-220,[1,1,1]]
+            ,[0,0,0,130,0,-220,[1,1,1]]
         ];
         this.front.css({
             "background" : "-webkit-gradient(linear, left top, left bottom, from(#EEEEEE), to(#CCCCCC))"
@@ -43,8 +43,8 @@ w._Cardo_Enemy_ = _Model_Cardo_.extend({
 
         var _this = this;
 
-this.cube.dblclick(function(){_this.anUse();});
-this.cube.click(function(){_this.select();});
+this.cube.dblclick(function(){});
+this.cube.click(function(){});
         return this;
     }
     ,anUse : function(){

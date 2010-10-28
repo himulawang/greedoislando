@@ -2,6 +2,7 @@ $(function(){
     connect();
     generate_login_interface();
     my_cardo_slot = [];
+    enemy_cardo_slot = [];
 });
 
 var _GI_username;
