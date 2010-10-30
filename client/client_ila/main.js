@@ -8,7 +8,7 @@ $(function(){
     _GI_ = new _GI_World_();
 });
 
-var _GI_,intervalArray = [],ws,char,room;
+var _GI_,intervalArray = [],ws,char,room,actionbar;
 
 function write_log(info){
 	$("#console").append("<p>" + info + "</p>");
@@ -74,6 +74,7 @@ var _GI_Connection_ = Class.extend({
 var _GI_Character_ = Class.extend({
     init : function(){
         this.charName = null;
+        this.actionpoint = 0;
     }
     ,name : function(name){
         if(arguments.length===0) return this.charName;
@@ -93,6 +94,7 @@ var _GI_Character_ = Class.extend({
 
 var _Character_My_ = _GI_Character_.extend({
     init : function(id){
+        this._super();
         this.id = id;
         this.cardo_slot = [];
     }
@@ -105,21 +107,32 @@ var _Character_My_ = _GI_Character_.extend({
             this.cardo_slot[x].front.append(xxx);
         }
     }
+    ,get_action_point : function(doc){
+        var p = doc[this.id].action_point * 10;
+        this.actionpoint = p;
+        actionbar.change("my",p);
+    }
 });
 
 var _Character_Enemy_ = _GI_Character_.extend({
     init : function(id){
+        this._super();
         this.id = id;
         this.cardo_slot = [];
     }
     ,deal_cardo : function(doc){
         var x,xxx;
         for(x in doc[this.id].cardo){
-            this.cardo_slot[x] = new _Cardo_Enemy_(x).appendTo($("#enemy"));
+            this.cardo_slot[x] = new _Cardo_Enemy_(x).appendTo($("#enemy-info-left"));
             xxx = doc[this.id].cardo[x];
             this.cardo_slot[x].front.empty();
             this.cardo_slot[x].front.append(xxx);
         }
+    }
+    ,get_action_point : function(doc){
+        var p = doc[this.id].action_point * 10;
+        this.actionpoint = p;
+        actionbar.change("enemy",p);
     }
 });
 
@@ -197,6 +210,8 @@ var _GI_World_ = Class.extend({
                     _GI_.batt[x] = new _Character_Enemy_(x);
                 }
             }
+
+            actionbar = new _Bar_Action_(["enemy","my"]).appendTo($("#action-bar"));
 
             $("#me-info-left").fadeOut("50",function(){
                 $("#me").fadeIn("50");
