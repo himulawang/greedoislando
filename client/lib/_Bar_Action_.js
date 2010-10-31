@@ -33,11 +33,11 @@ w._Bar_Action_ = _Model_Bar_.extend({
             </div>
         </div>
     */
-        this.bar[name] = $("<div></div>");
-        this.progress[name] = $("<div></div>");
-        this.avatar[name] = $("<div></div>");
-        this.img[name] = $("<div></div>");
-        this.tag[name] = $("<div>0</div>");
+        this.bar[name] = $.css3d($("<div></div>"));
+        this.progress[name] = $.css3d($("<div></div>"));
+        this.avatar[name] = $.css3d($("<div></div>"));
+        this.img[name] = $.css3d($("<div></div>"));
+        this.tag[name] = $.css3d($("<div>0</div>"));
 
         this.tag[name].css({
             color: "#666666"
@@ -50,6 +50,8 @@ w._Bar_Action_ = _Model_Bar_.extend({
         });
         this.avatar[name].css({
             position : "absolute"
+            ,"-webkit-box-shadow" : "1px 2px 3px #AAAAAA"
+            ,"border-radius" : "3px"
         });
 
         this.img[name].css({
@@ -100,7 +102,7 @@ w._Bar_Action_ = _Model_Bar_.extend({
         if(orgWidth >= per){
             duration = 500;
         }else{
-            duration = 1200;
+            duration = 900;
         }
 
         var avatar = this.avatar[idx];
@@ -160,6 +162,25 @@ w._Bar_Action_ = _Model_Bar_.extend({
         this.avatar["enemy"].css({left:left,top:top});
 
         return this;
+    }
+    ,avatarShake : function(idx){
+        var img = this.img[idx];
+        img.addFrame("-webkit-transform","translateX(-15px)",30
+        ).addFrame("-webkit-transform","translateX(15px)",30
+        ).addFrame("-webkit-transform","translateX(-15px)",30
+        ).addFrame("-webkit-transform","translateX(15px)",30
+        ).addFrame("-webkit-transform","translateX(0px)",30);
+        img.startFrame();
+    }
+    ,avatarShine : function(idx,color){
+        this.avatar[idx].css({
+            border : "3px solid " + color
+        });
+    }
+    ,avatarGloom : function(idx){
+        this.avatar[idx].css({
+            border : ""
+        });
     }
 });
 })(window);

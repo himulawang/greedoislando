@@ -20,7 +20,7 @@
  */
 (function(w){
 w._Cardo_My_ = _Model_Cardo_.extend({
-    init : function(idx){
+    init : function(idx,xxx){
         this._super();
         this.shape(120,194,8);
         this.defaultPosition = [
@@ -32,31 +32,27 @@ w._Cardo_My_ = _Model_Cardo_.extend({
             ,[0,0,0,-30,0,-400,[1,1,1]]
             ,[0,0,0,-50,0,-400,[1,1,1]]
         ];
+        var frontside = "";
+        frontside += "<div>XXX:"+xxx+"</div>";
+        frontside += "<div>Name:"+this.XXX[xxx].name+"</div>";
+        frontside += "<div>Description:"+this.XXX[xxx].description+"</div>";
+
         this.front.css({
             "background" : "-webkit-gradient(linear, left top, left bottom, from(#EEEEEE), to(#CCCCCC))"
             ,"border" : "1px solid #CCCCCC"
             ,"background-size" : "100% 100%"
-        });
+        }).html(frontside);
         this.back.css({"background" : "-webkit-gradient(linear, left top, left bottom, from(#EEEEEE), to(#CCCCCC))"});
         this.setDefaultPosition(idx);
 
         var _this = this;
 
-this.cube.dblclick(function(){_this.anUse();});
+this.cube.dblclick(function(){_this.use();});
 this.cube.click(function(){_this.select();});
         return this;
     }
-    ,anUse : function(){
-        this.cube.addFrame("-webkit-transform","rotateY(0deg) translateZ(-100px)",500,500);
-        this.cube.addFrame("-webkit-transform","translateY(-400px) translateZ(-800px)",500,500);
-        this.cube.addFrame("opacity","0",500,0,null,function(){
-            $(this.cube).remove();
-            my_cardo_slot[this.idx] = null;
-        });
-
-        use_cardo(this.idx);
-
-        this.cube.startFrame();
+    ,use : function(){
+        ws.send("batt",{cmd:"use_cardo",pos:this.idx});
         return this;
     }
 });
