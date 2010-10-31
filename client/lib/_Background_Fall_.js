@@ -38,16 +38,15 @@ w._Background_Fall_ = _Model_Background_.extend({
         for(var i = 0; i < count; ++i){
             div = this.shape(50,50,"realLeaf.png",1,4);
             div = this.create(div);
-            $("#background").append(div);
             this.background.push(div);
         }
     }
     ,create : function(div){
-        var dropDuration = core.rand(5000,11000) + "ms";
+        var dropDuration = core.rand(12000,19000) + "ms";
         var dropDelay = core.rand(0, 5000) + "ms";
 
         div.css("top","-70px");
-        div.css("left", core.rand(85,95) + "%");
+        div.css("left", core.rand(65,95) + "%");
 
         div.css("-webkit-animation-name","fade,drop");
         div.css("-webkit-animation-duration",dropDuration + ", "+dropDuration);
@@ -60,13 +59,19 @@ w._Background_Fall_ = _Model_Background_.extend({
         var img = $("div",div);
         var name = "fall" + core.rand(1,4);
         img.css("-webkit-animation-name",name);
-        img.css("-webkit-animation-duration",core.rand(4000, 8000)+"ms");
+        img.css("-webkit-animation-duration",core.rand(5000, 9000)+"ms");
         img.css("-webkit-animation-iteration-count","infinite");
         img.css("-webkit-animation-timing-function","ease-in-out");
         //img.css("-webkit-animation-direction","alternate");
         img.css("-webkit-transform-origin","50% -100%");
 
         return div;
+    }
+    ,appendTo : function(el){
+        for(var i = 0, len = this.background.length; i < len; ++i){
+            $(el).append(this.background[i]);
+        }
+        return this;
     }
 });
 })(window);

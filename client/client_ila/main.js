@@ -8,7 +8,7 @@ $(function(){
     _GI_ = new _GI_World_();
 });
 
-var _GI_,intervalArray = [],ws,char,room,actionbar;
+var _GI_,intervalArray = [],ws,char,room,actionbar,battleConsole,background;
 
 function write_log(info){
 	$("#console").append("<p>" + info + "</p>");
@@ -74,7 +74,11 @@ var _GI_Connection_ = Class.extend({
 var _GI_Character_ = Class.extend({
     init : function(){
         this.charName = null;
-        this.actionpoint = 0;
+        this._actionpoint = 0;
+        this._hp = 0;
+        this._maxhp = 0;
+        this._speed = 0;
+        this._speedup = 0;
     }
     ,name : function(name){
         if(arguments.length===0) return this.charName;
@@ -90,6 +94,31 @@ var _GI_Character_ = Class.extend({
         $("#avatar").empty().append(str);
         new _Effect_Print_Text_("Hello, " + name + "! Welcome to the world of Greedo Island , u are now available to fight!",$("#char-set-des"));
     }
+    ,hp : function(v){
+        if(arguments.length===0) return this._hp;
+        this._hp = v;
+        return this;
+    }
+    ,maxhp : function(v){
+        if(arguments.length===0) return this._maxhp;
+        this._maxhp = v;
+        return this;
+    }
+    ,speed : function(v){
+        if(arguments.length===0) return this._speed;
+        this._speed = v;
+        return this;
+    }
+    ,speedup : function(v){
+        if(arguments.length===0) return this._speedup;
+        this._speedup = v;
+        return this;
+    }
+    ,actionpoint : function(v){
+        if(arguments.length===0) return this._actionpoint;
+        this._actionpoint = v;
+        return this;
+    }
 });
 
 var _Character_My_ = _GI_Character_.extend({
@@ -101,16 +130,66 @@ var _Character_My_ = _GI_Character_.extend({
     ,deal_cardo : function(doc){
         var x,xxx;
         for(x in doc[this.id].cardo){
-            this.cardo_slot[x] = new _Cardo_My_(x).appendTo($("#me"));
             xxx = doc[this.id].cardo[x];
-            this.cardo_slot[x].front.empty();
-            this.cardo_slot[x].front.append(xxx);
+            this.cardo_slot[x] = new _Cardo_My_(x,xxx).appendTo($("#me"));
         }
     }
     ,get_action_point : function(doc){
         var p = doc[this.id].action_point * 10;
-        this.actionpoint = p;
+        this.actionpoint(p);
         actionbar.change("my",p);
+    }
+    ,use_cardo : function(doc){
+        var idx = doc[this.id].pos;
+        var xxx = doc[this.id].xxx;
+        var slot = this.cardo_slot;
+        var cardo = slot[idx];
+        var cube = cardo.cube;
+        cube.addFrame("-webkit-transform","rotateY(0deg) translateZ(-100px)",500,500);
+        cube.addFrame("-webkit-transform","translateY(-400px) translateZ(-800px)",500,500);
+        cube.addFrame("opacity","0",500,0,null,function(){
+            $(cube).remove();
+            slot[this.idx] = null;
+        });
+
+        cube.startFrame();
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_damage : function(doc){
+        var damage = doc[this.id].damage;
+        if(damage!=0){
+            actionbar.avatarShake("my");
+        }
+    }
+    ,get_hp : function(doc){
+        var hp = doc[this.id].hp;
+        this.hp(hp);
+        $("#me-current-hp").html(hp);
+    }
+    ,get_defendfield : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+        var df = doc[this.id].df;
+        var color = _GI_XXX_[df].fieldColor;
+        actionbar.avatarShine("my",color);
+    }
+    ,cancel_defendfield : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+        actionbar.avatarGloom("my");
+    }
+    ,effect_defendfield : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_buffer : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_speedup : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_buffer_remain_round : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_unbuffer : function(doc){
+        battleConsole.push(JSON.stringify(doc));
     }
 });
 
@@ -125,14 +204,64 @@ var _Character_Enemy_ = _GI_Character_.extend({
         for(x in doc[this.id].cardo){
             this.cardo_slot[x] = new _Cardo_Enemy_(x).appendTo($("#enemy-info-left"));
             xxx = doc[this.id].cardo[x];
-            this.cardo_slot[x].front.empty();
-            this.cardo_slot[x].front.append(xxx);
         }
     }
     ,get_action_point : function(doc){
         var p = doc[this.id].action_point * 10;
-        this.actionpoint = p;
+        this.actionpoint(p);
         actionbar.change("enemy",p);
+    }
+    ,use_cardo : function(doc){
+        var idx = doc[this.id].pos;
+        var xxx = doc[this.id].xxx;
+        var slot = this.cardo_slot;
+        var cardo = slot[idx];
+        var cube = cardo.cube;
+        cube.addFrame("-webkit-transform","rotateY(0deg) translateZ(-100px)",500,500);
+        cube.addFrame("-webkit-transform","translateY(-400px) translateZ(-800px)",500,500);
+        cube.addFrame("opacity","0",500,0,null,function(){
+            $(cube).remove();
+            slot[this.idx] = null;
+        });
+
+        cube.startFrame();
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_damage : function(doc){
+        var damage = doc[this.id].damage;
+        if(damage!=0){
+            actionbar.avatarShake("enemy");
+        }
+    }
+    ,get_hp : function(doc){
+        var hp = doc[this.id].hp;
+        this.hp(hp);
+        $("#enemy-current-hp").html(hp);
+    }
+    ,get_defendfield : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+        var df = doc[this.id].df;
+        var color = this.XXX[df].fieldColor;
+        actionbar.avatarShine("enemy",color);
+    }
+    ,cancel_defendfield : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+        actionbar.avatarGloom("enemy");
+    }
+    ,effect_defendfield : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_buffer : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_speedup : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_buffer_remain_round : function(doc){
+        battleConsole.push(JSON.stringify(doc));
+    }
+    ,get_unbuffer : function(doc){
+        battleConsole.push(JSON.stringify(doc));
     }
 });
 
@@ -202,23 +331,38 @@ var _GI_World_ = Class.extend({
         ,start_bf : function(doc){
             var x;
             var str;
+            var char,hp,maxhp,speed,speedup,actionpoint;
 
             for(x in doc.char){
+                char = doc.char[x];
+                hp = char.hp;
+                maxhp = char.maxhp;
+                speed = char.speed;
+                speedup = char.speedup;
+                actionpoint = char.actionpoint;
                 if(x === _GI_ID_){
-                    _GI_.batt[_GI_ID_] = new _Character_My_(_GI_ID_);
+                    _GI_.batt[x] = new _Character_My_(x);
                 }else{
                     _GI_.batt[x] = new _Character_Enemy_(x);
                 }
+                _GI_.batt[x].hp(hp
+                    ).maxhp(maxhp
+                    ).speed(speed
+                    ).speedup(speedup
+                    ).actionpoint(actionpoint
+                );
             }
 
             actionbar = new _Bar_Action_(["enemy","my"]).appendTo($("#action-bar"));
+            battleConsole = new _Info_Battle_Console_(600,230).appendTo($("#bf-console-upper-layer"));
+            background = new _Background_Fall_(3).appendTo($("#background"));
 
             $("#me-info-left").fadeOut("50",function(){
                 $("#me").fadeIn("50");
                 $("#ready-to-fight").remove();
                 for(x in doc.char){
                     if(x === _GI_ID_){
-                        str = "<div class='char-attr-info'>ID: " + doc.char[x].id + "</div>";
+                        str = "<div class='char-attr-info'>ID: " + x + "</div>";
                         str += "<div class='char-attr-info'>Name: " + doc.char[x].name + "</div>";
                         str += "<div class='char-attr-info'>HP: <span id='me-current-hp'>" + doc.char[x].hp + "</span> / " + doc.char[x].maxhp + "</div>";
                         str += "<div class='char-attr-info'>Speed: <span id='me-current-speed'>" + doc.char[x].speed + "</span></div>";
@@ -226,7 +370,7 @@ var _GI_World_ = Class.extend({
                         str += "<div class='char-attr-info'>ActionPoint: <span id='me-current-actionpoint'>" + doc.char[x].actionPoint + "</span></div>";
                         $("#me-info-left").append(str);
                     }else{
-                        str = "<div class='char-attr-info'>ID: " + doc.char[x].id + "</div>";
+                        str = "<div class='char-attr-info'>ID: " + x + "</div>";
                         str += "<div class='char-attr-info'>Name: " + doc.char[x].name + "</div>";
                         str += "<div class='char-attr-info'>HP: <span id='enemy-current-hp'>" + doc.char[x].hp + "</span> / " + doc.char[x].maxhp + "</div>";
                         str += "<div class='char-attr-info'>Speed: <span id='enemy-current-speed'>" + doc.char[x].speed + "</span></div>";
@@ -362,8 +506,10 @@ var generate = {
         }); 
     }
     ,battlefield : function(){
+        var str = "";
         $("#a-game").empty();
-        str = "<div id='room-name-title' class='block-title'></div>";
+        str += "<div id='background'></div>";
+        str += "<div id='room-name-title' class='block-title'></div>";
         str += "<div id='enemy'><div id='enemy-upper-layer'></div><div id='enemy-lower-layer'></div></div>";
         str += "<div id='bf-console'><div id='bf-console-upper-layer'></div><div id='bf-console-lower-layer'></div></div>";
         str += "<div id='me'></div>";
@@ -422,6 +568,100 @@ var generate = {
     }
 }
 
-
-
-
+var _GI_XXX_ = {
+    0 : {
+        xxx : "0"
+        ,name : "off"
+        ,description : "u can't see me"
+    }
+    ,51 : {
+        xxx : "051"
+        ,name : "hammer"
+        ,description : "casue physical damage 1"
+    }
+    ,52 : {
+        xxx : "052"
+        ,name : "gun"
+        ,description : "casue physical damage 3"
+    }
+    ,53 : {
+        xxx : "053"
+        ,name : "bomb"
+        ,description : "casue physical damage 5"
+    }
+    ,61 : {
+        xxx : "061"
+        ,name : "fire"
+        ,description : "casue magical damage 2"
+    }
+    ,62 : {
+        xxx : "062"
+        ,name : "thunder"
+        ,description : "casue magical damage 6"
+    }
+    ,71 : {
+        xxx : "071"
+        ,name : "umbrella"
+        ,description : "defend stone"
+        ,fieldColor : "black"
+    }
+    ,72 : {
+        xxx : "072"
+        ,name : "lid"
+        ,description : "defend all physical attack except bomb"
+        ,fieldColor : "gray"
+    }
+    ,73 : {
+        xxx : "073"
+        ,name : "GFW"
+        ,description : "defend all physical attack"
+        ,fieldColor : "gold"
+    }
+    ,81 : {
+        xxx : "081"
+        ,name : "Kinetic energy distribution field"
+        ,description : "defend 50% magical damage"
+        ,fieldColor : "red"
+    }
+    ,82 : {
+        xxx : "082"
+        ,name : "St. Cross Shield"
+        ,description : "reverse magic damage"
+        ,fieldColor : "green"
+    }
+    ,91 : {
+        xxx : "091"
+        ,name : "stone"
+        ,description : "half opponent's Action Point"
+    }
+    ,92 : {
+        xxx : "092"
+        ,name : "cock blood"
+        ,description : "speed up 2 keep 3 rounds"
+    }
+    ,93 : {
+        xxx : "093"
+        ,name : "run away"
+        ,description : "escape from battlefield"
+    }
+    ,94 : {
+        xxx : "094"
+        ,name : "exchange"
+        ,description : "exchange one random opponent cardo with my selected cardo"
+    }
+    ,95 : {
+        xxx : "095"
+        ,name : "real exchange"
+        ,description : "exchange one selected opponent cardo with my selected cardo"
+    }
+    ,96 : {
+        xxx : "096"
+        ,name : "Mr. Chen's Camera"
+        ,description : "peep one random opponent's cardo, will be noticed by opponent"
+    }
+    ,97 : {
+        xxx : "097"
+        ,name : "Mr. Chen's Teachings"
+        ,description : "peep 3 selected opponent's cardo, won't be noticed by opponent"
+    }
+}

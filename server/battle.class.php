@@ -13,8 +13,8 @@ class battle extends prepare {
         $this->stdProcess["use_cardo"] = array();
         $this->stdProcess["use_cardo"][] = "varInitBattle";
         $this->stdProcess["use_cardo"][] = "varBattlefieldRange";
-        $this->stdProcess["use_cardo"][] = "useCardo";
         $this->stdProcess["use_cardo"][] = "useActionPoint";
+        $this->stdProcess["use_cardo"][] = "useCardo";
 
         $this->stdProcess["get_attackcardo"] = array();
         $this->stdProcess["get_attackcardo"][] = "sysGetAttackCardo";

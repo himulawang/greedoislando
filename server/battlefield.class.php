@@ -50,7 +50,7 @@ class battlefield {
     public function enterBattlefield($id,$charname){
         $char = new char($id,$charname);
         $char->setMaxHP(30); //TODO
-        $char->setSpeed(3); //TODO
+        $char->setSpeed(2); //TODO
         $this->char[$id] = $char;
         return $char->getCharInfo();
     }
