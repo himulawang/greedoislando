@@ -153,7 +153,9 @@ var _Character_My_ = _GI_Character_.extend({
         });
 
         cube.startFrame();
-        battleConsole.push(JSON.stringify(doc));
+        var output = "";
+        var cardo = _GI_XXX_[xxx].name;
+        battleConsole.push(this.name() + " use " + cardo);
     }
     ,get_damage : function(doc){
         var damage = doc[this.id].damage;
@@ -217,15 +219,17 @@ var _Character_Enemy_ = _GI_Character_.extend({
         var slot = this.cardo_slot;
         var cardo = slot[idx];
         var cube = cardo.cube;
-        cube.addFrame("-webkit-transform","rotateY(0deg) translateZ(-100px)",500,500);
-        cube.addFrame("-webkit-transform","translateY(-400px) translateZ(-800px)",500,500);
+        cube.addFrame("-webkit-transform","rotateY(180deg) translateZ(80px)",500,500);
+        cube.addFrame("-webkit-transform","translateY(30px) translateZ(-120px)",500,500);
         cube.addFrame("opacity","0",500,0,null,function(){
             $(cube).remove();
             slot[this.idx] = null;
         });
 
         cube.startFrame();
-        battleConsole.push(JSON.stringify(doc));
+        var output = "";
+        var cardo = _GI_XXX_[xxx].name;
+        battleConsole.push(this.name() + " use " + cardo);
     }
     ,get_damage : function(doc){
         var damage = doc[this.id].damage;
