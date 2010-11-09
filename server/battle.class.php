@@ -116,6 +116,13 @@ class battle extends prepare {
         $this->bf->getAttackCardo($id);
         $this->bf->varAllCardo($id);
         self::getDealCardo($id);
+
+        //Opp
+        $id = $this->bf->getOpponentID($this->id);
+        if(!prepare::varBattlefield()) return; //check char in bf
+        $this->bf->getAttackCardo($id);
+        $this->bf->varAllCardo($id);
+        self::getDealCardo($id);
         return 1;
     }
     protected function sysGetDefendCardo(){
@@ -124,6 +131,13 @@ class battle extends prepare {
         $this->bf->getDefendCardo($id);
         $this->bf->varAllCardo($id);
         self::getDealCardo($id);
+
+        //Opp
+        $id = $this->bf->getOpponentID($this->id);
+        if(!prepare::varBattlefield()) return; //check char in bf
+        $this->bf->getDefendCardo($id);
+        $this->bf->varAllCardo($id);
+        self::getDealCardo($id);        
         return 1;
     }
     protected function sysGetSpecialCardo(){
@@ -132,6 +146,13 @@ class battle extends prepare {
         $this->bf->getSpecialCardo($id);
         $this->bf->varAllCardo($id);
         self::getDealCardo($id);
+        
+        //Opp
+        $id = $this->bf->getOpponentID($this->id);
+        if(!prepare::varBattlefield()) return; //check char in bf
+        $this->bf->getSpecialCardo($id);
+        $this->bf->varAllCardo($id);
+        self::getDealCardo($id);        
         return 1;
     }
 

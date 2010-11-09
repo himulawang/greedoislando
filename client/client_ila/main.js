@@ -8,6 +8,7 @@ $(function(){
     _GI_ = new _GI_World_();
 });
 
+var _GI_ID_,_GI_OPPONENT_;
 var _GI_,intervalArray = [],ws,char,room,actionbar,battleConsole,background;
 
 function write_log(info){
@@ -73,26 +74,29 @@ var _GI_Connection_ = Class.extend({
 
 var _GI_Character_ = Class.extend({
     init : function(){
-        this.charName = null;
+        this._name = null;
         this._actionpoint = 0;
         this._hp = 0;
         this._maxhp = 0;
         this._speed = 0;
         this._speedup = 0;
     }
-    ,name : function(name){
-        if(arguments.length===0) return this.charName;
-
+    ,set : function(name){
         if(name===undefined){
             alert("Plz Enter A Character Name");
             return;
         }
 
         generate.cancel_dialog();
-        this.charName = name;
-        var str = "<img src='" + name + ".jpg' class='avatar-1' />";
+        this.name(name);
+        var str = "<img src='" + name + ".jpg' class='avatar-1'>";
         $("#avatar").empty().append(str);
         new _Effect_Print_Text_("Hello, " + name + "! Welcome to the world of Greedo Island , u are now available to fight!",$("#char-set-des"));
+    }
+    ,name : function(name){
+        if(arguments.length===0) return this._name;
+        this._name = name;
+        return this;
     }
     ,hp : function(v){
         if(arguments.length===0) return this._hp;
@@ -130,6 +134,10 @@ var _Character_My_ = _GI_Character_.extend({
     ,deal_cardo : function(doc){
         var x,xxx;
         for(x in doc[this.id].cardo){
+            if(this.cardo_slot[x]){
+                this.cardo_slot[x].cube.remove();
+                this.cardo_slot[x] = null;
+            }
             xxx = doc[this.id].cardo[x];
             this.cardo_slot[x] = new _Cardo_My_(x,xxx).appendTo($("#me"));
         }
@@ -138,6 +146,7 @@ var _Character_My_ = _GI_Character_.extend({
         var p = doc[this.id].action_point * 10;
         this.actionpoint(p);
         actionbar.change("my",p);
+        $("#me-current-actionpoint").html(p);
     }
     ,use_cardo : function(doc){
         var idx = doc[this.id].pos;
@@ -149,7 +158,7 @@ var _Character_My_ = _GI_Character_.extend({
         cube.addFrame("-webkit-transform","translateY(-400px) translateZ(-800px)",500,500);
         cube.addFrame("opacity","0",500,0,null,function(){
             $(cube).remove();
-            slot[this.idx] = null;
+            slot[idx] = null;
         });
 
         cube.startFrame();
@@ -162,36 +171,83 @@ var _Character_My_ = _GI_Character_.extend({
         if(damage!=0){
             actionbar.avatarShake("my");
         }
+        battleConsole.push(this.name() + " get hurt: " + damage);
     }
     ,get_hp : function(doc){
         var hp = doc[this.id].hp;
         this.hp(hp);
         $("#me-current-hp").html(hp);
+        battleConsole.push(this.name() + " remain hp " + hp);
     }
     ,get_defendfield : function(doc){
-        battleConsole.push(JSON.stringify(doc));
         var df = doc[this.id].df;
         var color = _GI_XXX_[df].fieldColor;
         actionbar.avatarShine("my",color);
+
+        var df_name = _GI_XXX_[df].name;
+        battleConsole.push(this.name() + " get " + df_name + " field");
     }
     ,cancel_defendfield : function(doc){
-        battleConsole.push(JSON.stringify(doc));
         actionbar.avatarGloom("my");
+
+        var df = doc[this.id].df;
+        var df_name = _GI_XXX_[df].name;
+        battleConsole.push(this.name() + "'s " + df_name + " field has disappeared");
     }
     ,effect_defendfield : function(doc){
-        battleConsole.push(JSON.stringify(doc));
+        var df = doc[this.id].df;
+        var df_name = _GI_XXX_[df].name;
+        battleConsole.push(this.name() + "'s " + df_name + " field take effect");
     }
     ,get_buffer : function(doc){
-        battleConsole.push(JSON.stringify(doc));
+        var buffer = doc[this.id].buffer;
+        var buffer_name = _GI_XXX_[buffer].name;
+        battleConsole.push(this.name() + " get " + buffer_name + " buffer");
     }
     ,get_speedup : function(doc){
-        battleConsole.push(JSON.stringify(doc));
+        var speedup = doc[this.id].speed_up;
+        this.speedup(speedup);
+        battleConsole.push(this.name() + " speedup to " + speedup);
     }
     ,get_buffer_remain_round : function(doc){
         battleConsole.push(JSON.stringify(doc));
     }
     ,get_unbuffer : function(doc){
         battleConsole.push(JSON.stringify(doc));
+    }
+    ,exchange_cardo : function(doc){
+        var from_xxx = doc[this.id].from;
+        var from_pos = doc[this.id].from_pos;
+        var to_xxx = doc[this.id].to;
+        var to_pos = doc[this.id].to_pos;
+        var from_name = _GI_XXX_[from_xxx].name;
+        var to_name = _GI_XXX_[to_xxx].name;
+
+        //my
+        var my_slot = _GI_.batt[this.id].cardo_slot;
+        var my_cardo = my_slot[from_pos];
+        var my_cube = my_cardo.cube;
+        my_cube.initFrame();
+        my_cube.addFrame("opacity","0",800,50,null,function(){
+            $(my_cube).remove();
+            my_slot[from_pos] = null;
+            my_slot[from_pos] = new _Cardo_My_(from_pos,to_xxx).appendTo($("#me"));
+        });
+        my_cube.startFrame();
+
+        //enemy
+        var enemy_slot = _GI_.batt[_GI_OPPONENT_].cardo_slot;
+        var enemy_cardo = enemy_slot[to_pos];
+        var enemy_cube = enemy_cardo.cube;
+        enemy_cube.initFrame();
+        enemy_cube.addFrame("opacity","0",800,50,null,function(){
+            $(enemy_cube).remove();
+            enemy_slot[to_pos] = null;
+            enemy_slot[to_pos] = new _Cardo_Enemy_(to_pos,from_xxx).appendTo($("#enemy-info-left"));
+        });
+        enemy_cube.startFrame();
+
+        battleConsole.push("my " + from_name + "["+from_pos+"] exchanged with "+to_name+"["+to_pos+"]");
     }
 });
 
@@ -204,14 +260,19 @@ var _Character_Enemy_ = _GI_Character_.extend({
     ,deal_cardo : function(doc){
         var x,xxx;
         for(x in doc[this.id].cardo){
-            this.cardo_slot[x] = new _Cardo_Enemy_(x).appendTo($("#enemy-info-left"));
+            if(this.cardo_slot[x]){
+                this.cardo_slot[x].cube.remove();
+                this.cardo_slot[x] = null;
+            }
             xxx = doc[this.id].cardo[x];
+            this.cardo_slot[x] = new _Cardo_Enemy_(x).appendTo($("#enemy-info-left"));
         }
     }
     ,get_action_point : function(doc){
         var p = doc[this.id].action_point * 10;
         this.actionpoint(p);
         actionbar.change("enemy",p);
+        $("#enemy-current-actionpoint").html(p);
     }
     ,use_cardo : function(doc){
         var idx = doc[this.id].pos;
@@ -220,10 +281,10 @@ var _Character_Enemy_ = _GI_Character_.extend({
         var cardo = slot[idx];
         var cube = cardo.cube;
         cube.addFrame("-webkit-transform","rotateY(180deg) translateZ(80px)",500,500);
-        cube.addFrame("-webkit-transform","translateY(30px) translateZ(-120px)",500,500);
+        cube.addFrame("-webkit-transform","translateY(80px) translateZ(120px)",500,500);
         cube.addFrame("opacity","0",500,0,null,function(){
             $(cube).remove();
-            slot[this.idx] = null;
+            slot[idx] = null;
         });
 
         cube.startFrame();
@@ -236,36 +297,66 @@ var _Character_Enemy_ = _GI_Character_.extend({
         if(damage!=0){
             actionbar.avatarShake("enemy");
         }
+        battleConsole.push(this.name() + " get hurt: " + damage);
     }
     ,get_hp : function(doc){
         var hp = doc[this.id].hp;
         this.hp(hp);
         $("#enemy-current-hp").html(hp);
+        battleConsole.push(this.name() + " remain hp " + hp);
     }
     ,get_defendfield : function(doc){
-        battleConsole.push(JSON.stringify(doc));
         var df = doc[this.id].df;
-        var color = this.XXX[df].fieldColor;
+        var color = _GI_XXX_[df].fieldColor;
         actionbar.avatarShine("enemy",color);
+
+        var df_name = _GI_XXX_[df].name;
+        battleConsole.push(this.name() + " get " + df_name + " field");
     }
     ,cancel_defendfield : function(doc){
-        battleConsole.push(JSON.stringify(doc));
         actionbar.avatarGloom("enemy");
+
+        var df = doc[this.id].df;
+        var df_name = _GI_XXX_[df].name;
+        battleConsole.push(this.name() + "'s " + df_name + " field has disappeared");
     }
     ,effect_defendfield : function(doc){
-        battleConsole.push(JSON.stringify(doc));
+        var df = doc[this.id].df;
+        var df_name = _GI_XXX_[df].name;
+        battleConsole.push(this.name() + "'s " + df_name + " field take effect");
     }
     ,get_buffer : function(doc){
-        battleConsole.push(JSON.stringify(doc));
+        var buffer = doc[this.id].buffer;
+        var buffer_name = _GI_XXX_[buffer].name;
+        battleConsole.push(this.name() + " get " + buffer_name + " buffer");
     }
     ,get_speedup : function(doc){
-        battleConsole.push(JSON.stringify(doc));
+        var speedup = doc[this.id].speed_up;
+        this.speedup(speedup);
+        battleConsole.push(this.name() + " speedup to " + speedup);
     }
     ,get_buffer_remain_round : function(doc){
         battleConsole.push(JSON.stringify(doc));
     }
     ,get_unbuffer : function(doc){
         battleConsole.push(JSON.stringify(doc));
+    }
+    ,display_cardo : function(doc){
+        var xxxs = doc[this.id].display;
+        var idx,xxx;
+        for(idx in xxxs) {
+            xxx = xxxs[idx];
+            this.cardo_slot[idx].display(xxx);
+        }
+    }
+    ,notice_cardo_exposure : function(doc){
+        var xxxs = doc[this.id].display;
+        var idx,xxx,pos;
+        for(idx in xxxs) {
+            xxx = xxxs[idx];
+            pos = parseInt(idx) + 1;
+            battleConsole.push(this.name() + "'s [" + pos + "] cardo has exposured " + xxx);
+        }
     }
 });
 
@@ -335,7 +426,7 @@ var _GI_World_ = Class.extend({
         ,start_bf : function(doc){
             var x;
             var str;
-            var char,hp,maxhp,speed,speedup,actionpoint;
+            var char,hp,maxhp,speed,speedup,actionpoint,name;
 
             for(x in doc.char){
                 char = doc.char[x];
@@ -344,9 +435,11 @@ var _GI_World_ = Class.extend({
                 speed = char.speed;
                 speedup = char.speedup;
                 actionpoint = char.actionpoint;
+                name = char.name;
                 if(x === _GI_ID_){
                     _GI_.batt[x] = new _Character_My_(x);
                 }else{
+                    _GI_OPPONENT_ = x;
                     _GI_.batt[x] = new _Character_Enemy_(x);
                 }
                 _GI_.batt[x].hp(hp
@@ -354,6 +447,7 @@ var _GI_World_ = Class.extend({
                     ).speed(speed
                     ).speedup(speedup
                     ).actionpoint(actionpoint
+                    ).name(name
                 );
             }
 
@@ -550,7 +644,7 @@ var generate = {
         var id = $(obj).attr("id");
         if(id === "yes"){
             if(val === "Set Char"){
-                char.name($("#char-name").val());
+                char.set($("#char-name").val());
             }else if(val === "Set Room"){
                 room.set($("#room-name").val());
             }
