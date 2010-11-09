@@ -123,5 +123,12 @@ w._Model_Cardo_ = _Model_Cube_.extend({
             this.selected = true;
         }
     }
+    ,display : function(xxx){
+        var frontside = "";
+        frontside += "<div>XXX:"+xxx+"</div>";
+        frontside += "<div>Name:"+this.XXX[xxx].name+"</div>";
+        frontside += "<div>Description:"+this.XXX[xxx].description+"</div>";
+        this.front.html(frontside);
+    }
 });
 })(window);

@@ -8,6 +8,7 @@ class xxx091 extends special{
         $actionPoint = round($actionPoint / 2);
 
         $this->target->setActionPoint($actionPoint);
+        $this->target->setTimestamp();
 
         self::getActionPoint();
     }

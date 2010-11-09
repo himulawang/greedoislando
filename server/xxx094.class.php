@@ -7,7 +7,7 @@ class xxx094 extends special {
     public function gain(){ //exchange one random opponent cardo with my selected cardo
         if(!self::verify()) return;
 
-        $caster_pos = $this->msg["data"]["caster_pos"];
+        $caster_pos = $this->msg["data"]["caster_pos"][0];
         $target_pos = array_rand($this->target->cardo);
 
         $clone = clone $this->caster->cardo[$caster_pos];
@@ -23,7 +23,7 @@ class xxx094 extends special {
     protected function verify(){
         $msg = $this->msg["data"];
         if(!isset($msg["caster_pos"])) return;
-        $pos = $msg["caster_pos"];
+        $pos = $msg["caster_pos"][0];
         if($pos == $this->pos) return; //select cardo has same pos with this exchange cardo
         if(!isset($this->caster->cardo[$pos])) return; //select cardo not exists
         if(!$this->target->getCardoCount()) return; //target has no cardo

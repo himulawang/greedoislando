@@ -165,6 +165,7 @@ w._Bar_Action_ = _Model_Bar_.extend({
     }
     ,avatarShake : function(idx){
         var img = this.img[idx];
+        img.initFrame();
         img.addFrame("-webkit-transform","translateX(-15px)",30
         ).addFrame("-webkit-transform","translateX(15px)",30
         ).addFrame("-webkit-transform","translateX(-15px)",30
