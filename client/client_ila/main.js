@@ -9,7 +9,7 @@ $(function(){
 });
 
 var _GI_ID_,_GI_OPPONENT_;
-var _GI_,intervalArray = [],ws,char,room,actionbar,battleConsole,background;
+var _GI_,intervalArray = [],ws,char,room,actionbar,battleConsole,background,closeup;
 
 function write_log(info){
 	$("#console").append("<p>" + info + "</p>");
@@ -249,6 +249,13 @@ var _Character_My_ = _GI_Character_.extend({
 
         battleConsole.push("my " + from_name + "["+from_pos+"] exchanged with "+to_name+"["+to_pos+"]");
     }
+    ,get_lose : function(doc){
+        $("#islando").fadeOut("slow",function(){
+            $(this).remove();
+        });
+        $("body").append("<div id='closeup'></div>");
+        closeup = new _Closeup_Orc_("orc.png","U Lose").appendTo($("#closeup")).trigger();
+    }
 });
 
 var _Character_Enemy_ = _GI_Character_.extend({
@@ -357,6 +364,13 @@ var _Character_Enemy_ = _GI_Character_.extend({
             pos = parseInt(idx) + 1;
             battleConsole.push(this.name() + "'s [" + pos + "] cardo has exposured " + xxx);
         }
+    }
+    ,get_lose : function(doc){
+        $("#islando").fadeOut("slow",function(){
+            $(this).remove();
+        });
+        $("body").append("<div id='closeup'></div>");
+        closeup = new _Closeup_Orc_("orc.png","U Win").appendTo($("#closeup")).trigger();
     }
 });
 

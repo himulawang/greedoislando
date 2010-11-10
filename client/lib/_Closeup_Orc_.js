@@ -1,7 +1,7 @@
 //Closeup Orc
 (function(w){
 w._Closeup_Orc_ = _Model_Closeup_.extend({
-    init : function(src){
+    init : function(src,text){
         this.shape();
         //img
         this.img = $.css3d($("<img>"));
@@ -11,11 +11,32 @@ w._Closeup_Orc_ = _Model_Closeup_.extend({
             ,top : "10%"
             ,opacity : .8
         });
-        this.img.firstFrame({left:"-100%"}).addFrame("left","10%",1400);
-        //closeup
-        this.closeup.firstFrame({opacity:"0"}).addFrame("opacity","1",700);
+        this.img.firstFrame({left:"-100%"}).addFrame("left","10%",1400).addFrame(
+            "-webkit-transform","scale3d(1.2,1.2,1.2)",300).addFrame(
+            "-webkit-transform","scale3d(1.0,1.0,1.0)",300).addFrame(
+            "-webkit-transform","scale3d(1.2,1.2,1.2)",300).addFrame(
+            "-webkit-transform","scale3d(1.0,1.0,1.0)",300
+        );
 
+        //text
+        this.text = $.css3d($("<div>"+text+"</div>"));
+        this.text.css({
+            "font-size" : "2400%"
+            ,"top" : "60%"
+            ,"left" : "5%"
+            ,"position" : "absolute"
+            ,"color" : "red"
+        });
+        this.text.firstFrame({left:"-100%"}).addFrame("left","5%",1400,1400).addFrame(
+            "-webkit-transform","scale3d(1.2,1.2,1.2)",300).addFrame(
+            "-webkit-transform","scale3d(1.0,1.0,1.0)",300).addFrame(
+            "-webkit-transform","scale3d(1.2,1.2,1.2)",300).addFrame(
+            "-webkit-transform","scale3d(1.0,1.0,1.0)",300
+        );
+        //closeup
+        this.closeup.firstFrame({opacity:"0"}).addFrame("opacity","1",700)
         this.closeup.append(this.img);
+        this.closeup.append(this.text);
     }
     ,trigger : function(){
         var l = this.lines;
@@ -24,6 +45,7 @@ w._Closeup_Orc_ = _Model_Closeup_.extend({
         }
         this.img.startFrame();
         this.closeup.startFrame();
+        this.text.startFrame();
         return this;
     }
 });

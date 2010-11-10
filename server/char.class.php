@@ -150,6 +150,9 @@ class char {
     public function checkCardoExist($pos){
         return isset($this->cardo[$pos]) ? 1 : 0;
     }
+    public function getLose(){
+        return $this->hp == 0 ? 1 : 0;
+    }
 
 }
 ?>
