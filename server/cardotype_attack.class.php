@@ -9,6 +9,7 @@ class attack extends cardo {
             $this->target->doHarm($this->damage);
             self::getEffectDamage();
             self::getOpponentHP();
+            self::getOpponentLose();
         }
 
         return 1;
@@ -45,6 +46,17 @@ class attack extends cardo {
         $a[$id]["damage"] = $this->damage;
         $json = s2c::JSON("batt","get_damage",$a);
         $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
+    }
+    protected function getOpponentLose(){
+        $id = $this->target->getID();
+        $a = array();
+        $a[$id] = array();
+        $a[$id]["id"] = $id;
+        $a[$id]["lose"] = $this->target->getLose();
+        if($a[$id]["lose"]){
+            $json = s2c::JSON("batt","get_lose",$a);
+            $this->gi->result[] = s2c::outlet("selected",$this->range,$json);
+        }
     }
 }
 
