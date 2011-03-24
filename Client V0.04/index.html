@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <title>Greed Island</title>
+    <style>
+        body {padding: 0px; margin: 0px; font-family: Calibri;}
+        .right {float: right;}
+        .clear {float: clear;}
+        #main {display: none;width: 1024px;height: 700px;}
+        #login {width: 1024px; margin: 180px auto; height: 300px;}
+        .pickchar {width: 260px; height: 300px; border: 1px solid #000000; float:left; margin: 0 0 0 160px; text-align:center;}
+        .pickchar:hover {border: 1px solid #FFA500; color: #FFA500;}
+        #console {width: 100%; background: #CCCCCC;}
+        #disconnect {float: right;}
+    </style>
+    <script src='jquery-1.5.1.min.js'></script>
+    <script src='class.js'></script>
+    <script src='class_coordinate.js'></script>
+    <script src='class_map.js'></script>
+    <script src='class_cursor.js'></script>
+    <script src='class_character.js'></script>
+    <script src='class_init.js'></script>
+    <script src='websocket.js'></script>
+    <script src='main.js'></script>
+</head>
+<body>
+    <div id='login'>
+        <div id='char-one' class='pickchar'>Gon</div>
+        <div id='char-two' class='pickchar'>Killua</div>
+    </div>
+    <div id='main'>
+        <canvas id='cursor' style='position: absolute;'></canvas>
+        <canvas id='grid' style='position: relative;'></canvas>
+        <!-- <div style="background-image: url('map.png'); width: 1248px; height: 672px;"> -->
+    </div>
+    <div id='output'></div>
+    <div id='mouseevent'></div>
+    <div id='console'></div>
+</body>
+</html>
