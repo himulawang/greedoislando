@@ -4,11 +4,14 @@ var Init = Class.extend({
         $(document).ready(function(){
             _this.initMap();
             _this.initCursor();
+            if(MapEditorTigger){
+                //_this.initMapEditor();
+            }
             _this.disableContextMenu();
             _this.bindArrowKey();
             _this.bindMouseOverGrid();
             _this.bindMouseClick();
-            _this.createGon();
+            _this.createChar();
         });
     }
     /* Event Listener */
@@ -48,7 +51,7 @@ var Init = Class.extend({
         $('#grid')[0].onmouseup = function(e) {
             if (e.which === 1) {
                 console.log(e);
-                _this.char.gon.move(e);
+                _this.char.player.move(e);
             }
             return false;
         }
@@ -65,10 +68,15 @@ var Init = Class.extend({
         this.cursor.draw();
         this.cursor.startBreath();
     }
+    ,initMapEditor : function(){
+        //this.editor = new MapEditor(GI_MAP_WIDTH, GI_MAP_HEIGHT, GI_GRID_QUANTITY);
+        //this.editor.getCanvas($('#MapEditor')[0]);
+        //this.editor.draw();
+    }
     /* Create Character */
-    ,createGon : function() {
+    ,createChar : function() {
         this.char = {};
-        this.char.gon = new Character('char', 'gon');
+        this.char.player = new Character('char', GI_PLAYER);
     }
 });
 

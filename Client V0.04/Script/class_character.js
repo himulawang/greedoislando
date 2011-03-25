@@ -10,14 +10,14 @@ var Character = Coordinate.extend({
     }
     ,initCanvas : function() {
         this.el = $("<canvas id='" + this.name + "' style='position: absolute;'></canvas>");
-        $("#main").append(this.el);
+        $('body').append(this.el);
         this.el = $("#" + this.name)[0];
     }
     ,initStand : function(frames) {
         this.standImages = [];
         for (var i = 0; i < frames; ++i) {
             this.standImages.push(new Image);
-            this.standImages[i].src = this.type + '_' + this.name + '_' + i + '.png';
+            this.standImages[i].src = 'images/Character/' + this.type + '_' + this.name + '_' + i + '_S.png';
             //this.standImages[i].src = 'xsl.jpg';
         }
 
@@ -44,5 +44,13 @@ var Character = Coordinate.extend({
 
         this.standIndex = (this.standIndex < this.standImages.length - 1) ? this.standIndex + 1 : 0;
         c.drawImage(this.standImages[this.standIndex], 0, 0);
+    }
+    ,put : function() {
+        //var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
+        //var ScreenY = this.transferLogicToScreenY(this.x, this.y);
+        var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
+        var ScreenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
+        
+        $(this.el).css({left : ScreenX + 'px', top : ScreenY + 'px'});
     }
 });
