@@ -17,14 +17,14 @@ var Character = Coordinate.extend({
         this.standImages = [];
         for (var i = 0; i < frames; ++i) {
             this.standImages.push(new Image);
-            this.standImages[i].src = 'images/Character/' + this.type + '_' + this.name + '_' + i + '_S.png';
+            this.standImages[i].src = 'images/character/' + this.type + '_' + this.name.toLowerCase() + '_' + i + '_s.png';
             //this.standImages[i].src = 'xsl.jpg';
         }
 
         //Set Draw Frame Index
         this.standIndex = 0;
         var _this = this;
-        this.standInterval = setInterval(function(){ _this.drawStand(); }, 250);
+        this.standInterval = setInterval(function(){ _this.drawStand(); }, 500);
     }
     ,setPosition : function(x, y) {
         this.x = x;
