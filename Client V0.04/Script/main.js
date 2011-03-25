@@ -1,10 +1,9 @@
 var GI_MAP_WIDTH = 1248;
 var GI_MAP_HEIGHT = 672;
 var GI_GRID_QUANTITY = 16;
-var GI_PLAYER;
 
 $(function(){
-   new WSCLASS;
+   new WsConnect;
 
    /*$(".pickchar").click(function(){
         GI_PLAYER = $(this).html();

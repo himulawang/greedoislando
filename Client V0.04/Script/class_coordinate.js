@@ -25,6 +25,9 @@ var Coordinate = Class.extend({
         var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
         var ScreenY = this.transferLogicToScreenY(this.x, this.y);
 
+        //var ScreenX = (this.TILEWIDTH - this.transferLogicToScreenX(this.x, this.y))/2 + x;
+        //var ScreenY = this.transferLogicToScreenY(this.x, this.y) + this.HALFTILEHEIGHT;
+        
         $(this.el).css({left : ScreenX + 'px', top : ScreenY + 'px'});
     }
     ,move : function(e) {

@@ -8,7 +8,7 @@ var Map = Coordinate.extend({
         this.context = el.getContext('2d');
     }
     ,draw : function() { // Draw Map Side
-        //var x, y;
+        var x, y;
         this.context.beginPath();
         this.context.moveTo(this.MAPWIDTH / 2, 0);
         this.context.lineTo(0, this.MAPHEIGHT / 2);
@@ -17,7 +17,7 @@ var Map = Coordinate.extend({
         this.context.closePath();
         this.context.stroke();
 
-        /*
+        
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
             // 0 , 1
             x = 0; y = i;
@@ -28,6 +28,13 @@ var Map = Coordinate.extend({
             this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
             this.context.closePath();
             this.context.stroke();
+
+            this.context.fillStyle    = '#000000';
+            this.context.font         = 'Calibri 16px sans-serif';
+            this.context.textBaseline = 'top';
+            this.context.fillText  (y, this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
+                    
+            
         }
 
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
@@ -40,7 +47,12 @@ var Map = Coordinate.extend({
             this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
             this.context.closePath();
             this.context.stroke();
+
+            this.context.fillStyle    = '#000000';
+            this.context.font         = 'Calibri 16px sans-serif';
+            this.context.textBaseline = 'top';
+            this.context.fillText  (x, this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
         }
-        */
+        
     }
 });
