@@ -6,6 +6,7 @@ var Character = Coordinate.extend({
         this.initCanvas();
         this.initStand(2);
         this.setPosition(13, 13);
+        this.ui = new UserInterface;
         this.put();
     }
     ,initCanvas : function() {
@@ -46,11 +47,14 @@ var Character = Coordinate.extend({
         c.drawImage(this.standImages[this.standIndex], 0, 0);
     }
     ,put : function() {
-        //var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
-        //var ScreenY = this.transferLogicToScreenY(this.x, this.y);
+        var original_ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
+        var original_ScreenY = this.transferLogicToScreenY(this.x, this.y);
+
         var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
         var ScreenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
         
         $(this.el).css({left : ScreenX + 'px', top : ScreenY + 'px'});
+
+        this.ui.slotput(original_ScreenX,ScreenY);
     }
 });

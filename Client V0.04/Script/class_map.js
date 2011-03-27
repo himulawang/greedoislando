@@ -17,7 +17,7 @@ var Map = Coordinate.extend({
         this.context.closePath();
         this.context.stroke();
 
-        
+        /*
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
             // 0 , 1
             x = 0; y = i;
@@ -53,6 +53,6 @@ var Map = Coordinate.extend({
             this.context.textBaseline = 'top';
             this.context.fillText  (x, this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
         }
-        
+        */
     }
 });
