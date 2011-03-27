@@ -1,6 +1,6 @@
 var ws;
 var consoleDiv;
-var WS_HOST = "ws://58.35.102.183:8080";
+var WS_HOST = "ws://giworld.gicp.net:8080";
 
 //Upper case variable name means Constant,like 'WS_HOST'
 //Class name should begin as Upper case and then lower case like 'CharacterNPC'
@@ -56,6 +56,7 @@ var WsConnect = Class.extend({
              */
             if(!GI_PLAYER) return;
             $("#login").fadeOut(100,function(){
+                $("#login").remove();
                 $("#main").fadeIn(100,function(){
                     //if you want to use GI as a global variable, var this at the top of script
                     var GI = new Init;
