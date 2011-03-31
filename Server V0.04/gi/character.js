@@ -1,0 +1,2 @@
+exports.initCharacter = function(cID) {
+}
