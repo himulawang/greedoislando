@@ -1,6 +1,6 @@
 var ws;
 var consoleDiv;
-var WS_HOST = "ws://giworld.gicp.net:8080";
+var WS_HOST = "ws://giworld.gicp.net:8081";
 
 //Upper case variable name means Constant,like 'WS_HOST'
 //Class name should begin as Upper case and then lower case like 'CharacterNPC'
@@ -26,7 +26,11 @@ var WsConnect = Class.extend({
         ws.onmessage = function(e) {
             console.log(e);
             _this.writelog(e.data);
+            
+            var arr = JSON.parse(e.data);
+
             //Here should add main entrance in the future
+            var ientrance = new InteractionEntrance(arr);
         }
     }
     ,InitDisconnect : function(){
@@ -53,15 +57,7 @@ var WsConnect = Class.extend({
             });
 
             better? less one level of {}
-             */
-            if(!GI_PLAYER) return;
-            $("#login").fadeOut(100,function(){
-                $("#login").remove();
-                $("#main").fadeIn(100,function(){
-                    //if you want to use GI as a global variable, var this at the top of script
-                    var GI = new Init;
-                });
-            });
+             */            
         });
     }
     ,writelog : function(text){

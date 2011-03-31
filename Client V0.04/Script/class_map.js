@@ -17,7 +17,35 @@ var Map = Coordinate.extend({
         this.context.closePath();
         this.context.stroke();
 
-        /*
+        //consoleDiv = document.getElementById('console');
+        //consoleDiv.innerHTML = consoleDiv.innerHTML + "<div>" + terrain + "</div>";
+        //alert(TERRAIN);
+        
+        var comp;
+        var obsname;
+        var dcomp;
+        for(var i = 1; i <= this.GRIDQUANTITY; i++){
+            x = i; 
+            for(var j = 1; j <= this.GRIDQUANTITY; j++){
+                y = j;
+                comp = x + "," + y;
+                for(z in TERRAIN){
+                    dcomp = JSON.parse(TERRAIN[z]);
+                    //var cncl = jQuery.inArray(comp, dcomp.Coord);
+                    if(comp == dcomp.Coord){
+                        obsname = dcomp.Obs;
+                        break;
+                    }else{
+                        continue;
+                    }
+                }
+                this.context.fillStyle    = '#000000';
+                this.context.font         = 'Calibri 16px sans-serif';
+                this.context.textBaseline = 'top';
+                this.context.fillText  (obsname, this.transferLogicToScreenX(x, y) - 10, this.transferLogicToScreenY(x, y) - 30);
+            }
+        }
+
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
             // 0 , 1
             x = 0; y = i;
@@ -28,14 +56,9 @@ var Map = Coordinate.extend({
             this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
             this.context.closePath();
             this.context.stroke();
-
-            this.context.fillStyle    = '#000000';
-            this.context.font         = 'Calibri 16px sans-serif';
-            this.context.textBaseline = 'top';
-            this.context.fillText  (y, this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
-                    
-            
         }
+
+        
 
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
             // 1 , 0
@@ -47,12 +70,6 @@ var Map = Coordinate.extend({
             this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
             this.context.closePath();
             this.context.stroke();
-
-            this.context.fillStyle    = '#000000';
-            this.context.font         = 'Calibri 16px sans-serif';
-            this.context.textBaseline = 'top';
-            this.context.fillText  (x, this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
         }
-        */
     }
 });
