@@ -1,4 +1,4 @@
-exports.getMap = function() {
+exports.initMap = function() {
     /* 2000 Plain
      * 2001 Broken Wall
      * 2002 Tree
