@@ -1,7 +1,10 @@
+var fw;
+
 var Init = Class.extend({
     init : function() {
         var _this = this;
         $(document).ready(function(){
+            fw = new FindWay;
             _this.initMap();
             _this.initCursor();
             if(MapEditorTigger){
@@ -48,9 +51,17 @@ var Init = Class.extend({
     }
     ,bindMouseClick : function() {
         var _this = this;
+        alert(GI.char.player.x +"|"+ GI.char.player.y);
+        //fw.setStart(GI.char.player.x,GI.char.player.y);
         $('#grid')[0].onmouseup = function(e) {
+            var xPX = e.layerX;
+            var yPX = e.layerY;
+            var x = this.transferScreenToLogicX(xPX, yPX);
+            var y = this.transferScreenToLogicY(xPX, yPX);
+            //fw.setEnd(x,y);
             if (e.which === 1) {
                 console.log(e);
+                //fw.getWay();
                 _this.char.player.move(e);
             }
             return false;

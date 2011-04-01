@@ -24,7 +24,7 @@ var Coordinate = Class.extend({
     ,put : function() {
         var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
         var ScreenY = this.transferLogicToScreenY(this.x, this.y);
-
+                
         //var ScreenX = (this.TILEWIDTH - this.transferLogicToScreenX(this.x, this.y))/2 + x;
         //var ScreenY = this.transferLogicToScreenY(this.x, this.y) + this.HALFTILEHEIGHT;
         
@@ -39,6 +39,7 @@ var Coordinate = Class.extend({
         if (this.checkMoveOut(x, y)) {
             this.x = x;
             this.y = y;
+            //fw.setEnd(this.x,this.y);
             this.put();
         }
     }

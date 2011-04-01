@@ -34,6 +34,9 @@ var Map = Coordinate.extend({
                     //var cncl = jQuery.inArray(comp, dcomp.Coord);
                     if(comp == dcomp.Coord){
                         obsname = dcomp.Obs;
+                        if(obsname == "BrokenWall" || obsname == "Tree" || obsname == "River"){
+                            fw.setObstacle(x,y);
+                        }
                         break;
                     }else{
                         continue;

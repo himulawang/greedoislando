@@ -1,16 +1,23 @@
 var TERRAIN = [];
+var InitPostion = [];
+var InitfaceTo;
 
 var InteractionEntrance = Class.extend({
     init : function(e){
         this.sd = e.data;
         if(e.type == "initMyCharacter"){
-            this.generateChar();
+            this.generateChar(e.data.position,e.data.faceTo);
         }else if(e.type == "map"){
             this.generateTerrainData();
         }
     }
-    ,generateChar : function(){
+    ,generateChar : function(InitPos,InitFac){
         //if you want to use GI as a global variable, var this at the top of script
+        var dotPos = InitPos.lastIndexOf(",");
+        var PosStringLen = InitPos.length;
+        InitPostion.x = Number(InitPos.substr(0,dotPos));
+        InitPostion.y = Number(InitPos.substr(dotPos+1,PosStringLen));
+        InitfaceTo = InitFac;
         GI = new Init;
     }
     ,generateTerrainData : function(){
