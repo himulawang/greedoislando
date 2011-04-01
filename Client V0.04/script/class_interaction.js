@@ -1,10 +1,12 @@
+// don't var things here. put them to main.js
 var TERRAIN = [];
-var InitPostion = [];
+var InitPosition = [];
 var InitfaceTo;
 
 var InteractionEntrance = Class.extend({
     init : function(e){
         this.sd = e.data;
+        console.log(this.sd);
         if(e.type == "initMyCharacter"){
             this.generateChar(e.data.position,e.data.faceTo);
         }else if(e.type == "map"){
@@ -12,21 +14,37 @@ var InteractionEntrance = Class.extend({
         }
     }
     ,generateChar : function(InitPos,InitFac){
-        //if you want to use GI as a global variable, var this at the top of script
+        // ila : use this
+        InitPos = InitPos.split(',');
+        InitPosition.x = InitPos[0];
+        InitPosition.y = InitPos[1];
+        InitfaceTo = InitFac;
+        GI.createChar();
+        //GI = new Init;
+        /*
         var dotPos = InitPos.lastIndexOf(",");
         var PosStringLen = InitPos.length;
         InitPostion.x = Number(InitPos.substr(0,dotPos));
         InitPostion.y = Number(InitPos.substr(dotPos+1,PosStringLen));
         InitfaceTo = InitFac;
         GI = new Init;
+        */
     }
     ,generateTerrainData : function(){
-        var ObsCoord;
+        //var ObsCoord;
         $("#login").fadeOut(100,function(){
             $("#login").remove();
             $("#main").fadeIn(100);
         });
+        console.log(this.sd);
+        //ila this x should var first
+        var x;
         for(x in this.sd){
+            //ila : use this
+            TERRAIN.push(JSON.stringify(
+                { Obs : GI_TERRAIN_DEFINE[this.sd[x].objID], Coord : x }
+            ));
+            /*
             if(this.sd[x].objID == 2000){
                 ObsCoord = { Obs : "plain", Coord : x };
                 TERRAIN.push(JSON.stringify(ObsCoord));
@@ -52,6 +70,8 @@ var InteractionEntrance = Class.extend({
                 ObsCoord = { Obs : "Bridge", Coord : x };
                 TERRAIN.push(JSON.stringify(ObsCoord));
             }
+            */
         }
+        GI.initMap();
     }
 });

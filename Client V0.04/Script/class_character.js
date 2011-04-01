@@ -1,3 +1,4 @@
+// ila: don't var things here, all var should put in main.js
 var charPosX;
 var charPosY;
 
@@ -8,7 +9,7 @@ var Character = Coordinate.extend({
         this.name = name;
         this.initCanvas();
         this.initStand(2);
-        this.setPosition(InitPostion.x,InitPostion.y);
+        this.setPosition(InitPosition.x,InitPosition.y);
         this.ui = new UserInterface;
         this.put();
     }
@@ -64,5 +65,9 @@ var Character = Coordinate.extend({
         $(this.el).css({left : ScreenX + 'px', top : ScreenY + 'px'});
 
         this.ui.slotput(original_ScreenX,ScreenY);
+    }
+    // ila add here
+    ,move : function() {
+        
     }
 });

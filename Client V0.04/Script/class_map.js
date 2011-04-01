@@ -35,7 +35,7 @@ var Map = Coordinate.extend({
                     if(comp == dcomp.Coord){
                         obsname = dcomp.Obs;
                         if(obsname == "BrokenWall" || obsname == "Tree" || obsname == "River"){
-                            fw.setObstacle(x,y);
+                            //fw.setObstacle(x,y);
                         }
                         break;
                     }else{
