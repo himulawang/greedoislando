@@ -1,0 +1,70 @@
+/*
+ * Greed Island Common css File
+ */
+
+body {
+    padding: 0px;
+    margin: 0px;
+    font-family: Calibri;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    float: clear;
+}
+
+#main {
+    display: none;
+    width: 1024px;
+    height: 700px;
+}
+
+#login {
+    width: 1024px;
+    margin: 180px auto;
+    height: 300px;
+}
+
+.pickchar {
+    width: 260px;
+    height: 300px;
+    border: 1px solid #000000;
+    float:left;
+    margin: 0 0 0 160px;
+    text-align:center;
+}
+
+.pickchar:hover {
+    border: 1px solid #FFA500;
+    color: #FFA500;
+}
+
+#console {
+    width: 100%;
+    background: #CCCCCC;
+}
+
+#disconnect {
+    float: right;
+}
+
+#char-one {
+    background : url("../images/avatar/GON-2.png") no-repeat center;
+    cursor: pointer;
+}
+
+#char-one:hover {
+    background : url("../images/avatar/GON-1.png") no-repeat center;
+}
+
+#char-two {
+    background : url("../images/avatar/KILLUA-2.png") no-repeat center;
+    cursor: pointer;
+}
+
+#char-two:hover {
+    background : url("../images/avatar/KILLUA-1.png") no-repeat center;
+}
