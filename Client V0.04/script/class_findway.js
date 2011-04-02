@@ -7,7 +7,7 @@ var FindWay = Class.extend({
      *
      * */
     init : function() {
-        this.maxGrid = 16; //Modify To Constant
+        this.maxGrid = 15; //Modify To Constant
         this.obstacleList = {};
         this.parentList = {};
         this.openList = {};
@@ -15,15 +15,15 @@ var FindWay = Class.extend({
         this.nowPoint = {x : 0, y : 0};
     }
     ,setObstacle : function(x, y) {
-        this.obstacleList[this.getIndex(x, y)] = {x : x, y : y};
+        this.obstacleList[this.getIndex(x, y)] = {x : parseInt(x), y : parseInt(y)};
         //var a = JSON.stringify(this.obstacleList);
         //alert(a);
     }
     ,setStart : function(x, y) {
-        this.startPoint = {x : x, y : y};
+        this.startPoint = {x : parseInt(x), y : parseInt(y)};
     }
     ,setEnd : function(x, y) {
-        this.endPoint = {x : x, y : y};
+        this.endPoint = {x : parseInt(x), y : parseInt(y)};
     }
     ,getG : function(x, y) {
         var childX = x;
@@ -90,8 +90,7 @@ var FindWay = Class.extend({
         this.nowPoint = {x : this.endPoint.x, y : this.endPoint.y};
         this.traceBack();
 
-        alert(this.way);
-        return this.way;
+        return this.way.reverse();
     }
     ,dealAroundGrid : function() {
         var x = this.nowPoint.x;
@@ -106,7 +105,7 @@ var FindWay = Class.extend({
         this.dealSingleGrid(x - 1, y - 1);
     }
     ,dealSingleGrid : function(x, y) {
-        if (x < 1 || y < 1 || x > this.maxGrid || y > this.maxGrid) return;
+        if (x < 0 || y < 0 || x > this.maxGrid || y > this.maxGrid) return;
         var index = this.getIndex(x, y);
         //if this point has in obstacleList or closeList , do nothing
         var point = this.obstacleList[index] || this.closeList[index];
