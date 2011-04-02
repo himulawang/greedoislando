@@ -13,7 +13,7 @@ var Coordinate = Class.extend({
         return this.MAPWIDTH / 2 + (x - y) * this.HALFTILEWIDTH;
     }
     ,transferLogicToScreenY : function(x, y) {
-        return (y + x) * this.HALFTILEHEIGHT;
+        return (parseInt(y) + parseInt(x)) * this.HALFTILEHEIGHT;
     }
     ,transferScreenToLogicX : function(x, y) {
         return parseInt((x - this.MAPWIDTH / 2) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));

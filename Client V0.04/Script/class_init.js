@@ -53,21 +53,21 @@ var Init = Class.extend({
         $('#grid')[0].onmouseup = function(e) {
             var xPX = e.layerX;
             var yPX = e.layerY;
-            console.log(e);
             var InstanceCoordinate = new Coordinate();
             var x = InstanceCoordinate.transferScreenToLogicX(xPX, yPX);
             var y = InstanceCoordinate.transferScreenToLogicY(xPX, yPX);
             //fw.setEnd(x,y);
             if (e.which === 1) {
-                console.log(e);
                 //fw.getWay();
                 //_this.char.player.move(e);
 
                 // ila begin here
                 var InstanceFindWay = new FindWay;
                 InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
+            console.log(_this.char.player.x, _this.char.player.y);
                 InstanceFindWay.setEnd(x, y);
-                alert(console.log(InstanceFindWay.getWay()));
+            console.log(x, y);
+                console.log(InstanceFindWay.getWay());
                 // ila end here
             }
             return false;
