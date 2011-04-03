@@ -16,8 +16,6 @@ var FindWay = Class.extend({
     }
     ,setObstacle : function(x, y) {
         this.obstacleList[this.getIndex(x, y)] = {x : parseInt(x), y : parseInt(y)};
-        //var a = JSON.stringify(this.obstacleList);
-        //alert(a);
     }
     ,setStart : function(x, y) {
         this.startPoint = {x : parseInt(x), y : parseInt(y)};
