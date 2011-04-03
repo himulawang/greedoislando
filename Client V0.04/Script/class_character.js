@@ -67,7 +67,24 @@ var Character = Coordinate.extend({
         this.ui.slotput(original_ScreenX,ScreenY);
     }
     // ila add here
-    ,move : function() {
-        
+    ,showWay : function(move) {
+        var _this = this;
+        var countDown = 300;
+
+        if (this.showWayIndex === undefined) {
+            this.showWayIndex = 0;
+        }
+
+        if (this.showWayIndex >= move.length) {
+            delete this.showWayIndex;
+            GI.showWayCursor.showWay(GI.char.player.x + ',' + GI.char.player.y);
+            return;
+        }
+
+        setTimeout(function() {
+            GI.showWayCursor.showWay(move[_this.showWayIndex]);
+            ++_this.showWayIndex;
+            _this.showWay(move);
+        }, countDown);
     }
 });
