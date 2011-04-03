@@ -1,6 +1,6 @@
 // ila: don't var things here, all var should put in main.js
-var charPosX;
-var charPosY;
+//var charPosX;
+//var charPosY;
 
 var Character = Coordinate.extend({
     init : function(type, name) {
@@ -22,13 +22,14 @@ var Character = Coordinate.extend({
         this.standImages = [];
         for (var i = 0; i < frames; ++i) {
             this.standImages.push(new Image);
-            this.standImages[i].src = 'images/character/' + this.type + '_' + this.name.toLowerCase() + '_' + i + '_s.png';
+            this.standImages[i].src = 'images/character/' + this.name.toLowerCase() + '/stand/' + this.type + '_' + this.name.toLowerCase() + '_' + i + '_s.png';
             //this.standImages[i].src = 'xsl.jpg';
         }
 
         //Set Draw Frame Index
         this.standIndex = 0;
         var _this = this;
+        clearInterval(this.runInterval);
         this.standInterval = setInterval(function(){ _this.drawStand(); }, 500);
     }
     ,setPosition : function(x, y) {
@@ -65,11 +66,15 @@ var Character = Coordinate.extend({
         $(this.el).css({left : ScreenX + 'px', top : ScreenY + 'px'});
 
         this.ui.slotput(original_ScreenX,ScreenY);
+
+        //if(this.x == GI.endPointX && this.y == GI.endPointY){            
+        //    this.initStand(2);
+        //}
     }
     // ila add here
     ,showWay : function(move) {
         var _this = this;
-        var countDown = 300;
+        var countDown = 800;
 
         if (this.showWayIndex === undefined) {
             this.showWayIndex = 0;
@@ -77,14 +82,51 @@ var Character = Coordinate.extend({
 
         if (this.showWayIndex >= move.length) {
             delete this.showWayIndex;
+            GI.char.player.showRunAnimation(GI.char.player.x + ',' + GI.char.player.y);
             GI.showWayCursor.showWay(GI.char.player.x + ',' + GI.char.player.y);
             return;
         }
 
         setTimeout(function() {
-            GI.showWayCursor.showWay(move[_this.showWayIndex]);
+            GI.char.player.showRunAnimation(move[_this.showWayIndex]);
+            GI.showWayCursor.showWay(GI.char.player.x + ',' + GI.char.player.y);
             ++_this.showWayIndex;
             _this.showWay(move);
         }, countDown);
+    }
+    ,showRunAnimation : function(index) {
+        var tmp = index.split(",");
+        this.x = tmp[0];
+        this.y = tmp[1];
+        this.put();
+    }
+    ,initRun : function(frames) {
+        this.runImages = [];
+        for (var i = 0; i < frames; ++i) {
+            this.runImages.push(new Image);
+            this.runImages[i].src = 'images/character/' + this.name.toLowerCase() + '/run-s-1/' + this.name.toLowerCase() + '-run-' + i + '-s.png';
+        }
+
+        //Set Draw Frame Index
+        this.runIndex = 0;
+        var _this = this;
+        clearInterval(this.standInterval);
+        clearInterval(this.runInterval);
+        this.runInterval = setInterval(function(){ _this.drawRun(); }, 100);
+    }
+    ,drawRun : function(){
+        var c = this.el.getContext('2d');
+        this.runWidth = this.runImages[0].width;
+        //this.standWidth = 76;
+        this.runHeight = this.runImages[0].height;
+        //this.standHeight = 48;
+        //Set Stand Canvas Width And Height
+        this.el.width = this.runWidth;
+        this.el.height = this.runHeight;
+
+        c.clearRect(0, 0, this.runWidth, this.runHeight);
+
+        this.runIndex = (this.runIndex < this.runImages.length - 1) ? this.runIndex + 1 : 0;
+        c.drawImage(this.runImages[this.runIndex], 0, 0);
     }
 });
