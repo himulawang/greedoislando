@@ -40,4 +40,22 @@ var Cursor = Coordinate.extend({
             _this.draw();
         }, 100);
     }
+    ,move : function(e) {
+        var xPX = e.layerX;
+        var yPX = e.layerY;
+        var x = this.transferScreenToLogicX(xPX, yPX);
+        var y = this.transferScreenToLogicY(xPX, yPX);
+
+        if (this.checkMoveOut(x, y)) {
+            this.x = x;
+            this.y = y;
+            this.put();
+        }
+    }
+    ,showWay : function(index) {
+        var tmp = index.split(",");
+        this.x = tmp[0];
+        this.y = tmp[1];
+        this.put();
+    }
 });

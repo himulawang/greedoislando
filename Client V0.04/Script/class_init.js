@@ -3,6 +3,7 @@ var Init = Class.extend({
         var _this = this;
         $(document).ready(function(){
             _this.initCursor();
+            _this.initShowWay();
             //ila: MapEditorTrigger is a Constant. use MAP_EDITOR_TRIGGER and move this to main.js
             // and Tigger is T(r)igger
             if(MapEditorTigger){
@@ -64,10 +65,11 @@ var Init = Class.extend({
                 // ila begin here
                 var InstanceFindWay = new FindWay;
                 InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
-            console.log(_this.char.player.x, _this.char.player.y);
                 InstanceFindWay.setEnd(x, y);
-            console.log(x, y);
-                console.log(InstanceFindWay.getWay());
+                var way = InstanceFindWay.getWay();
+                console.log(way);
+                _this.char.player.showWay(way);
+                
                 // ila end here
             }
             return false;
@@ -84,6 +86,12 @@ var Init = Class.extend({
         this.cursor.getCanvas($('#cursor')[0]);
         this.cursor.draw();
         this.cursor.startBreath();
+    }
+    ,initShowWay : function() {
+        this.showWayCursor = new Cursor(GI_MAP_WIDTH, GI_MAP_HEIGHT, GI_GRID_QUANTITY);
+        this.showWayCursor.getCanvas($('#show-way-cursor')[0]);
+        this.showWayCursor.draw();
+        this.showWayCursor.startBreath();
     }
     ,initMapEditor : function(){
         //this.editor = new MapEditor(GI_MAP_WIDTH, GI_MAP_HEIGHT, GI_GRID_QUANTITY);
