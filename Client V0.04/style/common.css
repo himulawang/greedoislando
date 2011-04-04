@@ -52,19 +52,19 @@ body {
 }
 
 #char-one {
-    background : url("../images/avatar/GON-2.png") no-repeat center;
+    background : url("../images/avatar/gon-2.png") no-repeat center; 
     cursor: pointer;
 }
 
 #char-one:hover {
-    background : url("../images/avatar/GON-1.png") no-repeat center;
+    background : url("../images/avatar/gon-1.png") no-repeat center;
 }
 
 #char-two {
-    background : url("../images/avatar/KILLUA-2.png") no-repeat center;
+    background : url("../images/avatar/killua-2.png") no-repeat center;
     cursor: pointer;
 }
 
 #char-two:hover {
-    background : url("../images/avatar/KILLUA-1.png") no-repeat center;
+    background : url("../images/avatar/killua-1.png") no-repeat center;
 }

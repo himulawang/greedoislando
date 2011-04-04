@@ -55,7 +55,6 @@ var Init = Class.extend({
             var InstanceCoordinate = new Coordinate();
             var x = InstanceCoordinate.transferScreenToLogicX(xPX, yPX);
             var y = InstanceCoordinate.transferScreenToLogicY(xPX, yPX);
-            GI.char.player.initRun(8);
             if (e.which === 1) {
                 // ila begin here
                 var InstanceFindWay = new FindWay;
@@ -63,7 +62,8 @@ var Init = Class.extend({
                 InstanceFindWay.setEnd(x, y);
                 var way = InstanceFindWay.getWay();
                 console.log(way);
-                _this.char.player.showWay(way);
+                _this.char.player.setWay(way);
+                _this.char.player.startWay();
                 // ila end here
             }
             return false;
