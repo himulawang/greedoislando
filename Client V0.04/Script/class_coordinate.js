@@ -4,10 +4,23 @@ var Coordinate = Class.extend({
         this.MAPHEIGHT = GI_MAP_HEIGHT;
         this.GRIDQUANTITY = GI_GRID_QUANTITY;
 
+        this.SQUARESIDE = Math.sqrt(Math.pow(this.MAPWIDTH, 2) + Math.pow(this.MAPHEIGHT, 2));
+
         this.TILEWIDTH = this.MAPWIDTH / this.GRIDQUANTITY;
         this.TILEHEIGHT = this.MAPHEIGHT / this.GRIDQUANTITY;
         this.HALFTILEWIDTH = this.TILEWIDTH / 2;
         this.HALFTILEHEIGHT = this.TILEHEIGHT / 2;
+        this.DIRECTIONS = {
+            //deltaX,deltaY
+            '0,-1' : 0
+            ,'1,-1' : 1
+            ,'1,0' : 2
+            ,'1,1' : 3
+            ,'0,1' : 4
+            ,'-1,1' : 5
+            ,'-1,0' : 6
+            ,'-1,-1' : 7
+        };
     }
     ,transferLogicToScreenX : function(x, y) {
         return this.MAPWIDTH / 2 + (x - y) * this.HALFTILEWIDTH;
@@ -68,4 +81,31 @@ var Coordinate = Class.extend({
             && y < this.GRIDQUANTITY
         ) return true;
     }
+    ,getCoordinateIndex : function(x, y) {
+        return x + ',' + y;
+    }
+    ,getCoordinateXY : function(index) {
+        index = index.split(',');
+        return {x : parseInt(index[0]), y : parseInt(index[1])};
+    }
+    ,getTowardNewGridDirection : function(x, y) {
+        var deltaX = x - this.x;
+        var deltaY = y - this.y;
+        var deltaIndex = this.getCoordinateIndex(deltaX, deltaY);
+        return this.DIRECTIONS[deltaIndex];
+    }
+    /*
+    ,getTowardNewGridDisplacementX : function(nextGridIndex) {
+        var nextXY = this.getCoordinateXY(nextGridIndex);
+        var nowScreenX = this.transferLogicToScreenX(this.x, this.y);
+        var newScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y);
+        return newScreenX - nowScreenX;
+    }
+    ,getTowardNewGridDisplacementY : function(nextGridIndex) {
+        var nextXY = this.getCoordinateXY(nextGridIndex);
+        var nowScreenY = this.transferLogicToScreenY(this.x, this.y);
+        var newScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y);
+        return newScreenY - nowScreenY;
+    }
+    */
 });
