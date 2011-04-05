@@ -4,6 +4,7 @@ var Character = Coordinate.extend({
         this.type = type;
         this.name = name;
         this.setNewDestinationTigger = false;
+        this.characterMoving = false;
         this.initCanvas();
         this.initStand(2);
         this.initRun(8);
@@ -50,8 +51,11 @@ var Character = Coordinate.extend({
         //reach the final point
         if (this.wayIndex >= this.way.length) {
             this.startStand();
+            this.characterMoving = false;
             return;
         }
+
+        this.characterMoving = true;
 
         var _this = this;
         //get move one grid start coordinate and end coordinate
@@ -114,6 +118,20 @@ var Character = Coordinate.extend({
                 clearInterval(_this.moveInterval);
                 _this.x = nextXY.x;
                 _this.y = nextXY.y;
+
+                //if user made a new way before last way wasn't ended
+                if (_this.setNewDestinationTigger) {
+                    //make new way
+                    var InstanceFindWay = new FindWay;
+                    InstanceFindWay.setStart(_this.x, _this.y);
+                    InstanceFindWay.setEnd(_this.nextWayEndX, _this.nextWayEndY);
+                    var way = InstanceFindWay.getWay();
+                    _this.setWay(way);
+                    _this.startWay();
+                    //reset trigger
+                    _this.setNewDestinationTigger = false;
+                    return;
+                }
 
                 ++_this.wayIndex;
                 _this.moveWay();
