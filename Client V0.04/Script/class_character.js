@@ -3,6 +3,7 @@ var Character = Coordinate.extend({
         this._super();
         this.type = type;
         this.name = name;
+        this.setNewDestinationTigger = false;
         this.initCanvas();
         this.initStand(2);
         this.initRun(8);
@@ -97,7 +98,7 @@ var Character = Coordinate.extend({
 
         //start running animation
         this.startRun();
-        var i = 0;
+        var i = 0;        
         this.moveInterval = setInterval(function() {
             screenX += stepX;
             screenY += stepY;

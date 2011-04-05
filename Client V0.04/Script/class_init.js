@@ -58,6 +58,7 @@ var Init = Class.extend({
             if (e.which === 1) {
                 // ila begin here
                 var InstanceFindWay = new FindWay;
+                clearInterval(_this.char.player.moveInterval);
                 InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
                 InstanceFindWay.setEnd(x, y);
                 var way = InstanceFindWay.getWay();
