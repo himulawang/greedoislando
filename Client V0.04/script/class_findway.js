@@ -69,6 +69,7 @@ var FindWay = Class.extend({
     }
     ,getWay : function() {
         this.way = [];
+        this.newRouteBegin = 0;
         var index = this.getIndex(this.startPoint.x, this.startPoint.y);
         this.openList[index] = this.startPoint;
         this.setNowPoint(this.startPoint.x, this.startPoint.y);
@@ -87,6 +88,7 @@ var FindWay = Class.extend({
 
         this.nowPoint = {x : this.endPoint.x, y : this.endPoint.y};
         this.traceBack();
+        
 
         return this.way.reverse();
     }
