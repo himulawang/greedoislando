@@ -57,8 +57,13 @@ var Init = Class.extend({
             var y = InstanceCoordinate.transferScreenToLogicY(xPX, yPX);
             if (e.which === 1) {
                 // ila begin here
+                if (_this.char.player.characterMoving) {
+                    _this.char.player.setNewDestinationTigger = true;
+                    _this.char.player.nextWayEndX = x;
+                    _this.char.player.nextWayEndY = y;
+                    return;
+                }
                 var InstanceFindWay = new FindWay;
-                clearInterval(_this.char.player.moveInterval);
                 InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
                 InstanceFindWay.setEnd(x, y);
                 var way = InstanceFindWay.getWay();
