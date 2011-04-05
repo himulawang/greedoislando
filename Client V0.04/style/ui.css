@@ -1,0 +1,40 @@
+/*
+ * Greed island UserInterface css file
+ */
+
+.hpslot {
+    border : 1px solid #3c3c3c;
+    height : 4px;
+    width : 60px;
+    position : absolute;
+    border-radius : 1px;
+}
+
+.hpfiller {
+    border : 1px solid #009100;
+    border : none;
+    background : #009100;
+    width : 58px;
+    height: 2px;
+    margin: 1px 0 0 1px;
+    border-radius : 1px;
+}
+
+.manaslot {
+    border : 1px solid #3c3c3c;
+    height : 4px;
+    width : 60px;
+    position : absolute;
+    top : 20px;
+    border-radius : 1px;
+}
+
+.manafiller {
+    border : 1px solid #000079;
+    border : none;
+    background : #0000C6;
+    width : 58px;
+    height: 2px;
+    margin: 1px 0 0 1px;
+    border-radius : 1px;
+}
