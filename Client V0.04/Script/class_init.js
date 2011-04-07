@@ -102,6 +102,7 @@ var Init = Class.extend({
     ,createChar : function() {
         this.char = {};
         this.char.player = new Character('char', GI_PLAYER);
+        //this.char.player = eval('new '+ this.name + '(char ,' + GI_PLAYER + ')');
     }
 });
 
