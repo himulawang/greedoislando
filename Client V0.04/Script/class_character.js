@@ -3,6 +3,7 @@ var Character = Coordinate.extend({
         this._super();
         this.type = type;
         this.name = name;
+        this.CharAttribution = eval('new '+ this.name);
         this.setNewDestinationTigger = false;
         this.characterMoving = false;
         this.initCanvas();
@@ -51,6 +52,7 @@ var Character = Coordinate.extend({
         //reach the final point
         if (this.wayIndex >= this.way.length) {
             this.startStand();
+            this.put();
             this.characterMoving = false;
             return;
         }
@@ -67,12 +69,16 @@ var Character = Coordinate.extend({
         console.log(this.directionID);
 
         //get start grid screen X and Y
-        var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
-        var nowScreenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
+        //var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
+        //var nowScreenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
+        this.CharAttribution.runOffsetX = (this.CharAttribution.runOffsetX) ? (this.CharAttribution.runOffsetX) : (this.CharAttribution.standOffsetX);
+        this.CharAttribution.runOffsetY = (this.CharAttribution.runOffsetY) ? (this.CharAttribution.runOffsetY) : (this.CharAttribution.standOffsetY);
+        var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.CharAttribution.runOffsetX;
+        var nowScreenY = this.transferLogicToScreenY(this.x, this.y) - this.CharAttribution.runOffsetY;
 
         //get next step grid screen X and Y
-        var nextScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
-        var nextScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
+        var nextScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y) - this.HALFTILEWIDTH + this.CharAttribution.runOffsetX;
+        var nextScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y) - this.CharAttribution.runOffsetY;
 
         //get ui Slot start grid screen X and Y
         var uiScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
@@ -148,6 +154,8 @@ var Character = Coordinate.extend({
         this.el.width = this.standWidth;
         this.el.height = this.standHeight;
 
+        this.CharAttribution.CalculateGonStandOffset(this.standWidth,this.standHeight);
+
         c.clearRect(0, 0, this.standWidth, this.standHeight);
 
         this.standIndex = (this.standIndex < this.standImages.length - 1) ? this.standIndex + 1 : 0;
@@ -156,8 +164,10 @@ var Character = Coordinate.extend({
     ,put : function() {
         var originalScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
 
-        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
-        var screenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
+        //var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
+        //var screenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
+        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.CharAttribution.standOffsetX;
+        var screenY = this.transferLogicToScreenY(this.x, this.y) - this.CharAttribution.standOffsetY;
         
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 
@@ -183,6 +193,8 @@ var Character = Coordinate.extend({
             this.runImages[directionID][i].src = 'images/character/' + this.name.toLowerCase() + '/run-s-' + directionID + '/' + this.name.toLowerCase() + '-run-' + i + '-s.png';
             console.log('directionID:' + directionID + 'images/character/' + this.name.toLowerCase() + '/run-s-' + directionID + '/' + this.name.toLowerCase() + '-run-' + i + '-s.png');
         }
+        
+        this.CharAttribution.CalculateGonRunOffset(this.runImages[0][0].width,this.runImages[0][0].height);
     }
     ,startRun : function() {
         var _this = this;
@@ -199,6 +211,8 @@ var Character = Coordinate.extend({
         this.runHeight = suit[0].height;
         this.el.width = this.runWidth;
         this.el.height = this.runHeight;
+
+        this.CharAttribution.CalculateGonRunOffset(this.runWidth,this.runHeight);
 
         c.clearRect(0, 0, this.runWidth, this.runHeight);
 
