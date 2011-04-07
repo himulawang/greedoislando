@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <title>GI World Process Control</title>
+    <script src='jquery-1.5.1.min.js'></script>
+    <script>
+    function login(){
+        var id = $('#id').val();
+        var pwd = $('#pwd').val();
+        $.post('login.php'
+            ,{id : id, pwd : pwd}
+            ,function(data) {
+                j = JSON.parse(data);
+                if (j.r==1) {
+                    window.location = 'main.php';
+                }else if (j.r==2){
+                    $('#output').html('wrong id or pwd');
+                }
+            }
+        );
+    }
+    </script>
+</head>
+<body>
+
+<div>ID:<input id='id'></div>
+<div>PWD:<input type='password' id='pwd'></div>
+<div>
+    <input type='button' value='OK' onclick='login();'>
+</div>
+<div id='output'></div>
+
+</body>
+
+
+</html>
