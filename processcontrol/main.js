@@ -19,10 +19,10 @@ function getWaterFall() {
                 row = j[i];
                 html += '<tr>';
                 html += '<td>' + row.date + '</td>';
-                html += '<td class="content" onclick="edit(\'bb\',' + row.id + ', this);">' + row.bb + '</td>';
-                html += '<td class="content" onclick="edit(\'dya\',' + row.id + ', this);">' + row.dya + '</td>';
-                html += '<td class="content" onclick="edit(\'ila\',' + row.id + ', this);">' + row.ila + '</td>';
-                html += '<td class="content" onclick="edit(\'joseph\',' + row.id + ', this);">' + row.joseph + '</td>';
+                html += '<td class="content" onclick="edit(\'bb\',' + row.id + ', this);">' + enter(row.bb) + '</td>';
+                html += '<td class="content" onclick="edit(\'dya\',' + row.id + ', this);">' + enter(row.dya) + '</td>';
+                html += '<td class="content" onclick="edit(\'ila\',' + row.id + ', this);">' + enter(row.ila) + '</td>';
+                html += '<td class="content" onclick="edit(\'joseph\',' + row.id + ', this);">' + enter(row.joseph) + '</td>';
                 html += '</tr>';
             }
 
@@ -32,6 +32,14 @@ function getWaterFall() {
             
         }
     );
+}
+
+function enter(text) {
+    return text.split("\n").join('<br>');
+}
+
+function noEnter(text) {
+    return text.split('<br>').join("\n");
 }
 
 function add() {
@@ -65,7 +73,7 @@ function edit(who, id, el) {
     var text = el.html();
     var html = '';
 
-    html += '<textarea>' + text + '</textarea>';
+    html += '<textarea>' + noEnter(text) + '</textarea>';
     html += '<input type="button" value="OK" onclick="upgrade(\'' + who + '\',' + id + ', this);">';
     el[0].onclick = null;
     el.html(html);

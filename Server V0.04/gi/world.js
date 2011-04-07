@@ -1,5 +1,6 @@
 var sys = require('sys')
-    ,map = require('./map');
+    ,map = require('./map')
+    ,char = require('./character');
 
 /* MAP */
 var GI_MAP
@@ -39,37 +40,22 @@ function initMap(object) {
 }
 
 function initMyCharacter(object) {
-    /* 500 UpRight
-     * 501 DownRight
-     * 502 DownLeft
-     * 503 UpLeft
-     * */
-    var cID = object.cID;
-    var character = object.character;
-    var position = character === 'Gon' ? "2,2" : "16,16";
-    var faceTo = character === 'Gon' ? 501 : 503;
-    GI_CHARACTER[cID] = {
-        cID : cID
-        ,name : character
-        ,life : 100
-        ,maxLife : 100
-        ,force : 20
-        ,maxForce : 20
-        ,speed : 2
-        ,positon : position
-        ,faceTo : faceTo
-    };
-    return {
-        cID : cID
-        ,type : 'initMyCharacter'
-        ,data : GI_CHARACTER[cID]
-    };
+    return char.initMyCharacter(object, GI_CHARACTER);
+}
+
+function initCharacter(object) {
+    return char.initCharacter(object, GI_CHARACTER);
+    //return {type : 'initCharacter'}
+}
+
+//GM
+exports.getAllCharacter = function() {
+    return GI_CHARACTER;
 }
 var ACTION = {
     selectCharacter : {
         all : []
         ,self : [initMap, initMyCharacter]
-        ,other : []
+        ,other : [initCharacter]
     }
 };
-

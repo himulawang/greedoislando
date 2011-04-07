@@ -15,7 +15,7 @@ exports.output = function(object, clients) {
 sys.debug(JSON.stringify(object.data.type));
     if (object.send === 'all') {
         for (i in clients) {
-            clients.write(JSON.stringify(object.data));
+            clients[i].write(JSON.stringify(object.data));
         }
     }else if (object.send === 'self') {
         if (!clients[cID]) return;
@@ -23,7 +23,7 @@ sys.debug(JSON.stringify(object.data.type));
     }else if (object.send === 'other') {
         for (i in clients) {
             if (i === object.cID) continue;
-            clients[cID].write(JSON.stringify(object.data));
+            clients[i].write(JSON.stringify(object.data));
         }
     }
 }
