@@ -101,7 +101,8 @@ var Init = Class.extend({
     /* Create Character */
     ,createChar : function(data) {
         this.char = {};
-        this.char.player = new Character('char', GI_PLAYER , data);
+        this.char.player = eval('new '+ data.name);
+        this.char.player.make(data);
         //this.char.player = eval('new '+ this.name + '(char ,' + GI_PLAYER + ')');
     }
     ,createOtherChar : function(data){
