@@ -1,21 +1,6 @@
 var Character = Coordinate.extend({
-    init : function(type, name, e) {
+    init : function() {
         this._super();
-        this.type = type;
-        this.name = name;
-        this.cID = e.cID;
-        this.faceTo = e.faceTo;
-        this.initPos = e.position.split(',');
-        this.CharAttribution = eval('new '+ this.name);
-        this.setNewDestinationTigger = false;
-        this.characterMoving = false;
-        this.initCanvas();
-        this.initStand(2);
-        this.initRun(8);
-        this.startStand();
-        this.setPosition(this.initPos[0],this.initPos[1]);
-        this.ui = new UserInterface(this.cID);
-        this.put();
     }
     ,initCanvas : function() {
         this.el = $("<canvas id='" + this.cID + "' style='position: absolute;'></canvas>");
@@ -27,7 +12,6 @@ var Character = Coordinate.extend({
         for (var i = 0; i < frames; ++i) {
             this.standImages.push(new Image);
             this.standImages[i].src = 'images/character/' + this.name.toLowerCase() + '/stand/' + this.type + '_' + this.name.toLowerCase() + '_' + i + '_s.png';
-            //this.standImages[i].src = 'xsl.jpg';
         }
 
         //Set Draw Frame Index
@@ -72,16 +56,12 @@ var Character = Coordinate.extend({
         console.log(this.directionID);
 
         //get start grid screen X and Y
-        //var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
-        //var nowScreenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
-        this.CharAttribution.runOffsetX = (this.CharAttribution.runOffsetX) ? (this.CharAttribution.runOffsetX) : (this.CharAttribution.standOffsetX);
-        this.CharAttribution.runOffsetY = (this.CharAttribution.runOffsetY) ? (this.CharAttribution.runOffsetY) : (this.CharAttribution.standOffsetY);
-        var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.CharAttribution.runOffsetX;
-        var nowScreenY = this.transferLogicToScreenY(this.x, this.y) - this.CharAttribution.runOffsetY;
+        var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.runOffsetX;
+        var nowScreenY = this.transferLogicToScreenY(this.x, this.y) - this.runOffsetY;
 
         //get next step grid screen X and Y
-        var nextScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y) - this.HALFTILEWIDTH + this.CharAttribution.runOffsetX;
-        var nextScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y) - this.CharAttribution.runOffsetY;
+        var nextScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y) - this.HALFTILEWIDTH + this.runOffsetX;
+        var nextScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y) - this.runOffsetY;
 
         //get ui Slot start grid screen X and Y
         var uiScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
@@ -157,8 +137,6 @@ var Character = Coordinate.extend({
         this.el.width = this.standWidth;
         this.el.height = this.standHeight;
 
-        this.CharAttribution.CalculateGonStandOffset(this.standWidth,this.standHeight);
-
         c.clearRect(0, 0, this.standWidth, this.standHeight);
 
         this.standIndex = (this.standIndex < this.standImages.length - 1) ? this.standIndex + 1 : 0;
@@ -167,10 +145,8 @@ var Character = Coordinate.extend({
     ,put : function() {
         var originalScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
 
-        //var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + (this.TILEWIDTH - this.standImages[0].width) / 2 + 5;
-        //var screenY = this.transferLogicToScreenY(this.x, this.y) - (this.standImages[0].height - this.HALFTILEHEIGHT) + 5;
-        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.CharAttribution.standOffsetX;
-        var screenY = this.transferLogicToScreenY(this.x, this.y) - this.CharAttribution.standOffsetY;
+        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.standOffsetX;
+        var screenY = this.transferLogicToScreenY(this.x, this.y) - this.standOffsetY;
         
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 
@@ -196,8 +172,6 @@ var Character = Coordinate.extend({
             this.runImages[directionID][i].src = 'images/character/' + this.name.toLowerCase() + '/run-s-' + directionID + '/' + this.name.toLowerCase() + '-run-' + i + '-s.png';
             console.log('directionID:' + directionID + 'images/character/' + this.name.toLowerCase() + '/run-s-' + directionID + '/' + this.name.toLowerCase() + '-run-' + i + '-s.png');
         }
-        
-        this.CharAttribution.CalculateGonRunOffset(this.runImages[0][0].width,this.runImages[0][0].height);
     }
     ,startRun : function() {
         var _this = this;
@@ -214,8 +188,6 @@ var Character = Coordinate.extend({
         this.runHeight = suit[0].height;
         this.el.width = this.runWidth;
         this.el.height = this.runHeight;
-
-        this.CharAttribution.CalculateGonRunOffset(this.runWidth,this.runHeight);
 
         c.clearRect(0, 0, this.runWidth, this.runHeight);
 
