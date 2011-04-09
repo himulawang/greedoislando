@@ -19,10 +19,10 @@ function getWaterFall() {
                 row = j[i];
                 html += '<tr>';
                 html += '<td>' + row.date + '</td>';
-                html += '<td class="content" onclick="edit(\'bb\',' + row.id + ', this);">' + enter(row.bb) + '</td>';
-                html += '<td class="content" onclick="edit(\'dya\',' + row.id + ', this);">' + enter(row.dya) + '</td>';
-                html += '<td class="content" onclick="edit(\'ila\',' + row.id + ', this);">' + enter(row.ila) + '</td>';
-                html += '<td class="content" onclick="edit(\'joseph\',' + row.id + ', this);">' + enter(row.joseph) + '</td>';
+                html += '<td class="content" ondblclick="edit(\'bb\',' + row.id + ', this);">' + enter(row.bb) + '</td>';
+                html += '<td class="content" ondblclick="edit(\'dya\',' + row.id + ', this);">' + enter(row.dya) + '</td>';
+                html += '<td class="content" ondblclick="edit(\'ila\',' + row.id + ', this);">' + enter(row.ila) + '</td>';
+                html += '<td class="content" ondblclick="edit(\'joseph\',' + row.id + ', this);">' + enter(row.joseph) + '</td>';
                 html += '</tr>';
             }
 
@@ -75,7 +75,7 @@ function edit(who, id, el) {
 
     html += '<textarea>' + noEnter(text) + '</textarea>';
     html += '<input type="button" value="OK" onclick="upgrade(\'' + who + '\',' + id + ', this);">';
-    el[0].onclick = null;
+    el[0].ondblclick = null;
     el.html(html);
 }
 
