@@ -1,25 +1,25 @@
 // don't var things here. put them to main.js
 var TERRAIN = [];
-var InitPosition = [];
-var InitfaceTo;
 
 var InteractionEntrance = Class.extend({
     init : function(e){
         this.sd = e.data;
         console.log(this.sd);
         if(e.type == "initMyCharacter"){
-            this.generateChar(e.data.position,e.data.faceTo);
+            this.generateMyChar();
         }else if(e.type == "map"){
             this.generateTerrainData();
+        }else if(e.type == "initCharacter"){
+            this.generateOtherChar();
         }
     }
-    ,generateChar : function(InitPos,InitFac){
+    ,generateMyChar : function(InitPos,InitFac){
         // ila : use this
-        InitPos = InitPos.split(',');
-        InitPosition.x = InitPos[0];
-        InitPosition.y = InitPos[1];
-        InitfaceTo = InitFac;
-        GI.createChar();
+        //InitPos = InitPos.split(',');
+        //InitPosition.x = InitPos[0];
+        //InitPosition.y = InitPos[1];
+        //InitfaceTo = InitFac;
+        GI.createChar(this.sd);
         //GI = new Init;
         /*
         var dotPos = InitPos.lastIndexOf(",");
@@ -29,6 +29,9 @@ var InteractionEntrance = Class.extend({
         InitfaceTo = InitFac;
         GI = new Init;
         */
+    }
+    ,generateOtherChar : function() {
+        GI.createOtherChar(this.sd);
     }
     ,generateTerrainData : function(){
         //var ObsCoord;

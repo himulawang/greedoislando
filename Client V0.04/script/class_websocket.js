@@ -11,6 +11,12 @@ var WsConnect = Class.extend({
         this.InitConnect();
         this.InitDisconnect();
         this.InitSelectChar();
+        var CheckCon = setInterval(function(){
+            var obj = {
+                type : "keepSession"
+            }
+            ws.send(JSON.stringify(obj));
+        },29000);
     }
     ,InitConnect : function(){
         ws = new WebSocket(WS_HOST);
