@@ -1,8 +1,11 @@
 var Character = Coordinate.extend({
-    init : function(type, name) {
+    init : function(type, name, e) {
         this._super();
         this.type = type;
         this.name = name;
+        this.cID = e.cID;
+        this.faceTo = e.faceTo;
+        this.initPos = e.position.split(',');
         this.CharAttribution = eval('new '+ this.name);
         this.setNewDestinationTigger = false;
         this.characterMoving = false;
@@ -10,14 +13,14 @@ var Character = Coordinate.extend({
         this.initStand(2);
         this.initRun(8);
         this.startStand();
-        this.setPosition(InitPosition.x,InitPosition.y);
-        this.ui = new UserInterface;
+        this.setPosition(this.initPos[0],this.initPos[1]);
+        this.ui = new UserInterface(this.cID);
         this.put();
     }
     ,initCanvas : function() {
-        this.el = $("<canvas id='" + this.name + "' style='position: absolute;'></canvas>");
+        this.el = $("<canvas id='" + this.cID + "' style='position: absolute;'></canvas>");
         $('body').append(this.el);
-        this.el = $("#" + this.name)[0];
+        this.el = $("#" + this.cID)[0];
     }
     ,initStand : function(frames) {
         this.standImages = [];

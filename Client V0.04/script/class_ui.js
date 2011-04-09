@@ -1,19 +1,20 @@
 var UserInterface = Class.extend({
-    init : function() {
+    init : function(cID) {
+        this.cID = cID;
         this.drawUserHpSlot();
         this.drawUserManaSlot();
     }
     ,drawUserHpSlot : function() {
-        var HpSlotHtml = "<div class='hpslot' id='" + GI_PLAYER + "-hpslot'><div class='hpfiller'></div></div>";
+        var HpSlotHtml = "<div class='hpslot' id='" + this.cID + "-hpslot'><div class='hpfiller'></div></div>";
         $("#main").append(HpSlotHtml);
     }
     ,drawUserManaSlot : function() {
-        var ManaSlotHtml = "<div class='manaslot' id='" + GI_PLAYER + "-manaslot'><div class='manafiller'></div></div>";
+        var ManaSlotHtml = "<div class='manaslot' id='" + this.cID + "-manaslot'><div class='manafiller'></div></div>";
         $("#main").append(ManaSlotHtml);
     }
     ,slotput : function(ScreenX,ScreenY) {
-        var Hpslot = $('#' + GI_PLAYER + '-hpslot');
-        var ManaSlot = $('#' + GI_PLAYER + '-manaslot');
+        var Hpslot = $('#' + this.cID + '-hpslot');
+        var ManaSlot = $('#' + this.cID + '-manaslot');
         Hpslot_X = ScreenX + 9;
         ManaSlot_X = ScreenX + 9;
         Hpslot_Y = ScreenY - 16;
