@@ -1,11 +1,12 @@
 var Character = Coordinate.extend({
-    init : function(type, name, e) {
+    init : function(type, name, data) {
         this._super();
         this.type = type;
         this.name = name;
-        this.cID = e.cID;
-        this.faceTo = e.faceTo;
-        this.initPos = e.position.split(',');
+        this.cID = data.cID;
+        this.faceTo = data.faceTo;
+        this.initPos = this.getCoordinateXY(data.position);
+        //this.initPos = data.position.split(',');
         this.CharAttribution = eval('new '+ this.name);
         this.setNewDestinationTigger = false;
         this.characterMoving = false;
@@ -13,7 +14,7 @@ var Character = Coordinate.extend({
         this.initStand(2);
         this.initRun(8);
         this.startStand();
-        this.setPosition(this.initPos[0],this.initPos[1]);
+        this.setPosition(this.initPos['x'],this.initPos['y']);
         this.ui = new UserInterface(this.cID);
         this.put();
     }

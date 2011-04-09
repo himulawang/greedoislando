@@ -99,16 +99,16 @@ var Init = Class.extend({
         //this.editor.draw();
     }
     /* Create Character */
-    ,createChar : function(e) {
+    ,createChar : function(data) {
         this.char = {};
-        this.char.player = new Character('char', GI_PLAYER , e);
+        this.char.player = new Character('char', GI_PLAYER , data);
         //this.char.player = eval('new '+ this.name + '(char ,' + GI_PLAYER + ')');
     }
-    ,createOtherChar : function(e){
+    ,createOtherChar : function(data){
         this.otherChar = {};
-        this.cID = e.cID;
-        this.name = e.name;
-        this.otherChar[this.cID] = new Character('char',this.name , e);
+        this.cID = data.cID;
+        this.name = data.name;
+        this.otherChar[this.cID] = new Character('char',this.name , data);
     }
 });
 

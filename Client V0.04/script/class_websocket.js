@@ -11,11 +11,12 @@ var WsConnect = Class.extend({
         this.InitConnect();
         this.InitDisconnect();
         this.InitSelectChar();
+        var _this = this;
         var CheckCon = setInterval(function(){
             var obj = {
                 type : "keepSession"
             }
-            ws.send(JSON.stringify(obj));
+            _this.sendMessage(obj);
         },29000);
     }
     ,InitConnect : function(){
@@ -45,6 +46,7 @@ var WsConnect = Class.extend({
         };
     }
     ,InitSelectChar : function(){
+        var _this = this;
         $('.pickchar').click(function(){
             //If you want to use GI_PLAYER as a global variable, better var this at the top of script.
             GI_PLAYER = $(this).html();
@@ -52,7 +54,8 @@ var WsConnect = Class.extend({
                 type : "selectCharacter"
                 ,character : GI_PLAYER
             }
-            ws.send(JSON.stringify(obj));
+            _this.sendMessage(obj);
+            //ws.send(JSON.stringify(obj));
             //this place:
             /*
             if(!GI_PLAYER) return;
@@ -71,5 +74,8 @@ var WsConnect = Class.extend({
             consoleDiv = document.getElementById('console');
         }
         consoleDiv.innerHTML = consoleDiv.innerHTML + "<div>" + text + "</div>";
+    }
+    ,sendMessage : function(obj){
+        ws.send(JSON.stringify(obj));
     }
 });
