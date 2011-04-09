@@ -19,8 +19,6 @@ ws.createServer(function (websocket) {
 
         for (cID in clients) {
             if (clients[cID] === websocket) {
-                sys.log(cID + 'data :' + data);
-
                 object = io.input(cID, data);
                 //invalid message
                 if (!object) return;
@@ -29,6 +27,7 @@ ws.createServer(function (websocket) {
                     clients[cID].sessionTime = fc.getTimestamp();
                     return;
                 }
+                sys.log(cID + 'data :' + data);
                 output = world.entrance(cID, object);
             }
         }
@@ -59,11 +58,10 @@ ws.createServer(function (websocket) {
 
 //session recycle
 setInterval(function(){
-    sys.log('begin recycle');
+    sys.log('Begin recycle');
     var now = fc.getTimestamp();
     var cID;
     for (cID in clients) {
-        sys.log('now: ' + now + ';' + 'sessionTime:' + clients[cID].sessionTime);
         if (now - clients[cID].sessionTime >= 60000) {
             sys.log(cID + ' be recycled');
             clients[cID].end();
