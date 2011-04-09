@@ -1,3 +1,35 @@
+var getDefineMap = function() {
+    return {
+        2000 : {
+            name : 'Plain'
+            ,movePossible : 1
+        }
+        ,2001 : {
+            name : 'Broken Wall'
+            ,movePossible : 0
+        }
+        ,2002 : {
+            name : 'Tree'
+            ,movePossible : 0
+        }
+        ,2003 : {
+            name : 'Door'
+            ,movePossible : 1
+        }
+        ,2004 : {
+            name : 'River'
+            ,movePossible : 0
+        }
+        ,2005 : {
+            name : 'Ruins'
+            ,movePossible : 1
+        }
+        ,2006 : {
+            name : 'Bridge'
+            ,movePossible : 1
+        }
+    };
+}
 exports.initMap = function() {
     /* 2000 Plain
      * 2001 Broken Wall
@@ -281,4 +313,14 @@ exports.initMap = function() {
         ,'14,15' : {objID : 2000, x : 14, y : 15}
         ,'15,15' : {objID : 2000, x : 15, y : 15}
     }
+}
+exports.makeMap = function() {
+    var DEFINE = getDefineMap();
+    var map = exports.initMap();
+    var i, objID;
+    for (i in map) {
+        var objID = map[i].objID;
+        map[i].movePossible = DEFINE[objID].movePossible;
+    }
+    return map;
 }

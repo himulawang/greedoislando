@@ -3,7 +3,7 @@ var sys = require('sys')
     ,char = require('./character');
 
 /* MAP */
-var GI_MAP
+var GI_MAP, GI_DEFINE_TERRAIN
     ,GI_CHARACTER = {};
 
 exports.entrance = function(cID, object) {
@@ -17,18 +17,20 @@ exports.entrance = function(cID, object) {
 }
 
 exports.init = function() {
-    GI_MAP = map.initMap();
+    GI_MAP = map.makeMap();
 }
 
 /* Action */
 function doAction(cID, actionList, object) {
-    var output = [], sendType, i, func;
+    var output = [], sendType, i, func, data;
     for (sendType in actionList) {
         for(i in actionList[sendType]) {
+            data = actionList[sendType][i](object);
+            if (!data) continue;
             output.push({
                 cID : cID
                 ,send : sendType
-                ,data : actionList[sendType][i](object)
+                ,data : data
             });
         }
     }
@@ -36,16 +38,22 @@ function doAction(cID, actionList, object) {
 }
 
 function initMap(object) {
-    return {cID : object.cID, type : 'map' ,data : GI_MAP};
+    return {cID : object.cID, type : 'map' ,data : map.initMap()};
 }
-
 function initMyCharacter(object) {
     return char.initMyCharacter(object, GI_CHARACTER);
 }
-
 function initCharacter(object) {
     return char.initCharacter(object, GI_CHARACTER);
-    //return {type : 'initCharacter'}
+}
+function initOnlineCharacters(object) {
+    return char.initOnlineCharacters(object, GI_CHARACTER);
+}
+function moveCharacter(object) {
+    return char.moveCharacter(object, GI_CHARACTER, GI_MAP);
+}
+function authLocation(object) {
+    return char.authLocation(object, GI_CHARACTER, GI_MAP);
 }
 
 //GM
@@ -55,7 +63,17 @@ exports.getAllCharacter = function() {
 var ACTION = {
     selectCharacter : {
         all : []
-        ,self : [initMap, initMyCharacter]
+        ,self : [initMap, initMyCharacter, initOnlineCharacters]
         ,other : [initCharacter]
+    }
+    ,moveCharacter : {
+        all : []
+        ,self : []
+        ,other : [moveCharacter]
+    }
+    ,authLocation : {
+        all : []
+        ,self : []
+        ,other : [authLocation]
     }
 };

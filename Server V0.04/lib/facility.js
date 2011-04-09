@@ -17,3 +17,12 @@ exports.random = function(n) {
 exports.getTimestamp = function() {
     return Date.parse(new Date());
 }
+//get position index
+exports.getPositionIndex = function(x, y) {
+    return x + ',' + y;
+}
+//get x y from position index
+exports.getXYFromPosition = function(index) {
+    var t = index.split(',');
+    return {x : parseInt(t[0]), y : parseInt(t[1])};
+}
