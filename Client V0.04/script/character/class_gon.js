@@ -1,21 +1,36 @@
 var Gon = Character.extend({
     init : function() {
-        this.MAPWIDTH = GI_MAP_WIDTH;
-        this.MAPHEIGHT = GI_MAP_HEIGHT;
-        this.GRIDQUANTITY = GI_GRID_QUANTITY;
-
-        this.SQUARESIDE = Math.sqrt(Math.pow(this.MAPWIDTH, 2) + Math.pow(this.MAPHEIGHT, 2));
-        this.TILEWIDTH = this.MAPWIDTH / this.GRIDQUANTITY;
-        this.TILEHEIGHT = this.MAPHEIGHT / this.GRIDQUANTITY;
-        this.HALFTILEWIDTH = this.TILEWIDTH / 2;
-        this.HALFTILEHEIGHT = this.TILEHEIGHT / 2;
-
+        this._super();
+        this.name = 'Gon';
+        this.type = 'char'
     }
-    ,CalculateGonRunOffset : function(runWidth,runHeight) {
+    ,make : function(data) {
+        this.cID = data.cID;
+        this.faceTo = data.faceTo;
+        this.initPos = this.getCoordinateXY(data.position);
+        //Init Offset
+        this.caculateRunOffset();
+        this.caculateStandOffset();
+
+        this.setNewDestinationTigger = false;
+        this.characterMoving = false;
+        this.initCanvas();
+        this.initStand(2);
+        this.initRun(8);
+        this.startStand();
+        this.setPosition(this.initPos['x'],this.initPos['y']);
+        this.ui = new UserInterface(this.cID);
+        this.put();
+    }
+    ,caculateRunOffset : function() {
+        var runWidth = 65;
+        var runHeight = 100;
         this.runOffsetX = (this.TILEWIDTH - runWidth) / 2;
         this.runOffsetY = runHeight - this.HALFTILEHEIGHT - 5;
     }
-    ,CalculateGonStandOffset : function(standWidth,standHeight) {
+    ,caculateStandOffset : function() {
+        var standWidth = 40;
+        var standHeight = 89;
         this.standOffsetX = (this.TILEWIDTH - standWidth) / 2 + 5;
         this.standOffsetY = standHeight - this.HALFTILEHEIGHT - 5;
     }
