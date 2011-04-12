@@ -102,14 +102,17 @@ var Init = Class.extend({
     ,createChar : function(data) {
         this.char = {};
         this.char.player = eval('new '+ data.name);
+        this.char.player.cID = data.cID;
         this.char.player.make(data);
         //this.char.player = eval('new '+ this.name + '(char ,' + GI_PLAYER + ')');
     }
     ,createOtherChar : function(data){
         this.otherChar = {};
-        this.cID = data.cID;
-        this.name = data.name;
-        this.otherChar[this.cID] = new Character('char',this.name , data);
+        //this.cID = data.cID;
+        //this.name = data.name;
+        //this.otherChar[this.cID] = new Character('char',this.name , data);
+        this.otherChar[this.cID] = eval('new ' + data.name);
+        this.otherChar[this.cID].make(data);
     }
 });
 

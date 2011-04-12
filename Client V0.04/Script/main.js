@@ -1,6 +1,7 @@
 var GI_MAP_WIDTH = 1248;
 var GI_MAP_HEIGHT = 672;
 var GI_GRID_QUANTITY = 16;
+var TERRAIN = [];
 
 var GI_TERRAIN_DEFINE = {
     2000 : 'Plain'

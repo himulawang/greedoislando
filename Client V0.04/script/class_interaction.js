@@ -1,6 +1,3 @@
-// don't var things here. put them to main.js
-var TERRAIN = [];
-
 var InteractionEntrance = Class.extend({
     init : function(e){
         this.sd = e.data;
@@ -9,8 +6,10 @@ var InteractionEntrance = Class.extend({
             this.generateMyChar();
         }else if(e.type == "map"){
             this.generateTerrainData();
-        }else if(e.type == "initCharacter"){
+        }else if(e.type == "newCharacterLogin" || e.type == "getOnlineCharacter"){
             this.generateOtherChar();
+        }else if(e.type == "logout"){
+            this.logOut(e);
         }
     }
     ,generateMyChar : function(InitPos,InitFac){
@@ -31,13 +30,21 @@ var InteractionEntrance = Class.extend({
         */
     }
     ,generateOtherChar : function() {
-        GI.createOtherChar(this.sd);
+        if($("#login").html()){
+            GI.createOtherChar(this.sd);
+            $("#" + this.sd.cID).hide();
+            $("#" + this.sd.cID).addClass("hiddenChar");
+        }else{
+            GI.createOtherChar(this.sd);
+        }
     }
     ,generateTerrainData : function(){
         //var ObsCoord;
         $("#login").fadeOut(100,function(){
             $("#login").remove();
-            $("#main").fadeIn(100);
+            $("#main").fadeIn(100,function(){
+                $(".hiddenChar").show();
+            });
         });
         console.log(this.sd);
         //ila this x should var first
@@ -76,5 +83,14 @@ var InteractionEntrance = Class.extend({
             */
         }
         GI.initMap();
+    }
+    ,logOut : function(e){
+        if(e.cID == GI.char.player.cID){
+            alert("U R Logging Out!!!");
+        }else{
+            $("#" + e.cID).remove();
+            $("#" + e.cID + "-hpslot").remove();
+            $("#" + e.cID + "-manaslot").remove();
+        }
     }
 });
