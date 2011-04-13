@@ -26,3 +26,10 @@ exports.getXYFromPosition = function(index) {
     var t = index.split(',');
     return {x : parseInt(t[0]), y : parseInt(t[1])};
 }
+exports.objectLength = function(object) {
+    var c = 0;
+    for (var i in object) {
+        if (object.hasOwnProperty(i)) ++c;
+    }
+    return c;
+}

@@ -1,5 +1,13 @@
-var getDefineMap = function() {
-    return {
+var map = function() {
+    this.DEFINE = {
+    /* 2000 Plain
+     * 2001 Broken Wall
+     * 2002 Tree
+     * 2003 Door
+     * 2004 River
+     * 2005 Ruins
+     * 2006 Bridge
+     * */
         2000 : {
             name : 'Plain'
             ,movePossible : 1
@@ -29,17 +37,7 @@ var getDefineMap = function() {
             ,movePossible : 1
         }
     };
-}
-exports.initMap = function() {
-    /* 2000 Plain
-     * 2001 Broken Wall
-     * 2002 Tree
-     * 2003 Door
-     * 2004 River
-     * 2005 Ruins
-     * 2006 Bridge
-     * */
-    return {
+    this.grid = {
         // x = 0
          '0,0' : {objID : 2001, x : 0, y : 0}
         ,'1,0' : {objID : 2001, x : 1, y : 0}
@@ -314,13 +312,11 @@ exports.initMap = function() {
         ,'15,15' : {objID : 2000, x : 15, y : 15}
     }
 }
-exports.makeMap = function() {
-    var DEFINE = getDefineMap();
-    var map = exports.initMap();
-    var i, objID;
-    for (i in map) {
-        var objID = map[i].objID;
-        map[i].movePossible = DEFINE[objID].movePossible;
-    }
-    return map;
+
+exports.create = function() {
+    return new map();
+}
+
+map.prototype.getGrid = function() {
+    return this.grid;
 }

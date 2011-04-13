@@ -1,47 +1,55 @@
 var fc = require('../lib/facility');
 
-exports.initMyCharacter = function(object, GI_CHARACTER) {
+var character = function(cID, name) {
     /* 500 UpRight
      * 501 DownRight
      * 502 DownLeft
      * 503 UpLeft
      * */
-    var cID = object.cID;
-    var character = object.character;
-    var x = fc.random(15);
-    var y = fc.random(15);
-    var position = fc.getPositionIndex(x, y);
-    var faceTo = character === 'Gon' ? 501 : 503;
-    GI_CHARACTER[cID] = {
-        cID : cID
-        ,name : character
-        ,life : 100
-        ,maxLife : 100
-        ,force : 20
-        ,maxForce : 20
-        ,speed : 2
-        ,position : position
-        ,x : x
-        ,y : y
-        ,faceTo : faceTo
-    };
-    return {
-        cID : cID
-        ,type : 'initMyCharacter'
-        ,data : GI_CHARACTER[cID]
-    };
+    this.cID = cID;
+    this.name = name;
+    this.life = 100;
+    this.maxLife = 100;
+    this.force = 20;
+    this.maxForce = 20;
+    this.speed = 2;
+    this.x = fc.random(15);
+    this.y = fc.random(15);
+    this.position = fc.getPositionIndex(this.x, this.y);
 }
 
-exports.initCharacter = function(object, GI_CHARACTER) {
+character.prototype.getInfo = function() {
+    return {
+        cID : this.cID
+        ,name : this.name
+        ,life : this.life
+        ,maxLife : this.maxLife
+        ,force : this.force
+        ,maxForce : this.maxForce
+        ,speed : this.speed
+        ,position : this.position
+        ,x : this.x
+        ,y : this.y
+    }
+}
+character.prototype.getCID = function() {
+    return this.cID;
+}
+exports.create = function(object) {
+    return new character(object.cID, object.character);
+}
+
+////////////////////
+exports.newCharacterLogin = function(object, GI_CHARACTER) {
     var cID = object.cID
     return {
         cID : cID
-        ,type : 'initCharacter'
+        ,type : 'newCharacterLogin'
         ,data : GI_CHARACTER[cID]
     };
 }
 
-exports.initOnlineCharacters = function(object, GI_CHARACTER) {
+exports.getOnlineCharacter = function(object, GI_CHARACTER) {
     var cID = object.cID;
     var data = [];
     var i;
@@ -51,7 +59,7 @@ exports.initOnlineCharacters = function(object, GI_CHARACTER) {
     }
     return {
         cID : cID
-        ,type : 'initOnlineCharacters'
+        ,type : 'getOnlineCharacter'
         ,data : data
     }
 }
