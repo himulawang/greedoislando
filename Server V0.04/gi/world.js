@@ -1,79 +1,64 @@
 var sys = require('sys')
+    ,response = require('./response')
     ,map = require('./map')
-    ,char = require('./character');
+    ,character = require('./character')
+    ,characterList = require('./character_list');
 
-/* MAP */
-var GI_MAP, GI_DEFINE_TERRAIN
-    ,GI_CHARACTER = {};
+var GI_MAP, GI_CHARACTER_LIST;
+
+function selectCharacter(cID, object) {
+    var output = response.create();
+
+    //getOnlineCharacter -> Self
+    var onlineCharacterData = GI_CHARACTER_LIST.getOnlineCharacterList();
+    output.add(cID, 'getOnlineCharacter', 'self', onlineCharacterData);
+
+    //initMap -> Self
+    var mapData = GI_MAP.getGrid();
+    output.add(cID, 'map', 'self', mapData);
+
+    //initMyCharacter ->Self
+    var myCharacter = character.create(object);
+    var myCharacterData = GI_CHARACTER_LIST.add(myCharacter);
+    output.add(cID, 'initMyCharacter', 'self', myCharacterData);
+
+    //newCharacterLogin -> Other
+    var newCharacterLoginData = myCharacter.getInfo();
+    output.add(cID, 'newCharacterLogin', 'other', newCharacterLoginData);
+
+    return output.get();
+}
+function logout(cID, object) {
+    var output = response.create();
+
+    //logout -> Other
+    GI_CHARACTER_LIST.del(cID);
+    output.add(cID, 'logout', 'other', {cID : cID});
+
+    return output.get();
+}
 
 exports.entrance = function(cID, object) {
     var type = object.type;
-    if (!type) return '{type : null}';
+    if (!type) return;
     var actionList = ACTION[object.type];
-    if (!actionList) return '{type : null}';
+    if (!actionList) return;
 
-    var output = doAction(cID, actionList, object);
-    return output;
+    return ACTION[object.type](cID, object);
 }
-
 exports.init = function() {
-    GI_MAP = map.makeMap();
+    GI_CHARACTER_LIST = characterList.create();
+    GI_MAP = map.create();
 }
-
-/* Action */
-function doAction(cID, actionList, object) {
-    var output = [], sendType, i, func, data;
-    for (sendType in actionList) {
-        for(i in actionList[sendType]) {
-            data = actionList[sendType][i](object);
-            if (!data) continue;
-            output.push({
-                cID : cID
-                ,send : sendType
-                ,data : data
-            });
-        }
+exports.gm = function(cmd) {
+    if (cmd === 'getAllCharacter') {
+        return JSON.stringify(GI_CHARACTER_LIST.getOnlineCharacterList());
+    }else if (cmd === '') {
+    
     }
-    return output;
 }
 
-function initMap(object) {
-    return {cID : object.cID, type : 'map' ,data : map.initMap()};
-}
-function initMyCharacter(object) {
-    return char.initMyCharacter(object, GI_CHARACTER);
-}
-function initCharacter(object) {
-    return char.initCharacter(object, GI_CHARACTER);
-}
-function initOnlineCharacters(object) {
-    return char.initOnlineCharacters(object, GI_CHARACTER);
-}
-function moveCharacter(object) {
-    return char.moveCharacter(object, GI_CHARACTER, GI_MAP);
-}
-function authLocation(object) {
-    return char.authLocation(object, GI_CHARACTER, GI_MAP);
-}
-
-//GM
-exports.getAllCharacter = function() {
-    return GI_CHARACTER;
-}
 var ACTION = {
-    selectCharacter : {
-        all : []
-        ,self : [initMap, initMyCharacter, initOnlineCharacters]
-        ,other : [initCharacter]
-    }
-    ,moveCharacter : {
-        all : []
-        ,self : []
-        ,other : [moveCharacter]
-    }
-    ,authLocation : {
-        all : []
-        ,self : []
-        ,other : [authLocation]
-    }
-};
+    selectCharacter : selectCharacter
+    ,logout : logout
+}

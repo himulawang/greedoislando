@@ -12,18 +12,24 @@ exports.input = function(cID, data) {
 exports.output = function(object, clients) {
     var i;
     var cID = object.cID;
-sys.debug(JSON.stringify(object.data.type));
-    if (object.send === 'all') {
+
+    var output = {
+        type : object.type
+        ,data : object.data
+    }
+console.log(cID, '<-', JSON.stringify(output.type));
+
+    if (object.sendTo === 'all') {
         for (i in clients) {
-            clients[i].write(JSON.stringify(object.data));
+            clients[i].write(JSON.stringify(output));
         }
-    }else if (object.send === 'self') {
+    }else if (object.sendTo === 'self') {
         if (!clients[cID]) return;
-        clients[cID].write(JSON.stringify(object.data));
-    }else if (object.send === 'other') {
+        clients[cID].write(JSON.stringify(output));
+    }else if (object.sendTo === 'other') {
         for (i in clients) {
             if (i === object.cID) continue;
-            clients[i].write(JSON.stringify(object.data));
+            clients[i].write(JSON.stringify(output));
         }
     }
 }
