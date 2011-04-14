@@ -1,6 +1,7 @@
 var Init = Class.extend({
     init : function() {
         var _this = this;
+        this.InstanceFindWay = new FindWay;
         $(document).ready(function(){
             _this.initCursor();
             _this.initShowWay();
@@ -63,10 +64,10 @@ var Init = Class.extend({
                     _this.char.player.nextWayEndY = y;
                     return;
                 }
-                var InstanceFindWay = new FindWay;
-                InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
-                InstanceFindWay.setEnd(x, y);
-                var way = InstanceFindWay.getWay();
+                _this.InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
+                _this.InstanceFindWay.setEnd(x, y);
+                _this.InstanceFindWay.reset();
+                var way = _this.InstanceFindWay.getWay();
                 console.log(way);
                 _this.char.player.setWay(way);
                 _this.char.player.startWay();
@@ -111,8 +112,11 @@ var Init = Class.extend({
         //this.cID = data.cID;
         //this.name = data.name;
         //this.otherChar[this.cID] = new Character('char',this.name , data);
-        this.otherChar[this.cID] = eval('new ' + data.name);
-        this.otherChar[this.cID].make(data);
+        for(x in data){
+            this.cID = data[x].cID;
+            this.otherChar[this.cID] = eval('new ' + data[x].name);
+            this.otherChar[this.cID].make(data[x]);
+        }
     }
 });
 

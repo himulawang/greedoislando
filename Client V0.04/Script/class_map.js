@@ -35,11 +35,8 @@ var Map = Coordinate.extend({
                     if(comp == dcomp.Coord){
                         obsname = dcomp.Obs;
                         if(obsname == "BrokenWall" || obsname == "Tree" || obsname == "River"){
-                            //fw.setObstacle(x,y);
+                            GI.InstanceFindWay.setObstacle(x,y);
                         }
-                        break;
-                    }else{
-                        continue;
                     }
                 }
                 this.context.fillStyle    = '#000000';
