@@ -24,9 +24,9 @@ var Map = Coordinate.extend({
         var comp;
         var obsname;
         var dcomp;
-        for(var i = 1; i <= this.GRIDQUANTITY; i++){
+        for(var i = 0; i < this.GRIDQUANTITY; ++i){
             x = i; 
-            for(var j = 1; j <= this.GRIDQUANTITY; j++){
+            for(var j = 0; j < this.GRIDQUANTITY; ++j){
                 y = j;
                 comp = x + "," + y;
                 for(z in TERRAIN){
@@ -42,7 +42,8 @@ var Map = Coordinate.extend({
                 this.context.fillStyle    = '#000000';
                 this.context.font         = 'Calibri 16px sans-serif';
                 this.context.textBaseline = 'top';
-                this.context.fillText  (obsname, this.transferLogicToScreenX(x, y) - 10, this.transferLogicToScreenY(x, y) - 30);
+                //this.context.fillText  (obsname, this.transferLogicToScreenX(x, y) - 10, this.transferLogicToScreenY(x, y) - 30);
+                this.context.fillText  (obsname, this.transferLogicToScreenX(x+1, y+1) - 10, this.transferLogicToScreenY(x+1, y+1) - 30);
             }
         }
 
