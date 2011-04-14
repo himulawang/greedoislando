@@ -1,7 +1,6 @@
 var Init = Class.extend({
     init : function() {
         var _this = this;
-        this.InstanceFindWay = new FindWay;
         $(document).ready(function(){
             _this.initCursor();
             _this.initShowWay();
@@ -53,45 +52,56 @@ var Init = Class.extend({
         $('#grid')[0].onmouseup = function(e) {
             var xPX = e.layerX;
             var yPX = e.layerY;
-            var InstanceCoordinate = new Coordinate();
-            var x = InstanceCoordinate.transferScreenToLogicX(xPX, yPX);
-            var y = InstanceCoordinate.transferScreenToLogicY(xPX, yPX);
-            var coord = x + "," + y;
+            var x = _this.map.transferScreenToLogicX(xPX, yPX);
+            var y = _this.map.transferScreenToLogicY(xPX, yPX);
             if (e.which === 1) {
-                if(_this.InstanceFindWay.obstacleList[coord]) return;
-                // ila begin here
+                //verify click grid is movePossible
+                var index = _this.map.getCoordinateIndex(x, y);
+                if(!_this.map.verifyMovePossible(index)) return;
+                //check character is moving 
                 if (_this.char.player.characterMoving) {
                     _this.char.player.setNewDestinationTigger = true;
                     _this.char.player.nextWayEndX = x;
                     _this.char.player.nextWayEndY = y;
                     return;
                 }
-                _this.InstanceFindWay.setStart(_this.char.player.x, _this.char.player.y);
-                _this.InstanceFindWay.setEnd(x, y);
-                _this.InstanceFindWay.reset();
-                var way = _this.InstanceFindWay.getWay();
+                //start move
+                _this.findWay.setStart(_this.char.player.x, _this.char.player.y);
+                _this.findWay.setEnd(x, y);
+                _this.findWay.reset();
+                var way = _this.findWay.getWay();
                 console.log(way);
                 _this.char.player.setWay(way);
                 _this.char.player.startWay();
-                // ila end here
             }
             return false;
         }
     }
     /* Draw Basic Element */
-    ,initMap : function() {
-        this.map = new Map(GI_MAP_WIDTH, GI_MAP_HEIGHT, GI_GRID_QUANTITY);
+    ,initMap : function(data) {
+        this.map = new Map();
         this.map.getCanvas($('#grid')[0]);
+        this.map.getData(data);
         this.map.draw();
     }
+    ,initFindWay : function() {
+        this.findWay = new FindWay;
+        //add obstacle to findway's obstacleList
+        var xy;
+        for (var index in this.map.grid) {
+            if (this.map.verifyMovePossible(index)) continue;
+            xy = this.map.getCoordinateXY(index);
+            this.findWay.setObstacle(xy.x, xy.y);
+        }
+    }
     ,initCursor : function() {
-        this.cursor = new Cursor(GI_MAP_WIDTH, GI_MAP_HEIGHT, GI_GRID_QUANTITY);
+        this.cursor = new Cursor();
         this.cursor.getCanvas($('#cursor')[0]);
         this.cursor.draw();
         this.cursor.startBreath();
     }
     ,initShowWay : function() {
-        this.showWayCursor = new Cursor(GI_MAP_WIDTH, GI_MAP_HEIGHT, GI_GRID_QUANTITY);
+        this.showWayCursor = new Cursor();
         this.showWayCursor.getCanvas($('#show-way-cursor')[0]);
         this.showWayCursor.draw();
         this.showWayCursor.startBreath();
@@ -107,7 +117,6 @@ var Init = Class.extend({
         this.char.player = eval('new '+ data.name);
         this.char.player.cID = data.cID;
         this.char.player.make(data);
-        //this.char.player = eval('new '+ this.name + '(char ,' + GI_PLAYER + ')');
     }
     ,createOtherChar : function(data){
         this.otherChar = {};

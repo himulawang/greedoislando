@@ -2,7 +2,8 @@ var sys = require('sys')
     ,ws = require('./lib/websocket')
     ,fc = require('./lib/facility');
 
-var io = require('./gi/io')
+var config = require('./config')
+    ,io = require('./gi/io')
     ,world = require('./gi/world')
     ,gm = require('./gi/gm');
 
@@ -59,15 +60,16 @@ ws.createServer(function (websocket) {
             logout(cID);
             return;
         }
-        output = world.entrance(cID, object);
 
+        output = world.entrance(cID, object);
+        if (!output) return;
         //send
         send(output);
     }).addListener("close", function () { 
         var cID = getCID(websocket);
         if (cID) logout(cID);
     });
-}).listen(8080);
+}).listen(config.port());
 
 //admin console
 ws.createServer(function (websocket) {
@@ -83,7 +85,7 @@ ws.createServer(function (websocket) {
     }).addListener("close", function () { 
         sys.debug("GM Disconnect");
     });
-}).listen(12345);
+}).listen(config.gmPort());
 
 //session recycle
 setInterval(function(){
