@@ -53,7 +53,6 @@ var Character = Coordinate.extend({
 
         //get toward direction to decide which animation shall use
         this.directionID = this.getTowardNewGridDirection(nextXY.x, nextXY.y);
-        console.log(this.directionID);
 
         //get start grid screen X and Y
         var nowScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.runOffsetX;
@@ -111,10 +110,10 @@ var Character = Coordinate.extend({
                 //if user made a new way before last way wasn't ended
                 if (_this.setNewDestinationTigger) {
                     //make new way
-                    GI.InstanceFindWay.setStart(_this.x, _this.y);
-                    GI.InstanceFindWay.setEnd(_this.nextWayEndX, _this.nextWayEndY);
-                    GI.InstanceFindWay.reset();
-                    var way = GI.InstanceFindWay.getWay();
+                    GI.findWay.setStart(_this.x, _this.y);
+                    GI.findWay.setEnd(_this.nextWayEndX, _this.nextWayEndY);
+                    GI.findWay.reset();
+                    var way = GI.findWay.getWay();
                     _this.setWay(way);
                     _this.startWay();
                     //reset trigger
@@ -170,7 +169,6 @@ var Character = Coordinate.extend({
         for (var i = 0; i < frames; ++i) {
             this.runImages[directionID].push(new Image);
             this.runImages[directionID][i].src = 'images/character/' + this.name.toLowerCase() + '/run-s-' + directionID + '/' + this.name.toLowerCase() + '-run-' + i + '-s.png';
-            console.log('directionID:' + directionID + 'images/character/' + this.name.toLowerCase() + '/run-s-' + directionID + '/' + this.name.toLowerCase() + '-run-' + i + '-s.png');
         }
     }
     ,startRun : function() {
@@ -182,7 +180,6 @@ var Character = Coordinate.extend({
     }
     ,drawRun : function(){
         var c = this.el.getContext('2d');
-        console.log(this.directionID);
         var suit = this.runImages[this.directionID];
         this.runWidth = suit[0].width;
         this.runHeight = suit[0].height;

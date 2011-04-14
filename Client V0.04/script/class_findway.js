@@ -7,7 +7,7 @@ var FindWay = Class.extend({
      *
      * */
     init : function() {
-        this.maxGrid = 15; //Modify To Constant
+        this.maxGrid = GI_GRID_QUANTITY - 1;
         this.obstacleList = {};
         this.parentList = {};
         this.openList = {};

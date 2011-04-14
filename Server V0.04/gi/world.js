@@ -37,6 +37,17 @@ function logout(cID, object) {
 
     return output.get();
 }
+function moveCharacter(cID, object) {
+    //verify startPoint And endPoint
+    if (!(GI_MAP.verifyMovePossible(object.startPoint) && GI_MAP.verifyMovePossible(object.endPoint))) return;
+
+    var output = response.create();
+
+    //moveCharacter -> Other
+    output.add(cID, 'moveCharacter', 'other', {startPoint : object.startPoint, endPoint : object.endPoint});
+
+    return output.get();
+}
 
 exports.entrance = function(cID, object) {
     var type = object.type;
@@ -60,5 +71,6 @@ exports.gm = function(cmd) {
 
 var ACTION = {
     selectCharacter : selectCharacter
+    ,moveCharacter : moveCharacter
     ,logout : logout
 }

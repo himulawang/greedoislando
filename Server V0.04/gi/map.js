@@ -219,12 +219,12 @@ var map = function() {
         ,'7,10' : {objID : 2003, x : 7, y : 10}
         ,'8,10' : {objID : 2001, x : 8, y : 10}
         ,'9,10' : {objID : 2001, x : 9, y : 10}
-        ,'10,11' : {objID : 2001, x : 10, y : 10}
-        ,'11,11' : {objID : 2001, x : 11, y : 10}
-        ,'12,11' : {objID : 2000, x : 12, y : 10}
-        ,'13,11' : {objID : 2002, x : 13, y : 10}
-        ,'14,11' : {objID : 2000, x : 14, y : 10}
-        ,'15,11' : {objID : 2000, x : 15, y : 10}
+        ,'10,10' : {objID : 2001, x : 10, y : 10}
+        ,'11,10' : {objID : 2001, x : 11, y : 10}
+        ,'12,10' : {objID : 2000, x : 12, y : 10}
+        ,'13,10' : {objID : 2002, x : 13, y : 10}
+        ,'14,10' : {objID : 2000, x : 14, y : 10}
+        ,'15,10' : {objID : 2000, x : 15, y : 10}
         // x = 11
         ,'0,11' : {objID : 2000, x : 0, y : 11}
         ,'1,11' : {objID : 2000, x : 1, y : 11}
@@ -319,4 +319,10 @@ exports.create = function() {
 
 map.prototype.getGrid = function() {
     return this.grid;
+}
+map.prototype.verifyMovePossible = function(index) {
+    if (!this.grid[index]) return false;
+    var objID = this.grid[index].objID;
+
+    return this.DEFINE[objID].movePossible;
 }
