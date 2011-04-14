@@ -56,7 +56,9 @@ var Init = Class.extend({
             var InstanceCoordinate = new Coordinate();
             var x = InstanceCoordinate.transferScreenToLogicX(xPX, yPX);
             var y = InstanceCoordinate.transferScreenToLogicY(xPX, yPX);
+            var coord = x + "," + y;
             if (e.which === 1) {
+                if(_this.InstanceFindWay.obstacleList[coord]) return;
                 // ila begin here
                 if (_this.char.player.characterMoving) {
                     _this.char.player.setNewDestinationTigger = true;

@@ -111,10 +111,10 @@ var Character = Coordinate.extend({
                 //if user made a new way before last way wasn't ended
                 if (_this.setNewDestinationTigger) {
                     //make new way
-                    var InstanceFindWay = new FindWay;
-                    InstanceFindWay.setStart(_this.x, _this.y);
-                    InstanceFindWay.setEnd(_this.nextWayEndX, _this.nextWayEndY);
-                    var way = InstanceFindWay.getWay();
+                    GI.InstanceFindWay.setStart(_this.x, _this.y);
+                    GI.InstanceFindWay.setEnd(_this.nextWayEndX, _this.nextWayEndY);
+                    GI.InstanceFindWay.reset();
+                    var way = GI.InstanceFindWay.getWay();
                     _this.setWay(way);
                     _this.startWay();
                     //reset trigger
