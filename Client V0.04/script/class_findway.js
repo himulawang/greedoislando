@@ -14,6 +14,11 @@ var FindWay = Class.extend({
         this.closeList = {};
         this.nowPoint = {x : 0, y : 0};
     }
+    ,reset : function() {
+        this.parentList = {};
+        this.openList = {};
+        this.closeList = {};
+    }
     ,setObstacle : function(x, y) {
         this.obstacleList[this.getIndex(x, y)] = {x : parseInt(x), y : parseInt(y)};
     }
