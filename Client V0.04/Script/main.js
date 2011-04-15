@@ -2,6 +2,7 @@ var GI_MAP_WIDTH = 1248;
 var GI_MAP_HEIGHT = 672;
 var GI_GRID_QUANTITY = 16;
 var TERRAIN = [];
+var wsocket;
 
 var GI_TERRAIN_DEFINE = {
     2000 : 'Plain'
@@ -15,7 +16,7 @@ var GI_TERRAIN_DEFINE = {
 
 var GI;
 $(function(){
-   new WsConnect;
+   wsocket = new WsConnect;
 
    /*$(".pickchar").click(function(){
         GI_PLAYER = $(this).html();

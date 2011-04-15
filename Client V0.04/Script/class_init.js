@@ -50,6 +50,9 @@ var Init = Class.extend({
     ,bindMouseClick : function() {
         var _this = this;
         $('#grid')[0].onmouseup = function(e) {
+            var obj;
+            var startPoint;
+            var endPoint;
             var xPX = e.layerX;
             var yPX = e.layerY;
             var x = _this.map.transferScreenToLogicX(xPX, yPX);
@@ -58,11 +61,15 @@ var Init = Class.extend({
                 //verify click grid is movePossible
                 var index = _this.map.getCoordinateIndex(x, y);
                 if(!_this.map.verifyMovePossible(index)) return;
+                startPoint = _this.char.player.x + "," + _this.char.player.y;
+                endPoint = x + "," + y;
+                obj = { type : 'moveCharacter', startPoint : startPoint, endPoint : endPoint };
                 //check character is moving 
                 if (_this.char.player.characterMoving) {
                     _this.char.player.setNewDestinationTigger = true;
                     _this.char.player.nextWayEndX = x;
                     _this.char.player.nextWayEndY = y;
+                    wsocket.sendMessage(obj);
                     return;
                 }
                 //start move
@@ -73,6 +80,7 @@ var Init = Class.extend({
                 console.log(way);
                 _this.char.player.setWay(way);
                 _this.char.player.startWay();
+                wsocket.sendMessage(obj);
             }
             return false;
         }
@@ -114,9 +122,11 @@ var Init = Class.extend({
     /* Create Character */
     ,createChar : function(data) {
         this.char = {};
-        this.char.player = eval('new '+ data.name);
-        this.char.player.cID = data.cID;
-        this.char.player.make(data);
+        for(x in data){
+            this.char.player = eval('new '+ data[x].name);
+            this.char.player.cID = data[x].cID;
+            this.char.player.make(data[x]);
+        }
     }
     ,createOtherChar : function(data){
         this.otherChar = {};
@@ -124,9 +134,8 @@ var Init = Class.extend({
         //this.name = data.name;
         //this.otherChar[this.cID] = new Character('char',this.name , data);
         for(x in data){
-            this.cID = data[x].cID;
-            this.otherChar[this.cID] = eval('new ' + data[x].name);
-            this.otherChar[this.cID].make(data[x]);
+            this.otherChar[data[x].cID] = eval('new ' + data[x].name);
+            this.otherChar[data[x].cID].make(data[x]);
         }
     }
 });

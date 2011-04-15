@@ -195,4 +195,27 @@ var Character = Coordinate.extend({
         clearInterval(this.standInterval);
         clearInterval(this.runInterval);
     }
+    ,charMove : function(d){
+        var startIndex = d.data.startPoint.split(',');
+        var endIndex = d.data.endPoint.split(',');
+        startPointX = parseInt(startIndex[0]);
+        startPointY = parseInt(startIndex[1]);
+        endPointX = parseInt(endIndex[0]);
+        endPointY = parseInt(endIndex[1]);
+        //check character is moving 
+        if (GI.otherChar[d.data.cID].characterMoving) {
+            GI.otherChar[d.data.cID].setNewDestinationTigger = true;
+            GI.otherChar[d.data.cID].nextWayEndX = endPointX;
+            GI.otherChar[d.data.cID].nextWayEndY = endPointY;
+            return;
+        }
+        //start move
+        GI.findWay.setStart(startPointX, startPointY);
+        GI.findWay.setEnd(endPointX, endPointY);
+        GI.findWay.reset();
+        var way = GI.findWay.getWay();
+        console.log(way);
+        GI.otherChar[d.data.cID].setWay(way);
+        GI.otherChar[d.data.cID].startWay();
+    }
 });
