@@ -10,6 +10,8 @@ var InteractionEntrance = Class.extend({
             this.generateOtherChar();
         }else if(e.type == "logout"){
             this.logOut(e);
+        }else if(e.type == "moveCharacter"){
+            this.moveOtherChar(e);
         }
     }
     ,generateMyChar : function(InitPos,InitFac){
@@ -17,9 +19,11 @@ var InteractionEntrance = Class.extend({
     }
     ,generateOtherChar : function() {
         if($("#login").html()){
-            GI.createOtherChar(this.sd);
-            $("#" + this.sd.cID).hide();
-            $("#" + this.sd.cID).addClass("hiddenChar");
+            for(x in this.sd){
+                GI.createOtherChar(this.sd);
+                $("#" + this.sd[x].cID).hide();
+                $("#" + this.sd[x].cID).addClass("hiddenChar");
+            }
         }else{
             GI.createOtherChar(this.sd);
         }
@@ -35,13 +39,16 @@ var InteractionEntrance = Class.extend({
         GI.initMap(this.sd);
         GI.initFindWay();
     }
-    ,logOut : function(e){
-        if(e.cID == GI.char.player.cID){
+    ,logOut : function(d){
+        if(d.cID == GI.char.player.cID){
             alert("U R Logging Out!!!");
         }else{
-            $("#" + e.cID).remove();
-            $("#" + e.cID + "-hpslot").remove();
-            $("#" + e.cID + "-manaslot").remove();
+            $("#" + d.data.cID).remove();
+            $("#" + d.data.cID + "-hpslot").remove();
+            $("#" + d.data.cID + "-manaslot").remove();
         }
+    }
+    ,moveOtherChar : function(d){
+        GI.otherChar[d.data.cID].charMove(d);
     }
 });
