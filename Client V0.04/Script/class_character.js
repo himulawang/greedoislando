@@ -195,6 +195,26 @@ var Character = Coordinate.extend({
         clearInterval(this.standInterval);
         clearInterval(this.runInterval);
     }
+    ////////////////////////////
+    //,charMove : function(startPoint, endPoint) {
+    //    var startXY = this.getCoordinateXY(startPoint);
+    //    var endXY = this.getCoordinateXY(endPoint);
+    //    //check character is moving 
+    //    if (this.characterMoving) {
+    //        this.setNewDestinationTigger = true;
+    //        this.nextWayEndX = endXY.x;
+    //        this.nextWayEndY = endXY.y;
+    //        return;
+    //    }
+    //    //start move
+    //    GI.findWay.setStart(startXY.x, startXY.y);
+    //    GI.findWay.setEnd(endXY.x, endXY.y);
+    //    GI.findWay.reset();
+    //    var way = GI.findWay.getWay();
+    //    this.setWay(way);
+    //    this.startWay();
+    //}
+    ////////////////////////////
     ,charMove : function(d){
         var startIndex = d.data.startPoint.split(',');
         var endIndex = d.data.endPoint.split(',');
