@@ -1,4 +1,5 @@
 var sys = require('sys')
+    ,fc = require('../lib/facility')
     ,response = require('./response')
     ,map = require('./map')
     ,character = require('./character')
@@ -41,12 +42,67 @@ function logout(cID, object) {
 }
 function moveCharacter(cID, object) {
     //verify startPoint And endPoint
-    if (!(GI_MAP.verifyMovePossible(object.startPoint) && GI_MAP.verifyMovePossible(object.endPoint))) return;
+    var startPoint = object.startPoint, endPoint = object.endPoint;
+    if (!(GI_MAP.verifyMovePossible(startPoint) && GI_MAP.verifyMovePossible(endPoint))) return;
+
+    var character = GI_CHARACTER_LIST.getCharacter(cID);
+    //check location
+    //1. character standing and startPoint matches
+    //2. character moving and startPoint matches
+    //3. character standing and startPoint != character Position
+    //4. character moving and startPoint doesn't match
+    var serverPosition = character.getLocation();
+    if (startPoint === serverPosition && !character.characterMoving) { 
+        var way = GI_MAP.getWay(startPoint, endPoint);
+        character.setWay(way);
+        character.startWay();
+    } else if (startPoint === serverPosition && character.characterMoving) { 
+        var way = GI_MAP.getWay(character.nextGridIndex, endPoint);
+        character.setNewDestinationTrigger = true;
+        character.setWay(way);
+    } else if (startPoint != serverPosition && !character.characterMoving) {
+        var deltaPosition = GI_MAP.getWay(startPoint, serverPosition);
+        if (deltaPosition.length <= 2) {
+            character.setLocation(startPoint);
+            var way = GI_MAP.getWay(startPoint, endPoint);
+            character.setWay(way);
+            character.startWay();            
+        }else {
+            output.add(cID, 'badMove', 'self', {cID : cID, clientPosition : startPoint ,serverPosition : serverPosition});
+        }
+    } else if (startPoint != serverPosition && character.characterMoving) {
+        var deltaPosition = GI_MAP.getWay(startPoint, serverPosition);
+        if (deltaPosition.length <= 2) {
+            character.setLocation(startPoint);
+            var way = GI_MAP.getWay(character.nextGridIndex, endPoint);
+            character.setNewDestinationTrigger = true;
+            character.setWay(way);
+        }else {
+            output.add(cID, 'badMove', 'self', {cID : cID, clientPosition : startPoint ,serverPosition : serverPosition});
+        }
+    }
 
     var output = response.create();
 
     //moveCharacter -> Other
     output.add(cID, 'moveCharacter', 'other', {cID : cID, startPoint : object.startPoint, endPoint : object.endPoint});
+
+    return output.get();
+}
+function authLocation(cID, object) {
+    var output = response.create();
+    var character = GI_CHARACTER_LIST.getCharacter(cID);
+    var serverPosition = character.position;
+    var clientPosition = object.location;
+    var authResult = clientPosition === serverPosition ? 'true' : 'false';
+    var authLocationData = {
+        cID : cID
+        ,clientPosition : clientPosition
+        ,serverPosition : serverPosition
+        ,authResult : authResult
+    }
+    console.log(authLocationData);
+    output.add(cID, 'authLocation', 'self', authLocationData);
 
     return output.get();
 }
@@ -74,5 +130,6 @@ exports.gm = function(cmd) {
 var ACTION = {
     selectCharacter : selectCharacter
     ,moveCharacter : moveCharacter
+    ,authLocation : authLocation
     ,logout : logout
 }

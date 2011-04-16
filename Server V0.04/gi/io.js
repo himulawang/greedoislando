@@ -17,7 +17,7 @@ exports.output = function(object, clients) {
         type : object.type
         ,data : object.data
     }
-console.log(cID, '<-', JSON.stringify(output.type));
+console.log(cID, '<-[', object.sendTo, ']', JSON.stringify(output.type));
 
     if (object.sendTo === 'all') {
         for (i in clients) {

@@ -27,3 +27,6 @@ list.prototype.getOnlineCharacterList = function() {
 list.prototype.del = function(cID) {
     delete this.onlineCharacter[cID];
 }
+list.prototype.getCharacter = function(cID) {
+    return this.onlineCharacter[cID];
+}
