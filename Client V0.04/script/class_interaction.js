@@ -11,10 +11,7 @@ var InteractionEntrance = Class.extend({
         }else if(e.type == "logout"){
             this.logOut(e);
         }else if(e.type == "moveCharacter"){
-            ////////////////////////////
-            //this.moveOtherChar();
-            ////////////////////////////
-            this.moveOtherChar(e);
+            this.moveOtherChar();
         }
     }
     ,generateMyChar : function(InitPos,InitFac){
@@ -51,12 +48,7 @@ var InteractionEntrance = Class.extend({
             $("#" + d.data.cID + "-manaslot").remove();
         }
     }
-    ////////////////////////////
-    //,moveOtherChar : function() {
-    //    GI.otherChar[this.sd.cID].charMove(this.sd.startPoint, this.sd.endPoint);
-    //}
-    ////////////////////////////
-    ,moveOtherChar : function(d){
-        GI.otherChar[d.data.cID].charMove(d);
+    ,moveOtherChar : function(){
+        GI.otherChar[this.sd.cID].charMove(this.sd.startPoint,this.sd.endPoint);
     }
 });

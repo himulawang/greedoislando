@@ -36,6 +36,10 @@ var Character = Coordinate.extend({
         this.moveWay();
     }
     ,moveWay : function() {
+        var location = this.getCoordinateIndex(this.x,this.y);
+        var authLocation = { type : 'authLocation', location : location };
+        wsocket.sendMessage(authLocation);
+        
         //reach the final point
         if (this.wayIndex >= this.way.length) {
             this.startStand();
@@ -195,47 +199,22 @@ var Character = Coordinate.extend({
         clearInterval(this.standInterval);
         clearInterval(this.runInterval);
     }
-    ////////////////////////////
-    //,charMove : function(startPoint, endPoint) {
-    //    var startXY = this.getCoordinateXY(startPoint);
-    //    var endXY = this.getCoordinateXY(endPoint);
-    //    //check character is moving 
-    //    if (this.characterMoving) {
-    //        this.setNewDestinationTigger = true;
-    //        this.nextWayEndX = endXY.x;
-    //        this.nextWayEndY = endXY.y;
-    //        return;
-    //    }
-    //    //start move
-    //    GI.findWay.setStart(startXY.x, startXY.y);
-    //    GI.findWay.setEnd(endXY.x, endXY.y);
-    //    GI.findWay.reset();
-    //    var way = GI.findWay.getWay();
-    //    this.setWay(way);
-    //    this.startWay();
-    //}
-    ////////////////////////////
-    ,charMove : function(d){
-        var startIndex = d.data.startPoint.split(',');
-        var endIndex = d.data.endPoint.split(',');
-        startPointX = parseInt(startIndex[0]);
-        startPointY = parseInt(startIndex[1]);
-        endPointX = parseInt(endIndex[0]);
-        endPointY = parseInt(endIndex[1]);
+    ,charMove : function(startPoint, endPoint){
+        var startXY = this.getCoordinateXY(startPoint);
+        var endXY = this.getCoordinateXY(endPoint);
         //check character is moving 
-        if (GI.otherChar[d.data.cID].characterMoving) {
-            GI.otherChar[d.data.cID].setNewDestinationTigger = true;
-            GI.otherChar[d.data.cID].nextWayEndX = endPointX;
-            GI.otherChar[d.data.cID].nextWayEndY = endPointY;
+        if (this.characterMoving) {
+            this.setNewDestinationTigger = true;
+            this.nextWayEndX = endXY.x;
+            this.nextWayEndY = endXY.y;
             return;
         }
         //start move
-        GI.findWay.setStart(startPointX, startPointY);
-        GI.findWay.setEnd(endPointX, endPointY);
+        GI.findWay.setStart(startXY.x, startXY.y);
+        GI.findWay.setEnd(endXY.x, endXY.y);
         GI.findWay.reset();
         var way = GI.findWay.getWay();
-        console.log(way);
-        GI.otherChar[d.data.cID].setWay(way);
-        GI.otherChar[d.data.cID].startWay();
+        this.setWay(way);
+        this.startWay();
     }
 });
