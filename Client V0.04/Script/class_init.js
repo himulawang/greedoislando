@@ -50,36 +50,18 @@ var Init = Class.extend({
     ,bindMouseClick : function() {
         var _this = this;
         $('#grid')[0].onmouseup = function(e) {
-            var obj;
-            var startPoint;
-            var endPoint;
             var xPX = e.layerX;
             var yPX = e.layerY;
             var x = _this.map.transferScreenToLogicX(xPX, yPX);
             var y = _this.map.transferScreenToLogicY(xPX, yPX);
+            var startPoint = _this.map.getCoordinateIndex(_this.char.player.x, _this.char.player.y);
+            var endPoint = _this.map.getCoordinateIndex(x, y);
+            var obj = { type : 'moveCharacter', startPoint : startPoint, endPoint : endPoint };
             if (e.which === 1) {
                 //verify click grid is movePossible
                 var index = _this.map.getCoordinateIndex(x, y);
                 if(!_this.map.verifyMovePossible(index)) return;
-                startPoint = _this.char.player.x + "," + _this.char.player.y;
-                endPoint = x + "," + y;
-                obj = { type : 'moveCharacter', startPoint : startPoint, endPoint : endPoint };
-                //check character is moving 
-                if (_this.char.player.characterMoving) {
-                    _this.char.player.setNewDestinationTigger = true;
-                    _this.char.player.nextWayEndX = x;
-                    _this.char.player.nextWayEndY = y;
-                    wsocket.sendMessage(obj);
-                    return;
-                }
-                //start move
-                _this.findWay.setStart(_this.char.player.x, _this.char.player.y);
-                _this.findWay.setEnd(x, y);
-                _this.findWay.reset();
-                var way = _this.findWay.getWay();
-                console.log(way);
-                _this.char.player.setWay(way);
-                _this.char.player.startWay();
+                _this.char.player.charMove(startPoint,endPoint);
                 wsocket.sendMessage(obj);
             }
             return false;
