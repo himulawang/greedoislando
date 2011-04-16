@@ -1,4 +1,9 @@
+var findway = require('./map_findway');
+var fc = require('../lib/facility');
+var constant = require('./constant').create();
+
 var map = function() {
+    this.GI_GRID_QUANTITY = constant;
     this.DEFINE = {
     /* 2000 Plain
      * 2001 Broken Wall
@@ -311,6 +316,8 @@ var map = function() {
         ,'14,15' : {objID : 2000, x : 14, y : 15}
         ,'15,15' : {objID : 2000, x : 15, y : 15}
     }
+    this.findway = findway.create();
+    this.setObstacleToFindWay();
 }
 
 exports.create = function() {
@@ -325,4 +332,20 @@ map.prototype.verifyMovePossible = function(index) {
     var objID = this.grid[index].objID;
 
     return this.DEFINE[objID].movePossible;
+}
+map.prototype.setObstacleToFindWay = function() {
+    var xy;
+    for (var index in this.grid) {
+        if (this.verifyMovePossible(index)) continue;
+        xy = fc.getCoordinateXY(index);
+        this.findway.setObstacle(xy.x, xy.y);
+    }
+}
+map.prototype.getWay = function(startPoint, endPoint) {
+    var startXY = fc.getCoordinateXY(startPoint);
+    var endXY = fc.getCoordinateXY(endPoint);
+    this.findway.reset();
+    this.findway.setStart(startXY.x, startXY.y);
+    this.findway.setEnd(endXY.x, endXY.y);
+    return this.findway.getWay();
 }

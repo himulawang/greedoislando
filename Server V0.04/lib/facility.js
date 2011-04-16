@@ -17,15 +17,6 @@ exports.random = function(n) {
 exports.getTimestamp = function() {
     return Date.parse(new Date());
 }
-//get position index
-exports.getPositionIndex = function(x, y) {
-    return x + ',' + y;
-}
-//get x y from position index
-exports.getXYFromPosition = function(index) {
-    var t = index.split(',');
-    return {x : parseInt(t[0]), y : parseInt(t[1])};
-}
 exports.objectLength = function(object) {
     var c = 0;
     for (var i in object) {
@@ -33,3 +24,11 @@ exports.objectLength = function(object) {
     }
     return c;
 }
+exports.getCoordinateXY = function(index) {
+    index = index.split(',');
+    return {x : parseInt(index[0]), y : parseInt(index[1])};
+}
+exports.getCoordinateIndex = function(x, y) {
+        return x + ',' + y;
+}
+

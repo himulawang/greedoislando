@@ -1,4 +1,5 @@
 var fc = require('../lib/facility');
+var CONSTANT = require('./constant').create();
 
 var character = function(cID, name) {
     /* 500 UpRight
@@ -6,6 +7,17 @@ var character = function(cID, name) {
      * 502 DownLeft
      * 503 UpLeft
      * */
+    this.DIRECTIONS = {
+        //deltaX,deltaY
+        '0,-1' : 0
+        ,'1,-1' : 1
+        ,'1,0' : 2
+        ,'1,1' : 3
+        ,'0,1' : 4
+        ,'-1,1' : 5
+        ,'-1,0' : 6
+        ,'-1,-1' : 7
+    };    
     this.cID = cID;
     this.name = name;
     this.life = 100;
@@ -15,7 +27,11 @@ var character = function(cID, name) {
     this.speed = 2;
     this.x = fc.random(15);
     this.y = fc.random(15);
-    this.position = fc.getPositionIndex(this.x, this.y);
+    this.position = fc.getCoordinateIndex(this.x, this.y);
+    this.characterMoving = false;
+    this.nextXY = null;
+    this.way = null;
+    this.nextGridIndex = null;
 }
 
 character.prototype.getInfo = function() {
@@ -35,79 +51,74 @@ character.prototype.getInfo = function() {
 character.prototype.getCID = function() {
     return this.cID;
 }
+character.prototype.getLocation = function() {
+    return this.position;
+}
+character.prototype.setLocation = function(index) {
+    this.position = index;
+    var xy = fc.getCoordinateXY(index);
+    this.x = xy.x;
+    this.y = xy.y;
+}
+character.prototype.setWay = function(way) {
+    this.way = way;
+}
+character.prototype.getWay = function(getWay) {
+    return this.way;
+}
+character.prototype.startWay = function() {
+    this.wayIndex = 0;
+    this.moveWay();
+}
+character.prototype.moveWay = function() {
+    if (this.wayIndex >= this.way.length) {
+        this.characterMoving = false;
+        this.nextXY = null;
+        this.moveTimeout = null;
+        this.way = null;
+        this.nextGridIndex = null;
+        return;
+    }
+    var _this = this;
+    this.characterMoving = true;
+    //get move one grid start coordinate and end coordinate
+    this.nextGridIndex = this.way[this.wayIndex];
+    this.nextXY = fc.getCoordinateXY(this.nextGridIndex);
+
+    var time = CONSTANT.GI_CHARACTER_MOVING_SPEED;
+    this.directionID = this.getTowardNewGridDirection(this.nextXY.x, this.nextXY.y);
+    if (this.directionID % 2 === 1) {
+        time *= 1.4;
+    }
+
+    this.moveTimeout = setTimeout(function(){
+        _this.x = _this.nextXY.x;
+        _this.y = _this.nextXY.y;
+        _this.position = _this.nextGridIndex;
+        console.log(_this.position);
+
+        if (_this.setNewDestinationTrigger) {
+            _this.setNewDestinationTrigger = false;
+            _this.startWay();
+            return;
+        }
+
+        ++_this.wayIndex;
+        _this.moveWay();
+    }, time);
+}
+character.prototype.getTowardNewGridDirection = function(x, y) {
+    var deltaX = x - this.x;
+    var deltaY = y - this.y;
+    var deltaIndex = fc.getCoordinateIndex(deltaX, deltaY);
+    return this.DIRECTIONS[deltaIndex];
+}
+/*
+character.prototype.getWayEndPoint = function(x, y) {
+    if (this.way === null) return null;
+    return this.way[this.way.length - 1];
+}
+*/
 exports.create = function(object) {
     return new character(object.cID, object.character);
-}
-
-////////////////////
-exports.newCharacterLogin = function(object, GI_CHARACTER) {
-    var cID = object.cID
-    return {
-        cID : cID
-        ,type : 'newCharacterLogin'
-        ,data : GI_CHARACTER[cID]
-    };
-}
-
-exports.getOnlineCharacter = function(object, GI_CHARACTER) {
-    var cID = object.cID;
-    var data = [];
-    var i;
-    for (i in GI_CHARACTER) {
-        if (i === cID) continue;
-        data.push(GI_CHARACTER[i]);
-    }
-    return {
-        cID : cID
-        ,type : 'getOnlineCharacter'
-        ,data : data
-    }
-}
-
-exports.moveCharacter = function(object, GI_CHARACTER, GI_MAP) {
-    var cID = object.cID;
-    var startPoint = object.startPoint;
-    var endPoint = object.endPoint;
-    var char = GI_CHARACTER[cID];
-
-
-    verify = 1;
-    /*
-    verify = verify
-        && verifyPointMovePossible(startPoint, GI_MAP)
-        && verifyPointMovePossible(endPoint, GI_MAP)
-        && verifyCharacterOnThePoint(startPoint, char);
-        */
-
-    return verify ? {
-        cID : cID
-        ,type : 'moveCharacter'
-        ,startPoint : startPoint
-        ,endPoint : endPoint
-    } 
-    :
-    null;
-}
-
-exports.authLocation = function(object, GI_CHARACTER, GI_MAP) {
-    var cID = object.cID;
-    var point = object.point;
-
-    var xy = fc.getXYFromPosition(point);
-    GI_CHARACTER[cID].position = point;
-    GI_CHARACTER[cID].x = xy.x;
-    GI_CHARACTER[cID].y = xy.y;
-
-    return {
-        cID : cID
-        ,type : 'authLocation'
-        ,point : point
-    }
-}
-
-function verifyPointMovePossible(index, GI_MAP) {
-    return GI_MAP[index].movePossible;
-}
-function verifyCharacterOnThePoint(index, char) {
-    return char.position === index;
 }
