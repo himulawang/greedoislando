@@ -19,11 +19,13 @@ function selectCharacter(cID, object) {
 
     //initMyCharacter ->Self
     var myCharacter = character.create(object);
-    var myCharacterData = GI_CHARACTER_LIST.add(myCharacter);
+    var myCharacterData = {};
+    myCharacterData[cID] = GI_CHARACTER_LIST.add(myCharacter);
     output.add(cID, 'initMyCharacter', 'self', myCharacterData);
 
     //newCharacterLogin -> Other
-    var newCharacterLoginData = myCharacter.getInfo();
+    var newCharacterLoginData = {};
+    newCharacterLoginData[cID] = myCharacter.getInfo();
     output.add(cID, 'newCharacterLogin', 'other', newCharacterLoginData);
 
     return output.get();
@@ -44,7 +46,7 @@ function moveCharacter(cID, object) {
     var output = response.create();
 
     //moveCharacter -> Other
-    output.add(cID, 'moveCharacter', 'other', {startPoint : object.startPoint, endPoint : object.endPoint});
+    output.add(cID, 'moveCharacter', 'other', {cID : cID, startPoint : object.startPoint, endPoint : object.endPoint});
 
     return output.get();
 }
