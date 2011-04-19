@@ -1,7 +1,8 @@
 var ws;
 var consoleDiv;
 var WS_HOST = "ws://giworld.gicp.net:8081";
-//var WS_HOST = "ws://192.168.0.130:8081";
+//var WS_HOST = "ws://192.168.0.130:8080";
+//var WS_HOST = "ws://giworld.gicp.net:8080";
 
 //Upper case variable name means Constant,like 'WS_HOST'
 //Class name should begin as Upper case and then lower case like 'CharacterNPC'

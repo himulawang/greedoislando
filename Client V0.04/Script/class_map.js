@@ -93,6 +93,7 @@ var Map = Coordinate.extend({
         //this.context.fillText  (obsname, this.transferLogicToScreenX(x, y) - 10, this.transferLogicToScreenY(x, y) - 30);
     }
     ,verifyMovePossible : function(index) {
+        return 1;
         if (!this.grid[index]) return false;
         var objID = this.grid[index].objID;
 
