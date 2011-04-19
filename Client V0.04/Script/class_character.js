@@ -37,8 +37,6 @@ var Character = Coordinate.extend({
     }
     ,moveWay : function() {
         var location = this.getCoordinateIndex(this.x,this.y);
-        var authLocation = { type : 'authLocation', location : location };
-        wsocket.sendMessage(authLocation);
         
         //reach the final point
         if (this.wayIndex >= this.way.length) {
@@ -75,14 +73,14 @@ var Character = Coordinate.extend({
         var displacementY = nextScreenY - nowScreenY;
 
         //use how much to do this movement
-        var time = 500; //ms connect this value with Character's Speed
+        var time = GI_CHARACTER_SPEED; //ms connect this value with Character's Speed
         if (this.directionID % 2 === 1) {
             time *= 1.4;
         }
         //render very 20ms
         var renderTime = 20; //ms
         //render how much times
-        var cycle = time / renderTime;
+        var cycle = Math.floor(time / renderTime);
 
         //calculate move how much long every renderTime
         var stepX = displacementX / time * renderTime;
@@ -100,6 +98,7 @@ var Character = Coordinate.extend({
             screenY += stepY;
             uiScreenX += stepX;
             uiScreenY += stepY;
+
             
             $(_this.el).css({left : screenX + 'px', top : screenY + 'px'});
             _this.ui.slotput(uiScreenX, uiScreenY);
@@ -110,6 +109,9 @@ var Character = Coordinate.extend({
                 clearInterval(_this.moveInterval);
                 _this.x = nextXY.x;
                 _this.y = nextXY.y;
+
+                var authLocation = { type : 'authLocation', location : _this.getCoordinateIndex(nextXY.x, nextXY.y) };
+                wsocket.sendMessage(authLocation);
 
                 //if user made a new way before last way wasn't ended
                 if (_this.setNewDestinationTigger) {
