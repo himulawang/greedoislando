@@ -36,7 +36,7 @@ var InteractionEntrance = Class.extend({
             });
         });
 
-        GI.initMap(this.sd);
+        GI.initMap();
         GI.initFindWay();
     }
     ,logOut : function(d){

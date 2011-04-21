@@ -71,17 +71,21 @@ var Init = Class.extend({
     ,initMap : function(data) {
         this.map = new Map();
         this.map.getCanvas($('#grid')[0]);
-        this.map.getData(data);
+        this.map.getData();
         this.map.draw();
     }
     ,initFindWay : function() {
         this.findWay = new FindWay;
         //add obstacle to findway's obstacleList
-        var xy;
+        var xy, i, j;
         for (var index in this.map.grid) {
             if (this.map.verifyMovePossible(index)) continue;
             xy = this.map.getCoordinateXY(index);
-            this.findWay.setObstacle(xy.x, xy.y);
+            for (i = 0; i < 6; ++i) {
+                for (j = 0; j < 6; ++j) {
+                    this.findWay.setObstacle(xy.x + i, xy.y + j);
+                }
+            }
         }
     }
     ,initCursor : function() {

@@ -94,18 +94,4 @@ var Coordinate = Class.extend({
         var deltaIndex = this.getCoordinateIndex(deltaX, deltaY);
         return this.DIRECTIONS[deltaIndex];
     }
-    /*
-    ,getTowardNewGridDisplacementX : function(nextGridIndex) {
-        var nextXY = this.getCoordinateXY(nextGridIndex);
-        var nowScreenX = this.transferLogicToScreenX(this.x, this.y);
-        var newScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y);
-        return newScreenX - nowScreenX;
-    }
-    ,getTowardNewGridDisplacementY : function(nextGridIndex) {
-        var nextXY = this.getCoordinateXY(nextGridIndex);
-        var nowScreenY = this.transferLogicToScreenY(this.x, this.y);
-        var newScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y);
-        return newScreenY - nowScreenY;
-    }
-    */
 });

@@ -1,8 +1,7 @@
 var GI_MAP_WIDTH = 1248;
 var GI_MAP_HEIGHT = 672;
 var GI_GRID_QUANTITY = 96;
-var GI_CHARACTER_SPEED = 120;
-var TERRAIN = [];
+var GI_CHARACTER_SPEED = 100;
 var wsocket;
 
 var GI_TERRAIN_DEFINE = {

@@ -37,8 +37,8 @@ var Map = Coordinate.extend({
         el.height = this.MAPHEIGHT;
         this.context = el.getContext('2d');
     }
-    ,getData : function(data) {
-        this.grid = data;
+    ,getData : function() {
+        this.grid = MAP_DATA;
     }
     ,draw : function() { // Draw Map Side
         var x, y;
@@ -52,35 +52,40 @@ var Map = Coordinate.extend({
 
         //draw line
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
-            // 0 , 1
-            x = 0; y = i;
-            this.context.beginPath();
-            this.context.moveTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
-            // 16, 1
-            x = this.GRIDQUANTITY; y = i;
-            this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
-            this.context.closePath();
-            this.context.stroke();
+            if (i % 6 === 0) {
+                // 0 , 1
+                x = 0; y = i;
+                this.context.beginPath();
+                this.context.moveTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
+                // 16, 1
+                x = this.GRIDQUANTITY; y = i;
+                this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
+                this.context.closePath();
+                this.context.stroke();
+            }
         }
 
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
-            // 1 , 0
-            x = i; y = 0;
-            this.context.beginPath();
-            this.context.moveTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
-            // 1, 16
-            x = i; y = this.GRIDQUANTITY;
-            this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
-            this.context.closePath();
-            this.context.stroke();
+            if (i % 6 === 0) {
+                // 1 , 0
+                x = i; y = 0;
+                this.context.beginPath();
+                this.context.moveTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
+                // 1, 16
+                x = i; y = this.GRIDQUANTITY;
+                this.context.lineTo(this.transferLogicToScreenX(x, y), this.transferLogicToScreenY(x, y));
+                this.context.closePath();
+                this.context.stroke();
+            }
         }
 
         //draw text
-        var terrainType, coordinate, xy;
+        var terrainType, coordinate, xy, tmpXY;
         for (var index in this.grid) {
-            xy = this.getCoordinateXY(index);
-            x = xy.x;
-            y = xy.y;
+            tmpXY = this.getCoordinateXY(index);
+            x = tmpXY.x * 6;
+            y = tmpXY.y * 6;
+            index = this.getCoordinateIndex(x, y);
 
             terrainType = this.getTerrainType(index);
             coordinate = index;
@@ -88,9 +93,8 @@ var Map = Coordinate.extend({
             this.context.fillStyle    = '#000000';
             this.context.font         = 'Calibri 8px sans-serif';
             this.context.textBaseline = 'top';
-            this.context.fillText  (terrainType + ' ' + index, this.transferLogicToScreenX(x, y) - 21, this.transferLogicToScreenY(x, y) + 14);
+            this.context.fillText(terrainType + ' ' + index, this.transferLogicToScreenX(x, y) - 21, this.transferLogicToScreenY(x, y) + 14);
         }
-        //this.context.fillText  (obsname, this.transferLogicToScreenX(x, y) - 10, this.transferLogicToScreenY(x, y) - 30);
     }
     ,verifyMovePossible : function(index) {
         return 1;
