@@ -1,6 +1,6 @@
 var ws;
 var consoleDiv;
-var WS_HOST = "ws://giworld.gicp.net:8081";
+var WS_HOST = "ws://192.168.0.130:8081";
 //var WS_HOST = "ws://192.168.0.130:8080";
 //var WS_HOST = "ws://giworld.gicp.net:8080";
 

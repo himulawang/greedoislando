@@ -4,17 +4,18 @@ var InteractionEntrance = Class.extend({
         console.log(this.sd);
         if(e.type == "initMyCharacter"){
             this.generateMyChar();
-        }else if(e.type == "map"){
             this.generateMapData();
         }else if(e.type == "newCharacterLogin" || e.type == "getOnlineCharacter"){
             this.generateOtherChar();
         }else if(e.type == "logout"){
             this.logOut(e);
         }else if(e.type == "moveCharacter"){
-            this.moveOtherChar();
+            this.turnCharToMove();
+        }else if(e.type == "characterStand"){
+            this.turnCharToStand();
         }
     }
-    ,generateMyChar : function(InitPos,InitFac){
+    ,generateMyChar : function(){
         GI.createChar(this.sd);
     }
     ,generateOtherChar : function() {
@@ -35,9 +36,9 @@ var InteractionEntrance = Class.extend({
                 $(".hiddenChar").show();
             });
         });
-
+        
         GI.initMap();
-        GI.initFindWay();
+        GI.map.initObstacle();
     }
     ,logOut : function(d){
         if(d.cID == GI.char.player.cID){
@@ -48,7 +49,25 @@ var InteractionEntrance = Class.extend({
             $("#" + d.data.cID + "-manaslot").remove();
         }
     }
-    ,moveOtherChar : function(){
-        GI.otherChar[this.sd.cID].charMove(this.sd.startPoint,this.sd.endPoint);
+    ,turnCharToMove : function(){
+        if(GI.char.player.cID == this.sd.cID)
+        {
+            GI.char.player.charMove(this.sd.nowLocation,this.sd.nextLocation, this.sd.duration);
+        }
+        else
+        {
+            GI.otherChar[this.sd.cID].charMove(this.sd.nowLocation,this.sd.nextLocation, this.sd.duration);
+        }
+    }
+    ,turnCharToStand : function()
+    {
+       if(GI.char.player.cID == this.sd.cID)
+        {
+            GI.char.player.reachDestinationCharacterStand();
+        }
+        else
+        {
+            GI.otherChar[this.sd.cID].reachDestinationCharacterStand();
+        } 
     }
 });
