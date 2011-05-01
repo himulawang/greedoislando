@@ -30,11 +30,13 @@ var Character = Coordinate.extend({
     ,setWay : function(way) {
         this.way = way;
     }
-    ,startWay : function() {
+    ,startWay : function(nowLocation,nextLocation,duration) {
         this.wayIndex = 0;
         
-        this.moveWay();
+        this.moveWay(nowLocation,nextLocation,duration);
     }
+    /*
+     * OLD PATTERN moveWay function , replace by new func
     ,moveWay : function() {
         var location = this.getCoordinateIndex(this.x,this.y);
         
@@ -132,6 +134,7 @@ var Character = Coordinate.extend({
             }
         }, renderTime);
     }
+    */
     ,drawStand : function() {
         var c = this.el.getContext('2d');
         this.standWidth = this.standImages[0].width;
@@ -201,7 +204,9 @@ var Character = Coordinate.extend({
         clearInterval(this.standInterval);
         clearInterval(this.runInterval);
     }
-    ,charMove : function(startPoint, endPoint){
+    /*
+     *  OLD CHARMOVING PATTERN
+     * ,charMove : function(startPoint, endPoint){
         var startXY = this.getCoordinateXY(startPoint);
         var endXY = this.getCoordinateXY(endPoint);
         //check character is moving 
@@ -218,5 +223,99 @@ var Character = Coordinate.extend({
         var way = GI.findWay.getWay();
         this.setWay(way);
         this.startWay();
+    }
+    */
+    ,charMove : function(nowLocation,nextLocation,duration)
+    {
+        //var nextLocationXY = this.getCoordinateXY(nextLocation);
+        // Reserve For Checking Moving Status
+        //console.log(nextLocation);
+        this.startWay(nowLocation,nextLocation,duration);
+    }
+    ,moveWay : function(nowLocation,nextLocation,duration) {
+        var nowLocationXY = this.getCoordinateXY(nowLocation);
+
+        this.characterMoving = true;
+
+        //reach the final point , old Pattern
+        /*
+        if (this.wayIndex >= this.way.length) {
+            this.startStand();
+            this.put();
+            this.characterMoving = false;
+            return;
+        }
+        */
+       
+        var _this = this;
+        //get move one grid start coordinate and end coordinate // no longer use
+        //var nextGridIndex = this.way[this.wayIndex];
+        //var nextXY = this.getCoordinateXY(nextGridIndex);
+        console.log('moveWay Inside',nextLocation);
+        var nextXY = this.getCoordinateXY(nextLocation);
+
+        //get toward direction to decide which animation shall use
+        this.directionID = this.getTowardNewGridDirection(nextXY.x, nextXY.y);
+
+        //get start grid screen X and Y
+        var nowScreenX = this.transferLogicToScreenX(nowLocationXY.x, nowLocationXY.y) - this.HALFTILEWIDTH + this.runOffsetX;
+        var nowScreenY = this.transferLogicToScreenY(nowLocationXY.x, nowLocationXY.y) - this.runOffsetY;
+
+        //get next step grid screen X and Y
+        var nextScreenX = this.transferLogicToScreenX(nextXY.x, nextXY.y) - this.HALFTILEWIDTH + this.runOffsetX;
+        var nextScreenY = this.transferLogicToScreenY(nextXY.x, nextXY.y) - this.runOffsetY;
+
+        //get ui Slot start grid screen X and Y
+        var uiScreenX = this.transferLogicToScreenX(nowLocationXY.x, nowLocationXY.y) - this.HALFTILEWIDTH;
+        var uiScreenY = nowScreenY;
+
+        //get displacement of this movement
+        var displacementX = nextScreenX - nowScreenX;
+        var displacementY = nextScreenY - nowScreenY;
+
+        //use how much to do this movement
+        var time = GI_CHARACTER_SPEED; //ms connect this value with Character's Speed
+        if (this.directionID % 2 === 1) {
+            time *= 1.4;
+        }
+        //render very 20ms
+        var renderTime = 20; //ms
+        //render how much times
+        var cycle = Math.floor(time / renderTime);
+
+        //calculate move how much long every renderTime
+        var stepX = displacementX / time * renderTime;
+        var stepY = displacementY / time * renderTime;
+        
+        //var new value for each renderTime
+        var screenX = nowScreenX;
+        var screenY = nowScreenY;
+
+        //start running animation
+        this.startRun();
+        var i = 0;        
+        this.moveInterval = setInterval(function() {
+            screenX += stepX;
+            screenY += stepY;
+            uiScreenX += stepX;
+            uiScreenY += stepY;
+            
+            $(_this.el).css({left : screenX + 'px', top : screenY + 'px'});
+            _this.ui.slotput(uiScreenX, uiScreenY);
+
+            ++i;
+
+            if (i === cycle) {
+                clearInterval(_this.moveInterval);
+                _this.x = nextXY.x;
+                _this.y = nextXY.y;
+
+                ++_this.wayIndex;
+            }
+        }, renderTime);
+    }
+    ,reachDestinationCharacterStand : function(){
+        this.startStand();
+        this.put();
     }
 });

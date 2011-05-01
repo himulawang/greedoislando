@@ -83,8 +83,8 @@ var Map = Coordinate.extend({
         var terrainType, coordinate, xy, tmpXY;
         for (var index in this.grid) {
             tmpXY = this.getCoordinateXY(index);
-            x = tmpXY.x * 6;
-            y = tmpXY.y * 6;
+            x = tmpXY.x;
+            y = tmpXY.y;
             index = this.getCoordinateIndex(x, y);
 
             terrainType = this.getTerrainType(index);
@@ -97,16 +97,41 @@ var Map = Coordinate.extend({
         }
     }
     ,verifyMovePossible : function(index) {
-        return 1;
         if (!this.grid[index]) return false;
+        //console.log(index);
         var objID = this.grid[index].objID;
 
         return this.DEFINE[objID].movePossible;
+    }
+    ,verifyClickMovePossible : function(index) {
+        if (this.obstacleList[index]) return false;
+        return true;
     }
     ,getTerrainType : function(index) {
         if (!this.grid[index]) return false;
         var objID = this.grid[index].objID;
         
         return this.DEFINE[objID].name;
+    }
+    ,setObstacle : function(x, y) {
+        this.obstacleList[this.getIndex(x, y)] = {x : parseInt(x), y : parseInt(y)};
+    }
+    ,getIndex : function(x, y) {
+        return x + ',' + y;
+    }
+    ,initObstacle : function() {
+        //this.findWay = new FindWay;
+        //add obstacle to findway's obstacleList
+        this.obstacleList = {};
+        var xy, i, j;
+        for (var index in this.grid) {
+            if (this.verifyMovePossible(index)) continue;
+            xy = this.getCoordinateXY(index);
+            for (i = 0; i < this.grid[index].l; ++i) {
+                for (j = 0; j < this.grid[index].w; ++j) {
+                    this.setObstacle(xy.x + i, xy.y + j);
+                }
+            }
+        }
     }
 });
