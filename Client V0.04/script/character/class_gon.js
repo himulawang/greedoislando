@@ -11,6 +11,8 @@ var Gon = Character.extend({
         //Init Offset
         this.caculateRunOffset();
         this.caculateStandOffset();
+        
+        this.timeDesprite = this.caculateTimeDesprite(data); // C/S Timestamp Difference
 
         this.setNewDestinationTigger = false;
         this.characterMoving = false;
@@ -19,7 +21,7 @@ var Gon = Character.extend({
         this.initRun(8);
         this.startStand();
         this.setPosition(this.initPos['x'],this.initPos['y']);
-        this.ui = new UserInterface(this.cID);
+        //this.ui = new UserInterface(this.cID);
         this.put();
     }
     ,caculateRunOffset : function() {

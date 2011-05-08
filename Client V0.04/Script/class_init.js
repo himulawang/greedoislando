@@ -110,9 +110,6 @@ var Init = Class.extend({
     }
     ,createOtherChar : function(data){
         this.otherChar = {};
-        //this.cID = data.cID;
-        //this.name = data.name;
-        //this.otherChar[this.cID] = new Character('char',this.name , data);
         for(x in data){
             this.otherChar[data[x].cID] = eval('new ' + data[x].name);
             this.otherChar[data[x].cID].make(data[x]);

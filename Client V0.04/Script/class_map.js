@@ -89,11 +89,29 @@ var Map = Coordinate.extend({
 
             terrainType = this.getTerrainType(index);
             coordinate = index;
-
+            
+            /*
             this.context.fillStyle    = '#000000';
             this.context.font         = 'Calibri 8px sans-serif';
             this.context.textBaseline = 'top';
             this.context.fillText(terrainType + ' ' + index, this.transferLogicToScreenX(x, y) - 21, this.transferLogicToScreenY(x, y) + 14);
+            */
+            
+            //Init Terrain
+            var img = new Image();
+            var rand = Math.random();
+            var randSuffix;
+            if(rand <= 0.5)
+            {
+                randSuffix = 1;
+            }
+            else
+            {
+                randSuffix = 2;
+            }
+            img.src = 'images/terrain/' + terrainType + '-' + randSuffix + '.png';
+            this.context.drawImage(img,this.transferLogicToScreenX(x, y) - 21,this.transferLogicToScreenY(x, y) + 14);
+            
         }
     }
     ,verifyMovePossible : function(index) {
