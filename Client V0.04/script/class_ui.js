@@ -15,8 +15,8 @@ var UserInterface = Class.extend({
     ,slotput : function(ScreenX,ScreenY) {
         var Hpslot = $('#' + this.cID + '-hpslot');
         var ManaSlot = $('#' + this.cID + '-manaslot');
-        Hpslot_X = ScreenX + 9;
-        ManaSlot_X = ScreenX + 9;
+        Hpslot_X = ScreenX - 20;
+        ManaSlot_X = ScreenX - 20;
         Hpslot_Y = ScreenY - 16;
         ManaSlot_Y = ScreenY - 8;
         

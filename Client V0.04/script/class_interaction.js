@@ -1,7 +1,7 @@
 var InteractionEntrance = Class.extend({
     init : function(e){
         this.sd = e.data;
-        console.log(this.sd);
+        this.e = e;
         if(e.type == "initMyCharacter"){
             this.generateMyChar();
             this.generateMapData();
@@ -10,9 +10,9 @@ var InteractionEntrance = Class.extend({
         }else if(e.type == "logout"){
             this.logOut(e);
         }else if(e.type == "moveCharacter"){
-            this.turnCharToMove();
+            this.charMoveQueue();
         }else if(e.type == "characterStand"){
-            this.turnCharToStand();
+            this.charMoveQueue();
         }
     }
     ,generateMyChar : function(){
@@ -49,25 +49,15 @@ var InteractionEntrance = Class.extend({
             $("#" + d.data.cID + "-manaslot").remove();
         }
     }
-    ,turnCharToMove : function(){
+    ,charMoveQueue : function(){
         if(GI.char.player.cID == this.sd.cID)
         {
-            GI.char.player.charMove(this.sd.nowLocation,this.sd.nextLocation, this.sd.duration);
+            GI.char.player.charMove(this.e);
         }
         else
         {
-            GI.otherChar[this.sd.cID].charMove(this.sd.nowLocation,this.sd.nextLocation, this.sd.duration);
+            GI.otherChar[this.sd.cID].charMove(this.e);
         }
     }
-    ,turnCharToStand : function()
-    {
-       if(GI.char.player.cID == this.sd.cID)
-        {
-            GI.char.player.reachDestinationCharacterStand();
-        }
-        else
-        {
-            GI.otherChar[this.sd.cID].reachDestinationCharacterStand();
-        } 
-    }
+    
 });

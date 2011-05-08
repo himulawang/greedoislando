@@ -33,12 +33,8 @@ var WsConnect = Class.extend({
             _this.writelog("disconnect");
         }
         ws.onmessage = function(e) {
-            console.log(e);
-            _this.writelog(e.data);
-            
+            //_this.writelog(e.data);
             var arr = JSON.parse(e.data);
-
-            //Here should add main entrance in the future
             var ientrance = new InteractionEntrance(arr);
         }
     }
