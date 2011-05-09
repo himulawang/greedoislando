@@ -5,30 +5,58 @@ var Map = Coordinate.extend({
             2000 : {
                 name : 'Plain'
                 ,movePossible : 1
+                ,w : 6
+                ,l : 6
+                ,offsetX : 39
+                ,offsetY : 42
             }
             ,2001 : {
-                name : 'Broken Wall'
+                name : 'Rock'
                 ,movePossible : 0
+                ,w : 6
+                ,l : 6
+                ,offsetX : 39
+                ,offsetY : 42
             }
             ,2002 : {
                 name : 'Tree'
                 ,movePossible : 0
+                ,w : 6
+                ,l : 6
+                ,offsetX : 39
+                ,offsetY : 30
             }
             ,2003 : {
                 name : 'Door'
-                ,movePossible : 1
+                ,movePossible : 0
+                ,w : 6
+                ,l : 6
+                ,offsetX : 39
+                ,offsetY : 42
             }
             ,2004 : {
-                name : 'River'
-                ,movePossible : 0
+                name : 'Pillar'
+                ,movePossible : 1
+                ,w : 6
+                ,l : 6
+                ,offsetX : 20
+                ,offsetY : 75
             }
             ,2005 : {
                 name : 'Ruins'
                 ,movePossible : 1
+                ,w : 6
+                ,l : 6
+                ,offsetX : 39
+                ,offsetY : 42
             }
             ,2006 : {
                 name : 'Bridge'
                 ,movePossible : 1
+                ,w : 6
+                ,l : 6
+                ,offsetX : 39
+                ,offsetY : 42
             }
         }
     }
@@ -51,6 +79,7 @@ var Map = Coordinate.extend({
         this.context.stroke();
 
         //draw line
+        /*
         for (var i = 1; i < this.GRIDQUANTITY; ++i) {
             if (i % 6 === 0) {
                 // 0 , 1
@@ -78,8 +107,9 @@ var Map = Coordinate.extend({
                 this.context.stroke();
             }
         }
+        */
 
-        //draw text
+        //draw map material
         var terrainType, coordinate, xy, tmpXY;
         for (var index in this.grid) {
             tmpXY = this.getCoordinateXY(index);
@@ -99,19 +129,15 @@ var Map = Coordinate.extend({
             
             //Init Terrain
             var img = new Image();
-            var rand = Math.random();
-            var randSuffix;
-            if(rand <= 0.5)
+            var objID = this.grid[index].objID;
+            var offsetX = this.DEFINE[objID].offsetX;
+            var offsetY = this.DEFINE[objID].offsetY;
+            //console.log(objID);
+            if(objID == 2001  || objID == 2002 || objID == 2004)
             {
-                randSuffix = 1;
+                img.src = 'images/terrain/' + terrainType + '-1-s.png';
+                this.context.drawImage(img,this.transferLogicToScreenX(x, y) - offsetX,this.transferLogicToScreenY(x, y) - offsetY);
             }
-            else
-            {
-                randSuffix = 2;
-            }
-            img.src = 'images/terrain/' + terrainType + '-' + randSuffix + '.png';
-            this.context.drawImage(img,this.transferLogicToScreenX(x, y) - 21,this.transferLogicToScreenY(x, y) + 14);
-            
         }
     }
     ,verifyMovePossible : function(index) {

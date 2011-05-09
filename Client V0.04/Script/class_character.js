@@ -144,31 +144,38 @@ var Character = Coordinate.extend({
         //console.log(nextLocation);
         
         this.moveOrbit = [];
-
         var _this = this;
-
         this.moveOrbit.push(data);
+
+        console.log(this.moveOrbit);
 
         if(!this.isMoving)
         {
+            this.count = 0;
             this.isMoving = true;
+            this.startRun();
             this.moveWay();
         }
 
     }
     ,moveWay : function()
     {
+        clearTimeout(this.movingTimeout);
         var _this = this;
 
         var date = new Date();
         var milliseconds = date.getMilliseconds();
         var cNowTimestamp = Date.parse(date) + milliseconds;
 
-        var cNowLocation = this.getCoordinateIndex(this.x,this.y);
+        //var cNowLocation = this.getCoordinateIndex(this.x,this.y);
 
         var nowOrbit = this.moveOrbit.shift();
 
-        if(!nowOrbit) return;
+        if(!nowOrbit)
+        {
+            this.movingTimeout = setTimeout(function(){_this.moveWay()},50);
+            return;
+        }
 
         if(nowOrbit.type == 'characterStand')
         {
@@ -180,6 +187,9 @@ var Character = Coordinate.extend({
             this.put();
             return;
         }
+
+        this.count++;
+        console.log(this.count);
 
         var sNowXY = this.getCoordinateXY(nowOrbit.data.nowLocation);
         var nextXY = this.getCoordinateXY(nowOrbit.data.nextLocation);
@@ -226,8 +236,6 @@ var Character = Coordinate.extend({
         var screenY = nowScreenY;
         var i = 0;
 
-        this.startRun();
-
         this.moveInterval = setInterval(function() {
             screenX += stepX;
             screenY += stepY;
@@ -243,7 +251,8 @@ var Character = Coordinate.extend({
                 clearInterval(_this.moveInterval);
                 _this.x = nextXY.x;
                 _this.y = nextXY.y;
-                _this.isMoving = false;
+                //_this.isMoving = false;
+                _this.moveWay();
             }
 
         }, renderTime);
