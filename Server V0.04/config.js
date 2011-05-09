@@ -1,6 +1,2 @@
-exports.port = function() {
-    return '8080';
-}
-exports.gmPort = function() {
-    return '12345';
-}
+global.SERVER_LISTEN_PORT = 8081;
+global.SERVER_LISTEN_GM_PORT = 12345;
