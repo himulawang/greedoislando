@@ -1,5 +1,4 @@
-var fc = require('../lib/facility');
-var CONSTANT = require('./constant').create();
+var io = require('./io');
 
 var character = function(cID, name) {
     /* 500 UpRight
@@ -25,9 +24,13 @@ var character = function(cID, name) {
     this.force = 20;
     this.maxForce = 20;
     this.speed = 2;
-    this.x = fc.random(15);
-    this.y = fc.random(15);
-    this.position = fc.getCoordinateIndex(this.x, this.y);
+    do {
+        this.x = 12;
+        this.y = 6;
+        this.position = fc.getCoordinateIndex(this.x, this.y);
+        if (giMap.verifyMovePossible(this.position)) break;
+    } while (1);
+    
     this.characterMoving = false;
     this.nextXY = null;
     this.way = null;
@@ -46,6 +49,7 @@ character.prototype.getInfo = function() {
         ,position : this.position
         ,x : this.x
         ,y : this.y
+        ,timestamp : fc.getTimestamp()
     }
 }
 character.prototype.getCID = function() {
@@ -71,37 +75,45 @@ character.prototype.startWay = function() {
     this.moveWay();
 }
 character.prototype.moveWay = function() {
+    var cID = this.getCID();
+    var stream = io.create();
+    stream.setSelfCID(cID);
     if (this.wayIndex >= this.way.length) {
         this.characterMoving = false;
         this.nextXY = null;
         this.moveTimeout = null;
         this.way = null;
         this.nextGridIndex = null;
+        stream.addOutputData(cID, 'characterStand', 'all', {cID : cID, timestamp : fc.getTimestamp(), nowLocation : this.position });
+        stream.response();
+        
         return;
     }
     var _this = this;
     this.characterMoving = true;
+
     //get move one grid start coordinate and end coordinate
     this.nextGridIndex = this.way[this.wayIndex];
     this.nextXY = fc.getCoordinateXY(this.nextGridIndex);
 
-    var time = CONSTANT.GI_CHARACTER_MOVING_SPEED;
+    var time = GI_CHARACTER_MOVING_SPEED;
     this.directionID = this.getTowardNewGridDirection(this.nextXY.x, this.nextXY.y);
     if (this.directionID % 2 === 1) {
         time *= 1.4;
     }
 
-    this.moveTimeout = setTimeout(function(){
-        _this.x = _this.nextXY.x;
-        _this.y = _this.nextXY.y;
-        _this.position = _this.nextGridIndex;
-        console.log(_this.position);
+    //moveCharacter -> Other
+    stream.addOutputData(cID, 'moveCharacter', 'all', {cID : cID, nowLocation : this.position, nextLocation : this.nextGridIndex, duration : time, timestamp : fc.getTimestamp() });
+    stream.response();
 
+    this.moveTimeout = setTimeout(function(){
         if (_this.setNewDestinationTrigger) {
             _this.setNewDestinationTrigger = false;
             _this.startWay();
             return;
         }
+
+        _this.setLocation(_this.nextGridIndex);
 
         ++_this.wayIndex;
         _this.moveWay();
@@ -113,12 +125,6 @@ character.prototype.getTowardNewGridDirection = function(x, y) {
     var deltaIndex = fc.getCoordinateIndex(deltaX, deltaY);
     return this.DIRECTIONS[deltaIndex];
 }
-/*
-character.prototype.getWayEndPoint = function(x, y) {
-    if (this.way === null) return null;
-    return this.way[this.way.length - 1];
-}
-*/
-exports.create = function(object) {
-    return new character(object.cID, object.character);
+exports.create = function(cID, name) {
+    return new character(cID, name);
 }

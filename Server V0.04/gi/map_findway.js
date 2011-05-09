@@ -1,7 +1,5 @@
-var CONSTANT = require('./constant').create();
-
 var findway = function() {
-    this.maxGrid = CONSTANT.GI_GRID_QUANTITY - 1;
+    this.maxGrid = GI_GRID_QUANTITY - 1;
     this.obstacleList = {};
     this.parentList = {};
     this.openList = {};
