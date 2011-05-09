@@ -1,0 +1,49 @@
+html {height: 100%; overflow: hidden;}
+
+body {height: 100%; }
+
+#per {
+    border: 1px solid #444;
+    width: 100%;
+    height: 100%;
+    -webkit-perspective: 800;
+    /* -webkit-transform-style: preserve-3d;*/
+}
+
+#me {
+    -webkit-transform: translateZ(400px);
+    -webkit-transform-style: preserve-3d;
+    height: 1px;
+    width: 100%;
+    margin-left:auto;
+    margin-right:auto;
+    position: absolute;
+
+    -webkit-animation: my-float 6000ms infinite ease-in-out;
+}
+
+#enemy {
+    -webkit-transform: rotateX(-12deg) translateZ(-1000px);
+    -webkit-transform-style: preserve-3d;
+    height: 1px;
+    width: 100%;
+    margin-left:auto;
+    margin-right:auto;
+    position: absolute;
+
+    -webkit-animation: enemy-float 12000ms infinite ease-in-out;
+}
+
+@-webkit-keyframes enemy-float{
+    0% { top: 1%; }
+    40% { top: 11%; }
+    100% { top: 1%; }
+}
+
+@-webkit-keyframes my-float{
+    0% { top: 70%; }
+    40% { top: 58%; }
+    100% { top: 70%; }
+}
+
+
