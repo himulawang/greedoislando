@@ -1,6 +1,7 @@
 var Init = Class.extend({
     init : function() {
         var _this = this;
+        this.lag;
         $(document).ready(function(){
             _this.initCursor();
             _this.initShowWay();

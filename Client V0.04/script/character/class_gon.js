@@ -2,7 +2,7 @@ var Gon = Character.extend({
     init : function() {
         this._super();
         this.name = 'Gon';
-        this.type = 'char'
+        this.type = 'char';        
     }
     ,make : function(data) {
         this.cID = data.cID;
@@ -16,10 +16,11 @@ var Gon = Character.extend({
 
         this.setNewDestinationTigger = false;
         this.characterMoving = false;
-        this.initCanvas();
-        this.initStand(2);
-        this.initRun(8);
-        this.startStand();
+
+        this.animation = new Animation(this.cID,this.name);
+        this.animation.initAnimation('stand');
+        this.animation.runAnimation(0);
+        this.getCanvas();
         this.setPosition(this.initPos['x'],this.initPos['y']);
         //this.ui = new UserInterface(this.cID);
         this.put();

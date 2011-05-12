@@ -1,8 +1,9 @@
 var ws;
 var consoleDiv;
 var WS_HOST = "ws://192.168.0.130:8081";
+//var WS_HOST = "ws://ginodedemo.duostack.net:9980";
 //var WS_HOST = "ws://192.168.0.130:8080";
-//var WS_HOST = "ws://giworld.gicp.net:8080";
+//var WS_HOST = "ws://giworld.gicp.net:8081";
 
 //Upper case variable name means Constant,like 'WS_HOST'
 //Class name should begin as Upper case and then lower case like 'CharacterNPC'
@@ -17,9 +18,10 @@ var WsConnect = Class.extend({
         var CheckCon = setInterval(function(){
             var obj = {
                 type : "keepSession"
+                ,timestamp : Date.now()
             }
             _this.sendMessage(obj);
-        },29000);
+        },5000);
     }
     ,InitConnect : function(){
         ws = new WebSocket(WS_HOST);
