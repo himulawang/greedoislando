@@ -13,7 +13,13 @@ var InteractionEntrance = Class.extend({
             this.charMoveQueue();
         }else if(e.type == "characterStand"){
             this.charMoveQueue();
+        }else if(e.type == "keepSession"){
+            this.getLag();
         }
+    }
+    ,getLag : function(){
+        var lag = Date.now() - this.sd.timestamp;
+        GI.lag = lag;
     }
     ,generateMyChar : function(){
         GI.createChar(this.sd);
@@ -41,6 +47,7 @@ var InteractionEntrance = Class.extend({
         GI.map.initObstacle();
     }
     ,logOut : function(d){
+        if(!GI.char) return;
         if(d.cID == GI.char.player.cID){
             alert("U R Logging Out!!!");
         }else{
@@ -50,12 +57,14 @@ var InteractionEntrance = Class.extend({
         }
     }
     ,charMoveQueue : function(){
+        if(!GI.char) return;
         if(GI.char.player.cID == this.sd.cID)
         {
             GI.char.player.charMove(this.e);
         }
         else
         {
+            if(!GI.otherChar) return;
             GI.otherChar[this.sd.cID].charMove(this.e);
         }
     }

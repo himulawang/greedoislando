@@ -3,6 +3,7 @@ var GI_MAP_HEIGHT = 672;
 var GI_GRID_QUANTITY = 96;
 var GI_CHARACTER_SPEED = 120;
 var wsocket;
+var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame || function(callback) { setTimeout(callback, 1000 / 60); };
 
 var GI_TERRAIN_DEFINE = {
     2000 : 'Plain'
