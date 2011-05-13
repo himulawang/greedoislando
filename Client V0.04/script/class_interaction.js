@@ -58,14 +58,17 @@ var InteractionEntrance = Class.extend({
     }
     ,charMoveQueue : function(){
         if(!GI.char) return;
+        
         if(GI.char.player.cID == this.sd.cID)
         {
-            GI.char.player.charMove(this.e);
+            //GI.char.player.charMove(this.e);
+        	GI.char.player.animation.initTransfer(this.e);
+        	GI.char.player.animation.transferAnimationSet(0);
         }
         else
         {
             if(!GI.otherChar) return;
-            GI.otherChar[this.sd.cID].charMove(this.e);
+            //GI.otherChar[this.sd.cID].charMove(this.e);
         }
     }
     

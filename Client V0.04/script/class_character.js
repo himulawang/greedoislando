@@ -76,6 +76,8 @@ var Character = Coordinate.extend({
         var sNowXY = this.getCoordinateXY(nowOrbit.data.nowLocation);
         var nextXY = this.getCoordinateXY(nowOrbit.data.nextLocation);
         
+        console.log(this.x,this.y);
+        
         var getDirectionFuncRe = this.getTowardNewGridDirection(nextXY.x,nextXY.y);
         this.directionID = (getDirectionFuncRe != undefined) ? getDirectionFuncRe : this.directionID;
 
