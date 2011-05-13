@@ -69,6 +69,8 @@ var InteractionEntrance = Class.extend({
         {
             if(!GI.otherChar) return;
             //GI.otherChar[this.sd.cID].charMove(this.e);
+            GI.otherChar[this.sd.cID].animation.initTransfer(this.e);
+        	GI.otherChar[this.sd.cID].animation.transferAnimationSet(0);
         }
     }
     

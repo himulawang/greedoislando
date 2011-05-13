@@ -1,5 +1,5 @@
 var Animation = Character.extend({
-    init : function(canvasID,animateName,x,y){
+    init : function(canvasID, animateName, x, y, offset){
     	this._super();
         this.animateCategory = {
             'stand' : {
@@ -15,13 +15,13 @@ var Animation = Character.extend({
                 ,'duration' : 100
             }
         };
+        this.offset = offset;
         this.x = x;
         this.y = y;
         this.isMoving = false;
         this.canvasID = canvasID;
         this.animateName = animateName;
         this.lastStamp1 = 0;
-        this.lastStamp2 = 0;
         this.initCanvas();
         this.transOrbit = [];
     }
@@ -37,7 +37,6 @@ var Animation = Character.extend({
         this.duration = this.animateCategory[action].duration;
         this.progress = this.duration;
         this.progress1 = this.duration;
-        this.progress2 = this.duration;
         for(var i = 0; i < animateFrames; ++i){
             this.animateImages.push(new Image);
             if(action == 'run'){
@@ -74,16 +73,17 @@ var Animation = Character.extend({
     	
     	if(this.isMoving) return;
     	
-    	var nowShift = this.transOrbit.shift();
-    	if(!nowShift){
+        if(this.transOrbit) var nowShift = this.transOrbit.shift();
+        
+        if(!nowShift){
     		this.movingTimeout = setTimeout(function(){
     			_this.transferAnimationSet();
-    		},50);
+    		},10);
     		return;
     	}
-    	
-        if(nowShift.type == 'characterStand')
-        {
+        //console.log(nowShift);
+
+        if(nowShift.type == 'characterStand') {
            	this.initAnimation('stand');
            	return;
         }
@@ -92,49 +92,54 @@ var Animation = Character.extend({
         
         this.serverNowXY = this.getCoordinateXY(nowShift.data.nowLocation);
         this.serverNextXY = this.getCoordinateXY(nowShift.data.nextLocation);
-        
+
         var directionRe = this.getTowardNewGridDirection(this.serverNextXY.x,this.serverNextXY.y);
         this.directionID = (directionRe != undefined) ? directionRe : this.directionID;
-        
-        var nowScreenX = this.transferLogicToScreenX(this.serverNowXY.x,this.serverNowXY.y) - this.HALFTILEWIDTH;
-        var nowScreenY = this.transferLogicToScreenY(this.serverNowXY.x,this.serverNowXY.y);
-        
-        var nextScreenX = this.transferLogicToScreenX(this.serverNextXY.x,this.serverNextXY.y) - this.HALFTILEWIDTH;
-        var nextScreenY = this.transferLogicToScreenY(this.serverNextXY.x,this.serverNextXY.y);
+
+        var nowScreenX = this.transferLogicToScreenX(this.serverNowXY.x,this.serverNowXY.y) - this.HALFTILEWIDTH + this.offset.runOffsetX;
+        var nowScreenY = this.transferLogicToScreenY(this.serverNowXY.x,this.serverNowXY.y) - this.offset.runOffsetY;
+
+        var nextScreenX = this.transferLogicToScreenX(this.serverNextXY.x,this.serverNextXY.y) - this.HALFTILEWIDTH + this.offset.runOffsetX;
+        var nextScreenY = this.transferLogicToScreenY(this.serverNextXY.x,this.serverNextXY.y) - this.offset.runOffsetY;
           
         var displacementX = nextScreenX - nowScreenX;
         var displacementY = nextScreenY - nowScreenY;
             
-        this.time = nowShift.data.duration;
-        this.renderTime = 20;
-        this.cycle = Math.floor(this.time / this.renderTime);
+        var time = nowShift.data.duration;
+        this.renderTime = 15;
+        this.cycle = Math.floor(time / this.renderTime);
             
-        this.stepX = displacementX / this.time * this.renderTime;
-        this.stepY = displacementY / this.time * this.renderTime;
-            
+        this.stepX = displacementX / time * this.renderTime;
+        this.stepY = displacementY / time * this.renderTime;
+        
         this.screenX = nowScreenX;
         this.screenY = nowScreenY;
             
         this.i = 0;
         
         this.initAnimation('run');
+        this.runAnimation(0);
         this.transferAnimationGo(0);
     }
     ,transferAnimationGo : function(timestamp){
     	var _this = this;
-    	var timeDelta = (this.lastStamp2 != 0) ? (timestamp - this.lastStamp2) : 0;
-        this.progress2 += timeDelta;
-        this.lastStamp2 = timestamp;
-        if(this.progress2 >= this.renderTime){
-        	this.progress2 = 0;
-        	this.screenX += this.stepX;
+    	var timeDelta = (this.lastStamp1 != 0) ? (timestamp - this.lastStamp1) : 0;
+        this.progress1 += timeDelta;
+        this.lastStamp1 = timestamp;
+        if(this.progress1 >= this.renderTime){
+        	this.progress1 = 0;
+            this.lastStamp1 = 0;
+            this.screenX += this.stepX;
         	this.screenY += this.stepY;
+
         	$(this.el).css({ left : this.screenX + 'px' , top : this.screenY + 'px' });
+
         	++this.i;
         	if(this.i === this.cycle) {
         		this.x = this.serverNextXY.x;
         		this.y = this.serverNextXY.y;
         		this.isMoving = false;
+                this.transferAnimationSet();
         		return;
         	}
         }
