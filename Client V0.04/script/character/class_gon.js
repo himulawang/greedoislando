@@ -11,6 +11,13 @@ var Gon = Character.extend({
         //Init Offset
         this.caculateRunOffset();
         this.caculateStandOffset();
+
+        var offset = {
+            runOffsetX : this.runOffsetX
+            ,runOffsetY : this.runOffsetY
+            ,standOffsetX : this.standOffsetX
+            ,standOffsetY : this.standOffsetY
+        };
         
         this.timeDesprite = this.caculateTimeDesprite(data); // C/S Timestamp Difference
 
@@ -20,7 +27,7 @@ var Gon = Character.extend({
         this.getCanvas();
         this.setPosition(this.initPos['x'],this.initPos['y']);
 
-        this.animation = new Animation(this.cID,this.name,this.initPos['x'],this.initPos['y']);
+        this.animation = new Animation(this.cID,this.name,this.initPos['x'],this.initPos['y'],offset);
         this.animation.initAnimation('stand');
         this.animation.runAnimation(0);
         

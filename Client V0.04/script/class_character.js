@@ -30,7 +30,9 @@ var Character = Coordinate.extend({
 
         var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.standOffsetX;
         var screenY = this.transferLogicToScreenY(this.x, this.y) - this.standOffsetY;
-        
+
+        console.log(screenX,screenY);
+
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 
         //this.ui.slotput(originalScreenX, screenY);
@@ -75,8 +77,6 @@ var Character = Coordinate.extend({
 
         var sNowXY = this.getCoordinateXY(nowOrbit.data.nowLocation);
         var nextXY = this.getCoordinateXY(nowOrbit.data.nextLocation);
-        
-        console.log(this.x,this.y);
         
         var getDirectionFuncRe = this.getTowardNewGridDirection(nextXY.x,nextXY.y);
         this.directionID = (getDirectionFuncRe != undefined) ? getDirectionFuncRe : this.directionID;
