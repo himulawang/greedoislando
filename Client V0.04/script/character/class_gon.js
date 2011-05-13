@@ -14,14 +14,16 @@ var Gon = Character.extend({
         
         this.timeDesprite = this.caculateTimeDesprite(data); // C/S Timestamp Difference
 
-        this.setNewDestinationTigger = false;
-        this.characterMoving = false;
-
-        this.animation = new Animation(this.cID,this.name);
-        this.animation.initAnimation('stand');
-        this.animation.runAnimation(0);
+        //this.setNewDestinationTigger = false;
+        //this.characterMoving = false;
+        
         this.getCanvas();
         this.setPosition(this.initPos['x'],this.initPos['y']);
+
+        this.animation = new Animation(this.cID,this.name,this.initPos['x'],this.initPos['y']);
+        this.animation.initAnimation('stand');
+        this.animation.runAnimation(0);
+        
         //this.ui = new UserInterface(this.cID);
         this.put();
     }
