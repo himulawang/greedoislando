@@ -1,168 +1,136 @@
-var Animation = Character.extend({
-    init : function(canvasID, animateName, x, y, offset){
+var Animation = Coordinate.extend({
+    init : function(object){
     	this._super();
-        this.animateCategory = {
-            'stand' : {
-                'frames' : 2
-                ,'duration' : 500
-            }
-            /*,'attack' : {
-                'frames' : 12
-                ,'duration' : 500
-            }*/
-            ,'run' : {
-                'frames' : 8
-                ,'duration' : 100
-            }
-        };
-        this.offset = offset;
-        this.x = x;
-        this.y = y;
-        this.isMoving = false;
-        this.canvasID = canvasID;
-        this.animateName = animateName;
-        this.lastStamp = 0;
-        this.lastStamp1 = 0;
+        this.object = object;
+        this.cID = object.cID;
+        this.name = object.name;
+        this.action = 'stand';
+        this.offset = object.offset;
+        this.initPosition = object.initPos;
+        this.x = this.initPosition.x;
+        this.y = this.initPosition.y;
+        this.canvasMoving = false;
+        this.lastCanvasTimestamp = 0;
         this.directionID = 0;
-        this.initCanvas();
-        this.initAnimation();
-        this.transOrbit = [];
+        this.actionQueue = [];
+        this.nowShift = null;
+        this.getQueueTimeout = null;
         this.animateMaterials = [];
         this.nowAnimateImages = [];
+
+        this.initCanvas();
+        this.initAnimation();
+        this.animationSwitch('stand');
+        this.runCanvas();
+        console.log('runCanvas');
+        this.getQueueAction();
+        this.put();
     }
-    ,initCanvas : function(){    
-        this.el = $("<canvas id='" + this.canvasID + "' style='position: absolute;'></canvas>");
+    ,initCanvas : function(){
+        this.el = $("<canvas id='" + this.cID + "' style='position: absolute;'></canvas>");
         $('body').append(this.el);
-        this.el = $("#" + this.canvasID)[0];
+        this.el = $("#" + this.cID)[0];
+        this.canvas = this.el.getContext('2d');
     }
     ,initAnimation : function(){
-        this.animateImages = [];
-        this.initMaterial();
+        this.animateImages = GI.material.images[this.name];
     }
-    ,initMaterial : function(){
-        for(action in this.animateCategory){
-            var frames = this.animateCategory[action].frames;
-            var tmp = [];
-            for(var i = 0; i < 8; ++i){
-                tmp[i] = [];
-                for(var j = 0; j < frames; ++j){
-                    tmp[i].push(new Image);
-                    tmp[i][j].src = 'images/character/' + this.animateName.toLowerCase() + '/' + action + '-s-' + i + '/' + this.animateName.toLowerCase() + '-' + action + '-' + j + '-s.png';
-                }
-            }
-            this.animateImages[action] = tmp;
+    ,addShift : function(data){
+    	this.actionQueue.push(data);
+    }
+    ,getQueueAction : function() {
+    	if (this.canvasMoving //last moving hasn't over
+            || this.actionQueue.length === 0 //queue is empty
+            || this.nowShift != null) { //now shift hasn't done
+            var _this = this;
+            this.getQueueTimeout = setTimeout(function() { _this.getQueueAction(); }, 10);
+            return;
+        };
+    	
+        this.nowShift = this.actionQueue.shift();
+        
+        if (this.nowShift.type === 'characterStand') {
+            this.animationSwitch('stand');
+            this.nowShift = null;
+        } else if (this.nowShift.type === 'moveCharacter') {
+            this.moveCanvasDuration = this.nowShift.data.duration;
+            this.animationSwitch('run');
+            this.moveCanvas();
         }
     }
     ,animationSwitch : function(action){
-        this.duration = this.animateCategory[action].duration;
-        this.progress = this.duration;
-        this.progress1 = this.duration;
-        this.nowAnimateImages = this.animateImages[action][this.directionID];
+        this.action = action;
+        this.canvasDuration = this.object.animateList[action].duration;
+        this.canvasProgress = this.canvasDuration;
+        this.moveProgress = 0;
     }
-    ,runAnimation : function(timestamp){
+    //Inside Canvas
+    ,runCanvas : function(){
+        var timestamp = fc.getNowTimestamp();
         var _this = this;
-        var timeDelta = this.lastStamp ? (timestamp - this.lastStamp) : 0;
-        this.progress += timeDelta;
-        this.lastStamp = timestamp;
-        if(this.progress >= this.duration){
-            this.progress = 0;
-            var c = this.el.getContext('2d');
-            this.animateWidth = this.nowAnimateImages[0].width;
-            this.animateHeight = this.nowAnimateImages[0].height;
+        var timeDelta = this.lastCanvasTimestamp ? (timestamp - this.lastCanvasTimestamp) : 0;
+        this.canvasProgress += timeDelta;
+        this.lastCanvasTimestamp = timestamp;
+        if(this.canvasProgress >= this.canvasDuration){
+            this.canvasProgress = 0;
+            var nowImageSuit = this.animateImages[this.action][this.directionID];
+            this.animateWidth = nowImageSuit[0].width;
+            this.animateHeight = nowImageSuit[0].height;
             this.el.width = this.animateWidth;
             this.el.height = this.animateHeight;
-            c.clearRect(0, 0, this.animateWidth, this.animateHeight);
-            this.animateIndex = (this.animateIndex < this.nowAnimateImages.length - 1) ? this.animateIndex + 1 : 0;
-            c.drawImage(this.nowAnimateImages[this.animateIndex], 0, 0);
+            this.animateIndex = (this.animateIndex < nowImageSuit.length - 1) ? this.animateIndex + 1 : 0;
+            this.canvas.clearRect(0, 0, this.animateWidth, this.animateHeight);
+            this.canvas.drawImage(nowImageSuit[this.animateIndex], 0, 0);
         }
-        requestAnimationFrame(function(){ _this.runAnimation(Date.now()) });
+        this.canvasAnimationID = requestAnimationFrame(function() { _this.runCanvas(); });
     }
-    ,initTransfer : function(data){
-    	this.transOrbit.push(data);
-    }
-    ,transferAnimationSet : function(){
-    	clearTimeout(this.movingTimeout);
-    	var _this = this;
-    	
-    	if(this.isMoving) return;
-    	
-        if(this.transOrbit) var nowShift = this.transOrbit.shift();
-        
-        if(!nowShift){
-    		this.movingTimeout = setTimeout(function(){
-    			_this.transferAnimationSet();
-    		},10);
-    		return;
-    	}
+    ,moveCanvas : function(){
+        var timestamp = fc.getNowTimestamp();
 
-        if(nowShift.type == 'characterStand') {
-            this.animationSwitch('stand');
-            this.put();
+        if (!this.canvasMoving) {
+            this.canvasMoving = true;
+
+            this.moveProgress = fc.getNowTimestamp();
+            
+            this.serverNowXY = this.getCoordinateXY(this.nowShift.data.nowLocation);
+            this.serverNextXY = this.getCoordinateXY(this.nowShift.data.nextLocation);
+
+            var directionRe = this.getTowardNewGridDirection(this.serverNextXY.x, this.serverNextXY.y);
+            this.directionID = (directionRe != undefined) ? directionRe : this.directionID;
+
+            this.nowScreenX = this.transferLogicToScreenX(this.serverNowXY.x,this.serverNowXY.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
+            this.nowScreenY = this.transferLogicToScreenY(this.serverNowXY.x,this.serverNowXY.y) - this.offset[this.action].y;
+
+            var nextScreenX = this.transferLogicToScreenX(this.serverNextXY.x,this.serverNextXY.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
+            var nextScreenY = this.transferLogicToScreenY(this.serverNextXY.x,this.serverNextXY.y) - this.offset[this.action].y;
+
+            this.displacementX = nextScreenX - this.nowScreenX;
+            this.displacementY = nextScreenY - this.nowScreenY;
+        }
+
+        var deltaTime = timestamp - this.moveProgress;
+        if (deltaTime <= this.moveCanvasDuration) {
+            var _this = this;
+            var nowDisplacementX = fc.fix(this.nowScreenX + deltaTime / this.moveCanvasDuration * this.displacementX);
+            var nowDisplacementY = fc.fix(this.nowScreenY + deltaTime / this.moveCanvasDuration * this.displacementY);
+        	$(this.el).css({ left : nowDisplacementX + 'px' , top : nowDisplacementY + 'px' });
+            this.moveAnimationID = requestAnimationFrame(function() { _this.moveCanvas(); });
             return;
         }
-        
-        this.isMoving = true;
-        
-        this.serverNowXY = this.getCoordinateXY(nowShift.data.nowLocation);
-        this.serverNextXY = this.getCoordinateXY(nowShift.data.nextLocation);
-
-        var directionRe = this.getTowardNewGridDirection(this.serverNextXY.x,this.serverNextXY.y);
-        this.directionID = (directionRe != undefined) ? directionRe : this.directionID;
-
-        var nowScreenX = this.transferLogicToScreenX(this.serverNowXY.x,this.serverNowXY.y) - this.HALFTILEWIDTH + this.offset.runOffsetX;
-        var nowScreenY = this.transferLogicToScreenY(this.serverNowXY.x,this.serverNowXY.y) - this.offset.runOffsetY;
-
-        var nextScreenX = this.transferLogicToScreenX(this.serverNextXY.x,this.serverNextXY.y) - this.HALFTILEWIDTH + this.offset.runOffsetX;
-        var nextScreenY = this.transferLogicToScreenY(this.serverNextXY.x,this.serverNextXY.y) - this.offset.runOffsetY;
-
-        var displacementX = nextScreenX - nowScreenX;
-        var displacementY = nextScreenY - nowScreenY;
             
-        var time = nowShift.data.duration;
-        this.renderTime = 25;
-        this.cycle = Math.floor(time / this.renderTime);
-            
-        this.stepX = displacementX / time * this.renderTime;
-        this.stepY = displacementY / time * this.renderTime;
-        
-        this.screenX = nowScreenX;
-        this.screenY = nowScreenY;
-            
-        this.i = 0;
-        
-        this.animationSwitch('run');
-        this.transferAnimationGo(0);
-    }
-    ,transferAnimationGo : function(timestamp){
-    	var _this = this;
-    	var timeDelta = (this.lastStamp1 != 0) ? (timestamp - this.lastStamp1) : 0;
-        this.progress1 += timeDelta;
-        this.lastStamp1 = timestamp;
-        if(this.progress1 >= this.renderTime){
-        	this.progress1 = 0;
-            this.lastStamp1 = 0;
-            this.screenX += this.stepX;
-        	this.screenY += this.stepY;
-
-        	$(this.el).css({ left : this.screenX + 'px' , top : this.screenY + 'px' });
-
-        	++this.i;
-        	if(this.i === this.cycle) {
-        		this.x = this.serverNextXY.x;
-        		this.y = this.serverNextXY.y;
-        		this.isMoving = false;
-                this.transferAnimationSet();
-        		return;
-        	}
-        }
-        requestAnimationFrame(function(){ _this.transferAnimationGo(Date.now()) });
+        this.moveProgress = 0;
+        this.x = this.serverNextXY.x;
+        this.y = this.serverNextXY.y;
+        this.put();
+        this.canvasMoving = false;
+        this.nowShift = null;
+        return;
     }
     ,put : function() {
-
         var originalScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
 
-        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.offset.standOffsetX;
-        var screenY = this.transferLogicToScreenY(this.x, this.y) - this.offset.standOffsetY;
+        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
+        var screenY = this.transferLogicToScreenY(this.x, this.y) - this.offset[this.action].y;
 
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 
