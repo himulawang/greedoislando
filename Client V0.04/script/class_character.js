@@ -31,8 +31,6 @@ var Character = Coordinate.extend({
         var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.standOffsetX;
         var screenY = this.transferLogicToScreenY(this.x, this.y) - this.standOffsetY;
 
-        console.log(screenX,screenY);
-
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 
         //this.ui.slotput(originalScreenX, screenY);

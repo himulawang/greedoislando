@@ -2,20 +2,19 @@ var Init = Class.extend({
     init : function() {
         var _this = this;
         this.lag;
-        $(document).ready(function(){
-            _this.initCursor();
-            _this.initShowWay();
-            //ila: MapEditorTrigger is a Constant. use MAP_EDITOR_TRIGGER and move this to main.js
-            // and Tigger is T(r)igger
-            if(MapEditorTigger){
-                //_this.initMapEditor();
-            }
-            _this.initMap();
-            _this.disableContextMenu();
-            //_this.bindArrowKey();
-            _this.bindMouseOverGrid();
-            _this.bindMouseClick();
-        });
+        this.otherChar = {};
+        this.initCursor();
+        this.initShowWay();
+        //ila: MapEditorTrigger is a Constant. use MAP_EDITOR_TRIGGER and move this to main.js
+        // and Tigger is T(r)igger
+        if(MapEditorTigger){
+            //_this.initMapEditor();
+        }
+        this.initMap();
+        this.disableContextMenu();
+        //_this.bindArrowKey();
+        this.bindMouseOverGrid();
+        this.bindMouseClick();
     }
     /* Event Listener */
     ,disableContextMenu : function() {
@@ -110,11 +109,11 @@ var Init = Class.extend({
         }
     }
     ,createOtherChar : function(data){
-        this.otherChar = {};
         for(x in data){
             this.otherChar[data[x].cID] = eval('new ' + data[x].name);
             this.otherChar[data[x].cID].make(data[x]);
         }
     }
+    
 });
 

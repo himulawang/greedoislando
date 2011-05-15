@@ -6,10 +6,10 @@ var Animation = Character.extend({
                 'frames' : 2
                 ,'duration' : 500
             }
-            ,'attack' : {
+            /*,'attack' : {
                 'frames' : 12
                 ,'duration' : 500
-            }
+            }*/
             ,'run' : {
                 'frames' : 8
                 ,'duration' : 100
@@ -21,30 +21,43 @@ var Animation = Character.extend({
         this.isMoving = false;
         this.canvasID = canvasID;
         this.animateName = animateName;
+        this.lastStamp = 0;
         this.lastStamp1 = 0;
+        this.directionID = 0;
         this.initCanvas();
+        this.initAnimation();
         this.transOrbit = [];
+        this.animateMaterials = [];
+        this.nowAnimateImages = [];
     }
     ,initCanvas : function(){    
         this.el = $("<canvas id='" + this.canvasID + "' style='position: absolute;'></canvas>");
         $('body').append(this.el);
         this.el = $("#" + this.canvasID)[0];
     }
-    ,initAnimation : function(action){
+    ,initAnimation : function(){
         this.animateImages = [];
-        this.lastStamp = 0;
-        var animateFrames = this.animateCategory[action].frames;
+        this.initMaterial();
+    }
+    ,initMaterial : function(){
+        for(action in this.animateCategory){
+            var frames = this.animateCategory[action].frames;
+            var tmp = [];
+            for(var i = 0; i < 8; ++i){
+                tmp[i] = [];
+                for(var j = 0; j < frames; ++j){
+                    tmp[i].push(new Image);
+                    tmp[i][j].src = 'images/character/' + this.animateName.toLowerCase() + '/' + action + '-s-' + i + '/' + this.animateName.toLowerCase() + '-' + action + '-' + j + '-s.png';
+                }
+            }
+            this.animateImages[action] = tmp;
+        }
+    }
+    ,animationSwitch : function(action){
         this.duration = this.animateCategory[action].duration;
         this.progress = this.duration;
         this.progress1 = this.duration;
-        for(var i = 0; i < animateFrames; ++i){
-            this.animateImages.push(new Image);
-            if(action == 'run'){
-            	this.animateImages[i].src = 'images/character/' + this.animateName.toLowerCase() + '/' + action + '-s-' + this.directionID + '/'+ this.animateName.toLowerCase() + '-' + action + '-' + i + '-s.png';
-            }else{
-            	this.animateImages[i].src = 'images/character/' + this.animateName.toLowerCase() + '/' + action + '/'+ this.animateName.toLowerCase() + '-' + action + '-' + i + '-s.png';
-            }
-        }
+        this.nowAnimateImages = this.animateImages[action][this.directionID];
     }
     ,runAnimation : function(timestamp){
         var _this = this;
@@ -54,13 +67,13 @@ var Animation = Character.extend({
         if(this.progress >= this.duration){
             this.progress = 0;
             var c = this.el.getContext('2d');
-            this.animateWidth = this.animateImages[0].width;
-            this.animateHeight = this.animateImages[0].height;
+            this.animateWidth = this.nowAnimateImages[0].width;
+            this.animateHeight = this.nowAnimateImages[0].height;
             this.el.width = this.animateWidth;
             this.el.height = this.animateHeight;
             c.clearRect(0, 0, this.animateWidth, this.animateHeight);
-            this.animateIndex = (this.animateIndex < this.animateImages.length - 1) ? this.animateIndex + 1 : 0;
-            c.drawImage(this.animateImages[this.animateIndex], 0, 0);
+            this.animateIndex = (this.animateIndex < this.nowAnimateImages.length - 1) ? this.animateIndex + 1 : 0;
+            c.drawImage(this.nowAnimateImages[this.animateIndex], 0, 0);
         }
         requestAnimationFrame(function(){ _this.runAnimation(Date.now()) });
     }
@@ -81,11 +94,11 @@ var Animation = Character.extend({
     		},10);
     		return;
     	}
-        //console.log(nowShift);
 
         if(nowShift.type == 'characterStand') {
-           	this.initAnimation('stand');
-           	return;
+            this.animationSwitch('stand');
+            this.put();
+            return;
         }
         
         this.isMoving = true;
@@ -101,12 +114,12 @@ var Animation = Character.extend({
 
         var nextScreenX = this.transferLogicToScreenX(this.serverNextXY.x,this.serverNextXY.y) - this.HALFTILEWIDTH + this.offset.runOffsetX;
         var nextScreenY = this.transferLogicToScreenY(this.serverNextXY.x,this.serverNextXY.y) - this.offset.runOffsetY;
-          
+
         var displacementX = nextScreenX - nowScreenX;
         var displacementY = nextScreenY - nowScreenY;
             
         var time = nowShift.data.duration;
-        this.renderTime = 15;
+        this.renderTime = 25;
         this.cycle = Math.floor(time / this.renderTime);
             
         this.stepX = displacementX / time * this.renderTime;
@@ -117,8 +130,7 @@ var Animation = Character.extend({
             
         this.i = 0;
         
-        this.initAnimation('run');
-        this.runAnimation(0);
+        this.animationSwitch('run');
         this.transferAnimationGo(0);
     }
     ,transferAnimationGo : function(timestamp){
@@ -144,5 +156,16 @@ var Animation = Character.extend({
         	}
         }
         requestAnimationFrame(function(){ _this.transferAnimationGo(Date.now()) });
+    }
+    ,put : function() {
+
+        var originalScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
+
+        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.offset.standOffsetX;
+        var screenY = this.transferLogicToScreenY(this.x, this.y) - this.offset.standOffsetY;
+
+        $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
+
+        //this.ui.slotput(originalScreenX, screenY);
     }
 });
