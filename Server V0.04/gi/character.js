@@ -1,4 +1,5 @@
-var io = require('./io');
+var io = require('./io')
+    ,skill = require('./skill');
 
 var character = function(cID, name) {
     /* 500 UpRight
@@ -19,11 +20,31 @@ var character = function(cID, name) {
     };    
     this.cID = cID;
     this.name = name;
-    this.life = 100;
-    this.maxLife = 100;
-    this.force = 20;
-    this.maxForce = 20;
-    this.speed = 2;
+    /* System Define List
+     * 1 strengthening
+     *
+     * */
+    this.system = 1;
+    // Attribute Begin
+    this.hp = 1000;
+    this.maxHP = 1000;
+    this.nv = 1500;
+    this.maxNV = 1500;
+    this.gCD = 1500; //ms
+    this.hitRate = 75;
+    this.dodgeRate = 0;
+    this.recovery = 10;
+    
+    this.baseNein = {
+        wrap : 1
+        ,obstruct : 1
+        ,charge : 1
+        ,launch : 1
+    }
+    this.skill = {};
+    //stoneScissorsCloth
+    this.skill[10000] = skill.get(10000);
+    // Attribute End
     do {
         this.x = 12;
         this.y = 6;
@@ -41,12 +62,17 @@ character.prototype.getInfo = function() {
     return {
         cID : this.cID
         ,name : this.name
-        ,life : this.life
-        ,maxLife : this.maxLife
-        ,force : this.force
-        ,maxForce : this.maxForce
-        ,speed : this.speed
+        ,hp : this.hp
+        ,maxHP : this.maxHP
+        ,nv : this.nv
+        ,maxNV : this.maxNV
+        ,gCD : this.gCD
         ,position : this.position
+        ,hitRate : this.hitRate
+        ,dodgeRate : this.dodgeRate
+        ,recovery : this.recovery
+        ,skill : this.skill
+        ,baseNein : this.baseNein
         ,x : this.x
         ,y : this.y
         ,timestamp : fc.getTimestamp()
@@ -99,7 +125,7 @@ character.prototype.moveWay = function() {
     var time = GI_CHARACTER_MOVING_SPEED;
     this.directionID = this.getTowardNewGridDirection(this.nextXY.x, this.nextXY.y);
     if (this.directionID % 2 === 1) {
-        time *= 1.4;
+time *= 1.4;
     }
 
     //moveCharacter -> Other
@@ -124,6 +150,39 @@ character.prototype.getTowardNewGridDirection = function(x, y) {
     var deltaY = y - this.y;
     var deltaIndex = fc.getCoordinateIndex(deltaX, deltaY);
     return this.DIRECTIONS[deltaIndex];
+}
+//attribute
+character.prototype.getHP = function() {
+    return this.hp;
+}
+character.prototype.setHP = function(hp) {
+    this.hp = (hp > this.maxHP) ? this.maxHP : hp;
+    return this.hp;
+}
+character.prototype.addHP = function(hp) {
+    var newHP = this.hp + hp;
+    this.hp = (newHP > this.maxHP) ? this.maxHP : newHP;
+}
+character.prototype.subHP = function(hp) {
+    this.hp = (hp < this.hp) ? this.hp - hp : 0;
+}
+character.prototype.getNV = function() {
+    return this.nv;
+}
+character.prototype.setNV = function(nv) {
+    this.nv = (nv > this.maxNV) ? this.maxNV : nv;
+    return this.nv;
+}
+character.prototype.addNV = function(nv) {
+    var newNV = this.nv + nv;
+    this.nv = (newNV > this.maxNV) ? this.maxNV : newNV;
+}
+character.prototype.subNV = function(nv) {
+    this.nv = (nv < this.nv) ? this.nv - nv : 0;
+}
+//skill cast
+character.prototype.getSkill = function(skillID) {
+    return this.skill[skillID];
 }
 exports.create = function(cID, name) {
     return new character(cID, name);
