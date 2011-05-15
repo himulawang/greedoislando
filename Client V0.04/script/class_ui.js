@@ -15,10 +15,10 @@ var UserInterface = Class.extend({
     ,slotput : function(ScreenX,ScreenY) {
         var Hpslot = $('#' + this.cID + '-hpslot');
         var ManaSlot = $('#' + this.cID + '-manaslot');
-        Hpslot_X = ScreenX - 20;
-        ManaSlot_X = ScreenX - 20;
-        Hpslot_Y = ScreenY - 16;
-        ManaSlot_Y = ScreenY - 8;
+        var Hpslot_X = ScreenX - 20;
+        var ManaSlot_X = ScreenX - 20;
+        var Hpslot_Y = ScreenY - 16;
+        var ManaSlot_Y = ScreenY - 8;
         
         Hpslot.css({left : Hpslot_X + 'px', top : Hpslot_Y + 'px'});
         ManaSlot.css({left : ManaSlot_X + 'px', top : ManaSlot_Y + 'px'});

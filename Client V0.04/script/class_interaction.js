@@ -1,4 +1,4 @@
-var InteractionEntrance = Class.extend({
+var Interaction= Class.extend({
     init : function(e){
         this.sd = e.data;
         this.e = e;
@@ -10,9 +10,9 @@ var InteractionEntrance = Class.extend({
         }else if(e.type == "logout"){
             this.logOut(e);
         }else if(e.type == "moveCharacter"){
-            this.charMoveQueue();
+            this.charActionQueue();
         }else if(e.type == "characterStand"){
-            this.charMoveQueue();
+            this.charActionQueue();
         }else if(e.type == "keepSession"){
             this.getLag();
         }
@@ -20,6 +20,7 @@ var InteractionEntrance = Class.extend({
     ,getLag : function(){
         var lag = Date.now() - this.sd.timestamp;
         GI.lag = lag;
+        $("#lag").html(lag + 'ms');
     }
     ,generateMyChar : function(){
         GI.createChar(this.sd);
@@ -36,9 +37,9 @@ var InteractionEntrance = Class.extend({
         }
     }
     ,generateMapData : function(){
-        $("#login").fadeOut(100,function(){
+        $("#login").fadeOut(100, function(){
             $("#login").remove();
-            $("#main").fadeIn(100,function(){
+            $("#main").fadeIn(100, function(){
                 $(".hiddenChar").show();
             });
         });
@@ -48,30 +49,28 @@ var InteractionEntrance = Class.extend({
     }
     ,logOut : function(d){
         if(!GI.char) return;
-        if(d.cID == GI.char.player.cID){
+        var cID = d.data.cID;
+        if(cID === GI.char.player.cID){
             alert("U R Logging Out!!!");
         }else{
-            $("#" + d.data.cID).remove();
-            $("#" + d.data.cID + "-hpslot").remove();
-            $("#" + d.data.cID + "-manaslot").remove();
+            cancelRequestAnimationFrame(GI.otherChar[cID].animation.canvasAnimationID);
+            cancelRequestAnimationFrame(GI.otherChar[cID].animation.moveAnimationID);
+            delete GI.otherChar[cID];
+            $("#" + cID).remove();
+            $("#" + cID + "-hpslot").remove();
+            $("#" + cID + "-manaslot").remove();
         }
     }
-    ,charMoveQueue : function(){
+    ,charActionQueue : function(){
         if(!GI.char) return;
-        
-        if(GI.char.player.cID == this.sd.cID)
-        {
-            //GI.char.player.charMove(this.e);
-        	GI.char.player.animation.initTransfer(this.e);
-        	GI.char.player.animation.transferAnimationSet(0);
-        }
-        else
-        {
-            if(!GI.otherChar) return;
-            //GI.otherChar[this.sd.cID].charMove(this.e);
-            GI.otherChar[this.sd.cID].animation.initTransfer(this.e);
-        	GI.otherChar[this.sd.cID].animation.transferAnimationSet(0);
+        var cID = this.sd.cID;
+        if(GI.char.player.cID === cID) {
+        	GI.char.player.animation.addShift(this.e);
+            GI.char.player.animation.getQueueAction();
+        } else {
+            if(!(GI.otherChar && GI.otherChar[cID])) return;
+            GI.otherChar[cID].animation.addShift(this.e);
+            GI.otherChar[cID].animation.getQueueAction();
         }
     }
-    
 });

@@ -1,8 +1,22 @@
 var Gon = Character.extend({
     init : function() {
         this._super();
-        this.name = 'Gon';
+        this.name = 'gon';
         this.type = 'char';        
+        this.animateList = {
+            'stand' : {
+                'frames' : 2
+                ,'duration' : 500
+            }
+            /*,'attack' : {
+                'frames' : 12
+                ,'duration' : 500
+            }*/
+            ,'run' : {
+                'frames' : 8
+                ,'duration' : 100
+            }
+        };
     }
     ,make : function(data) {
         this.cID = data.cID;
@@ -12,25 +26,23 @@ var Gon = Character.extend({
         this.caculateRunOffset();
         this.caculateStandOffset();
 
-        var offset = {
-            runOffsetX : this.runOffsetX
-            ,runOffsetY : this.runOffsetY
-            ,standOffsetX : this.standOffsetX
-            ,standOffsetY : this.standOffsetY
+        this.offset = {
+            run : {
+                x : this.runOffsetX
+                ,y : this.runOffsetY
+            }
+            ,stand : {
+                x : this.standOffsetX
+                ,y : this.standOffsetY
+                
+            }
         };
         
-        this.timeDesprite = this.caculateTimeDesprite(data); // C/S Timestamp Difference
+        this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
 
-        //this.setNewDestinationTigger = false;
-        //this.characterMoving = false;
-        
-        this.getCanvas();
-        this.setPosition(this.initPos['x'],this.initPos['y']);
-        this.put();
+        this.setPosition(this.initPos.x,this.initPos.y);
 
-        this.animation = new Animation(this.cID,this.name,this.initPos['x'],this.initPos['y'],offset);
-        this.animation.animationSwitch('stand');
-        this.animation.runAnimation(0);
+        this.animation = new Animation(this);
         
         //this.ui = new UserInterface(this.cID);
     }
