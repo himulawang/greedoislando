@@ -8,7 +8,7 @@ var Gon = Character.extend({
         this.cID = data.cID;
         this.faceTo = data.faceTo;
         this.initPos = this.getCoordinateXY(data.position);
-        //Init Offset
+
         this.caculateRunOffset();
         this.caculateStandOffset();
 
@@ -26,13 +26,13 @@ var Gon = Character.extend({
         
         this.getCanvas();
         this.setPosition(this.initPos['x'],this.initPos['y']);
+        this.put();
 
         this.animation = new Animation(this.cID,this.name,this.initPos['x'],this.initPos['y'],offset);
-        this.animation.initAnimation('stand');
+        this.animation.animationSwitch('stand');
         this.animation.runAnimation(0);
         
         //this.ui = new UserInterface(this.cID);
-        this.put();
     }
     ,caculateRunOffset : function() {
         var runWidth = 65;
