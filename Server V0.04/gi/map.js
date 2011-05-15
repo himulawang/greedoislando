@@ -838,3 +838,10 @@ map.prototype.getWay = function(startPoint, endPoint) {
     this.findway.setEnd(endXY.x, endXY.y);
     return this.findway.getWay();
 }
+map.prototype.getRange = function(a, b) {
+    var aXY = fc.getCoordinateXY(a);
+    var bXY = fc.getCoordinateXY(b);
+    var deltaX = Math.abs(aXY.x - bXY.x);
+    var deltaY = Math.abs(aXY.y - bXY.y);
+    return Math.round(Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)));
+}
