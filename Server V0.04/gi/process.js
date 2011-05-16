@@ -33,6 +33,7 @@ var moveCharacter = function (io) {
 
     var endPoint = object.endPoint;
     var character = giUserList.getCharacter(cID);
+    if (character.getStatus() === 0) return;
     var nowLocation = character.getLocation();
     if (!(endPoint //invalid endPoint
         && giMap.verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
@@ -63,6 +64,12 @@ var keepSession = function(io) {
 var castSkill = function(io) {
     var cID = io.iData.cID;
     var character = giUserList.getCharacter(cID);
+    if (character.getStatus() === 0) return;
+    if (character.getcCD() === 0) {
+        io.addOutputData(cID, 'commonCD', 'self', {cID : cID, timestamp : fc.getTimestamp()});
+        io.response();
+        return;
+    }
     var skillID = io.iData.skillID;
     var skill = character.getSkill(skillID);
     //check character has this skill
@@ -101,6 +108,9 @@ var castSkill = function(io) {
         var preHP = target.getHP();
         var nowHP = target.subHP(skill.damage);
         io.addOutputData(cID, 'hpChange', 'all', {cID : cID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
+        if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'all', {cID : cID, status : target.getStatus(), timestamp : fc.getTimestamp()});
+        character.cCD = 0;
+        character.commonCD();
         io.response();
     }
 }

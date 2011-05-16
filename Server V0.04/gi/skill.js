@@ -2,9 +2,9 @@ var skill = {
     10000 : {
         skillID : 10000
         ,name : "stoneScissorsCloth"
-        ,damage : 100
+        ,damage : 500
         ,costNV : 100
-        ,range : 3
+        ,range : 6
         ,attribution : "physics"
         ,triggerType : "positive"
         ,target : "single"
@@ -12,7 +12,5 @@ var skill = {
 }
 
 exports.get = function(skillID) {
-    var output = {};
-    output[skillID] = skill[skillID];
-    return output;
+    return skill[skillID];
 }
