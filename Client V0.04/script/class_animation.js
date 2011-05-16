@@ -30,6 +30,7 @@ var Animation = Coordinate.extend({
         this.el = $("<canvas id='" + this.cID + "' style='position: absolute;'></canvas>");
         $('body').append(this.el);
         this.el = $("#" + this.cID)[0];
+        Event.onSelectTarget(this.el);
         this.canvas = this.el.getContext('2d');
     }
     ,initAnimation : function(){
@@ -52,6 +53,7 @@ var Animation = Coordinate.extend({
         if (this.nowShift.type === 'characterStand') {
             this.animationSwitch('stand');
             this.nowShift = null;
+            this.put();
         } else if (this.nowShift.type === 'moveCharacter') {
             this.moveCanvasDuration = this.nowShift.data.duration;
             this.animationSwitch('run');
@@ -121,7 +123,6 @@ var Animation = Coordinate.extend({
         this.moveProgress = 0;
         this.x = this.serverNextXY.x;
         this.y = this.serverNextXY.y;
-        this.put();
         this.canvasMoving = false;
         this.nowShift = null;
         return;

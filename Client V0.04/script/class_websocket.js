@@ -1,8 +1,8 @@
 var ws;
 var consoleDiv;
-var WS_HOST = "ws://192.168.0.130:8081";
+//var WS_HOST = "ws://192.168.0.130:8081";
 //var WS_HOST = "ws://ginodedemo.duostack.net:9980";
-//var WS_HOST = "ws://192.168.0.130:8080";
+var WS_HOST = "ws://192.168.0.130:8080";
 //var WS_HOST = "ws://giworld.gicp.net:8081";
 
 var WsConnect = Class.extend({
@@ -30,8 +30,8 @@ var WsConnect = Class.extend({
             _this.writelog("disconnect");
         }
         ws.onmessage = function(e) {
-            var arr = JSON.parse(e.data);
-            var ientrance = new Interaction(arr);
+            var stream = JSON.parse(e.data);
+            new Input(stream);
         }
     }
     ,initDisconnect : function(){

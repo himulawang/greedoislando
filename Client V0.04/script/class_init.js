@@ -1,14 +1,15 @@
 var Init = Class.extend({
     init : function() {
         var _this = this;
-        this.lag;
+        this.lag = null;
+        this.target = null;
         this.otherChar = {};
         this.initMaterial();
         this.initCursor();
         //this.initShowWay();
         this.initMap();
-        //this.disableContextMenu();
-        //_this.bindArrowKey();
+        this.disableContextMenu();
+        this.bindArrowKey();
         this.bindMouseOverGrid();
         this.bindMouseClick();
     }
@@ -23,12 +24,19 @@ var Init = Class.extend({
         document.onkeydown = function(e) {
             if (e.which === 38) { //UP
                 _this.cursor.moveUp();
-            }else if (e.which === 40) { //Down
+            } else if (e.which === 40) { //Down
                 _this.cursor.moveDown();
-            }else if (e.which === 37) { //Left
+            } else if (e.which === 37) { //Left
                 _this.cursor.moveLeft();
-            }else if (e.which === 39) { //Right
+            } else if (e.which === 39) { //Right
                 _this.cursor.moveRight();
+            } else if (e.which >= 49 && e.which <= 53) {
+                var obj = {
+                    type : "castSkill"
+                    ,target : GI.target
+                    ,skillID: 10000
+                }
+                wsocket.sendMessage(obj);
             }
             _this.cursor.put();
             $('#output').html("LogicX:" + _this.cursor.x + " LogicY:" + _this.cursor.y);
@@ -57,7 +65,8 @@ var Init = Class.extend({
             //var startPoint = _this.map.getCoordinateIndex(_this.char.player.x, _this.char.player.y);            
             //var obj = { type : 'moveCharacter', startPoint : startPoint, endPoint : endPoint };
             var obj = { type : 'moveCharacter', endPoint : endPoint };
-            if (e.which === 1) {
+            //move
+            if (e.which === 3) {
                 //verify click grid is movePossible
                 var index = _this.map.getCoordinateIndex(x, y);
                 //console.log(_this.map.verifyMovePossible(index));
@@ -96,6 +105,7 @@ var Init = Class.extend({
         for(x in data){
             this.char.player = eval('new '+ data[x].name);
             this.char.player.cID = data[x].cID;
+            this.char.player.setSelf();
             this.char.player.make(data[x]);
         }
     }
