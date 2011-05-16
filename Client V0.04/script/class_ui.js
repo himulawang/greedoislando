@@ -1,8 +1,20 @@
-var UserInterface = Class.extend({
+var UI = Class.extend({
     init : function(cID) {
         this.cID = cID;
-        this.drawUserHpSlot();
-        this.drawUserManaSlot();
+    }
+    ,initMyCharacterProfile : function() {
+        var html = '';
+        html += "<div id='profile-my-character' style='position: absolute; width: 210px; height: 110px; border: 1px solid #DDDDDD;'>";
+
+        html += "<div id='avartar-my-character' style='float: left; width: 100px; height: 100px; border: 1px solid #DDDDDD;'></div>";
+
+        html += "<div id='div-status-my-character' style='float: left'>";
+        html += "<div id='div-hp-my-character'><span>HP:</span><span id='hp-my-character'></span></div>";
+        html += "<div id='div-nv-my-character'><span>NV:</span><span id='nv-my-character'></span></div>";
+        html += "</div>";
+
+        html += "</div>";
+        $("body").prepend(html);
     }
     ,drawUserHpSlot : function() {
         var HpSlotHtml = "<div class='hpslot' id='" + this.cID + "-hpslot'><div class='hpfiller'></div></div>";

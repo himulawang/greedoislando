@@ -18,34 +18,6 @@ var Gon = Character.extend({
             }
         };
     }
-    ,make : function(data) {
-        this.cID = data.cID;
-        this.faceTo = data.faceTo;
-        this.initPos = this.getCoordinateXY(data.position);
-
-        this.caculateRunOffset();
-        this.caculateStandOffset();
-
-        this.offset = {
-            run : {
-                x : this.runOffsetX
-                ,y : this.runOffsetY
-            }
-            ,stand : {
-                x : this.standOffsetX
-                ,y : this.standOffsetY
-                
-            }
-        };
-        
-        this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
-
-        this.setPosition(this.initPos.x,this.initPos.y);
-
-        this.animation = new Animation(this);
-        
-        //this.ui = new UserInterface(this.cID);
-    }
     ,caculateRunOffset : function() {
         var runWidth = 65;
         var runHeight = 100;
