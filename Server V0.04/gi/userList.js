@@ -50,6 +50,7 @@ list.prototype.disconnect = function(cID) {
     stream.response();
 }
 list.prototype.getCharacter = function(cID) {
+    if (!this.onlineUser[cID]) return;
     return this.onlineUser[cID].character;
 }
 list.prototype.getClient = function(cID) {

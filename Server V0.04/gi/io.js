@@ -48,7 +48,7 @@ io.prototype.response = function() {
             ,data : object.data
         }
 
-console.log(cID, '<-[', object.sendTo, ']', JSON.stringify(output.type));
+//console.log(cID, '<-[', object.sendTo, ']', JSON.stringify(output.type));
     
         if (object.sendTo === 'all') {
             giUserList.responseAll(output);

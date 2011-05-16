@@ -34,6 +34,11 @@ var character = function(cID, name) {
     this.hitRate = 75;
     this.dodgeRate = 0;
     this.recovery = 10;
+    // 0 = dead , 1 = alive
+    this.status = 1;
+    // 0 = CoolDowning , 1 = Cooledowned
+    this.cCD = 1;
+    this.cDuration = 1500; // ms 
     
     this.baseNein = {
         wrap : 1
@@ -162,9 +167,16 @@ character.prototype.setHP = function(hp) {
 character.prototype.addHP = function(hp) {
     var newHP = this.hp + hp;
     this.hp = (newHP > this.maxHP) ? this.maxHP : newHP;
+    return this.hp;
 }
 character.prototype.subHP = function(hp) {
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
+    console.log('hp',this.hp);
+    if (this.hp == 0) {
+        this.status = 0;
+        console.log(this.status);
+    }
+    return this.hp;
 }
 character.prototype.getNV = function() {
     return this.nv;
@@ -176,13 +188,25 @@ character.prototype.setNV = function(nv) {
 character.prototype.addNV = function(nv) {
     var newNV = this.nv + nv;
     this.nv = (newNV > this.maxNV) ? this.maxNV : newNV;
+    return this.nv;
 }
 character.prototype.subNV = function(nv) {
     this.nv = (nv < this.nv) ? this.nv - nv : 0;
+    return this.nv;
+}
+character.prototype.getStatus = function() {
+    return this.status;
 }
 //skill cast
 character.prototype.getSkill = function(skillID) {
     return this.skill[skillID];
+}
+character.prototype.commonCD = function() {
+    var _this = this;
+    setTimeout(function(){ _this.cCD = 1},this.cDuration);
+}
+character.prototype.getcCD = function() {
+    return this.cCD;
 }
 exports.create = function(cID, name) {
     return new character(cID, name);
