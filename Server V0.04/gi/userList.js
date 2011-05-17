@@ -42,6 +42,12 @@ list.prototype.getOnlineCharacterList = function() {
 list.prototype.disconnect = function(cID) {
     if (!(this.onlineUser[cID] && this.onlineUser[cID].client)) return;
     this.onlineUser[cID].client.end();
+
+    // recycle Resources , Important!!!
+    var character = giUserList.getCharacter(cID);
+    clearTimeout(character.setFreeTimeout);
+    clearInterval(character.setFreeRecInterval);
+    
     delete this.onlineUser[cID];
 
     var stream = io.create();

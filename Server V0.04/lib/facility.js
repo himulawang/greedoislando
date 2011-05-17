@@ -12,7 +12,7 @@ global.fc = {
     }
     //get random
     ,random : function(n) {
-        return Math.floor(Math.random() * n + 1);
+        return Math.floor(Math.random() * n);
     }
     //get timestamp
     ,getTimestamp : function() {

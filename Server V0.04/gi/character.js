@@ -31,14 +31,16 @@ var character = function(cID, name) {
     this.nv = 1500;
     this.maxNV = 1500;
     this.gCD = 1500; //ms
-    this.hitRate = 75;
-    this.dodgeRate = 0;
-    this.recovery = 10;
-    // 0 = dead , 1 = alive
-    this.status = 1;
-    // 0 = CoolDowning , 1 = Cooledowned
-    this.cCD = 1;
-    this.cDuration = 1500; // ms 
+    this.basicHit = 75; // Basic Hit Rate = 75%
+    this.hitRateAdd = 10; // Additional Hit Rate = 10% , Suppose
+    this.dodgeRateAdd = 5; // Additional Hit Rate = 5% , Suppose
+    this.status = 1; // 0 = dead , 1 = free , 2 = combat , 3 = criminal
+    this.cCD = 1; // GCD status , 0 = CoolDowning , 1 = Cooledowned
+    this.cDuration = 1500; // ms , GCD
+    this.freeDuration = 5000; // ms , status to free
+    this.recDuration = 3000; // ms , freerecover while not in combat
+    this.hpRecVal = 10; // HP freerecover val
+    this.nvRecVal = 10; // NV freerecover val
     
     this.baseNein = {
         wrap : 1
@@ -61,6 +63,8 @@ var character = function(cID, name) {
     this.nextXY = null;
     this.way = null;
     this.nextGridIndex = null;
+
+    this.freeRecover();
 }
 
 character.prototype.getInfo = function() {
@@ -171,10 +175,8 @@ character.prototype.addHP = function(hp) {
 }
 character.prototype.subHP = function(hp) {
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
-    console.log('hp',this.hp);
     if (this.hp == 0) {
         this.status = 0;
-        console.log(this.status);
     }
     return this.hp;
 }
@@ -203,10 +205,44 @@ character.prototype.getSkill = function(skillID) {
 }
 character.prototype.commonCD = function() {
     var _this = this;
-    setTimeout(function(){ _this.cCD = 1},this.cDuration);
+    setTimeout(function(){ _this.cCD = 1; }, this.cDuration);
 }
 character.prototype.getcCD = function() {
     return this.cCD;
+}
+character.prototype.setFree = function() {
+    var _this = this;
+    clearTimeout(this.setFreeTimeout);
+    this.setFreeTimeout = setTimeout(function(){ 
+        _this.status = 1;
+        _this.freeRecover();
+    }, this.freeDuration);
+}
+character.prototype.setCombat = function() {
+    clearInterval(this.setFreeRecInterval);
+    this.status = 2;
+}
+character.prototype.freeRecover = function() {
+    var _this = this;
+    if (this.status != 1) return;
+    this.setFreeRecInterval = setInterval(function(){
+        _this.hp = (_this.hp + _this.hpRecVal) < _this.maxHP ? _this.hp + _this.hpRecVal : _this.maxHP;
+        _this.nv = (_this.nv + _this.nvRecVal) < _this.maxNV ? _this.nv + _this.nvRecVal : _this.maxNV;
+        var stream = io.create();
+        var cID = _this.getCID();
+        stream.setSelfCID(cID);
+        stream.addOutputData(cID, 'freeRecover', 'self', {cID : cID, hp : _this.hp , hpRec : _this.hpRecVal , nv : _this.nv , nvRec : _this.nvRecVal });
+        stream.response();
+    }, this.recDuration);
+}
+character.prototype.getDodgeRate = function() {
+    return this.dodgeRateAdd;
+}
+character.prototype.hitProc = function(tangoDodgeRate) {
+    var chance = this.basicHit + this.hitRateAdd - tangoDodgeRate;
+    var rand = fc.random(100);
+    var hit = (rand <= chance) ? 1 : 0;
+    return hit;
 }
 exports.create = function(cID, name) {
     return new character(cID, name);
