@@ -22,7 +22,6 @@ var Animation = Coordinate.extend({
         this.initAnimation();
         this.animationSwitch('stand');
         this.runCanvas();
-        console.log('runCanvas');
         this.getQueueAction();
         this.put();
     }
@@ -76,15 +75,37 @@ var Animation = Coordinate.extend({
         if(this.canvasProgress >= this.canvasDuration){
             this.canvasProgress = 0;
             var nowImageSuit = this.animateImages[this.action][this.directionID];
+            //targeted
             this.animateWidth = nowImageSuit[0].width;
             this.animateHeight = nowImageSuit[0].height;
             this.el.width = this.animateWidth;
             this.el.height = this.animateHeight;
             this.animateIndex = (this.animateIndex < nowImageSuit.length - 1) ? this.animateIndex + 1 : 0;
             this.canvas.clearRect(0, 0, this.animateWidth, this.animateHeight);
+            this.addTargeted();
             this.canvas.drawImage(nowImageSuit[this.animateIndex], 0, 0);
         }
         this.canvasAnimationID = requestAnimationFrame(function() { _this.runCanvas(); });
+    }
+    ,addTargeted : function() {
+        if (!this.object.targeted) return;
+        this.canvas.shadowOffsetX = 5;
+        this.canvas.shadowOffsetY = 5;
+        this.canvas.shadowBlur = 25;
+        this.canvas.shadowColor = "white";
+        /*
+        var x = fc.fix(this.animateWidth / 2);
+        var y = fc.fix(this.animateHeight * 0.85);
+        var radius = 20;
+        var startAngle = 0;
+        var endAngle = Math.PI * 2;
+        var clockwise = true;
+        this.canvas.strokeStyle = "orange";
+        this.canvas.lineWidth = 4;
+        this.canvas.beginPath();
+        this.canvas.arc(x, y, radius, startAngle, endAngle, clockwise);
+        this.canvas.stroke();
+        */
     }
     ,moveCanvas : function(){
         var timestamp = fc.getNowTimestamp();
