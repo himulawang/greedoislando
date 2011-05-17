@@ -21,7 +21,7 @@ var selectCharacter = function(io) {
 }
 var logout = function (io) {
     var cID = io.iData.cID;
-
+    
     //logout -> Other
     giUserList.disconnect(cID);
     io.add(addOutputData, 'logout', 'other', {cID : cID});
@@ -104,16 +104,31 @@ var castSkill = function(io) {
         var nowNV = character.subNV(skill.costNV);
         io.addOutputData(cID, 'nvChange', 'all', {cID : cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
 
-        //skill cause damage
-        var preHP = target.getHP();
-        var nowHP = target.subHP(skill.damage);
-        io.addOutputData(cID, 'hpChange', 'all', {cID : cID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
-        if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'all', {cID : cID, status : target.getStatus(), timestamp : fc.getTimestamp()});
-        character.cCD = 0;
-        character.commonCD();
+        //skill miss
+        var tangoDodgeRate = target.getDodgeRate();
+        var ifHit = character.hitProc(tangoDodgeRate);
+        if(ifHit === 0){
+            io.addOutputData(cID, 'skillMiss', 'all', {cID : cID , target : targetCID , skillID : skillID});
+        }else{
+            //skill cause damage
+            var preHP = target.getHP();
+            var nowHP = target.subHP(skill.damage);
+            io.addOutputData(cID, 'hpChange', 'all', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
+            if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'all', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
+        }
+        
+        character.cCD = 0;  // GCD -- cant use skill in the next 1.5s
+        character.commonCD();  // 1.5s CoolDown Proc begins
+        character.setCombat();  // set self status to combat 
+        target.setCombat();  // set tango status to combat 
+        character.setFree();  // 10s later set self status to free
+        target.setFree();  // 10s later set tango status to free
         io.response();
     }
 }
+
+
+
 
 global.PROCESS = {
     keepSession : keepSession
