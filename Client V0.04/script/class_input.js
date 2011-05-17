@@ -17,10 +17,11 @@ var Input = Class.extend({
         } else if (e.type === "keepSession"){
             this.getLag();
         } else if (e.type === "hpChange") {
-            console.log('HP:', e.data.nowHP);
-            console.log(e);
+            console.log(e.data.cID);
+            console.log(GI.char.player.cID);
+            if (e.data.cID === GI.char.player.cID) $("#hp-my-character").html(e.data.nowHP);
         } else if (e.type === "nvChange") {
-            console.log(e);
+            if (e.data.cID === GI.char.player.cID) $("#nv-my-character").html(e.data.nowNV);
         } else if (e.type === "castSkill") {
             console.log(e);
         } else if (e.type === "castSkillOutOfRange") {
@@ -30,6 +31,12 @@ var Input = Class.extend({
             console.log('CD:', e.cID);
         } else if (e.type === "statusChange") {
             console.log(e.type);
+        } else if (e.type === "freeRecover") {
+            if (e.data.cID === GI.char.player.cID) $("#hp-my-character").html(e.data.hp);
+            if (e.data.cID === GI.char.player.cID) $("#nv-my-character").html(e.data.nv);
+        } else if (e.type === "skillMiss") {
+            console.log(e.type);
+            console.log(e.data.skillID);
         }
     }
     ,getLag : function(){

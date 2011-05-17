@@ -1,6 +1,8 @@
 var Character = Coordinate.extend({
     init : function() {
         this._super();
+        this.self = false;
+        this.targeted = false;
     }
     ,make : function(data) {
         this.cID = data.cID;
@@ -43,6 +45,13 @@ var Character = Coordinate.extend({
         this.y = y;
     }
     ,setSelf : function() { //tag that this character is my character
-        this.self = 1;
+        this.self = true;
+    }
+    ,setTarget : function() {
+        if (this.self) return;
+        this.targeted = true;
+    }
+    ,cancelTarget : function() {
+        this.targeted = false;
     }
 });

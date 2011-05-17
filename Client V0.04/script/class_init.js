@@ -40,7 +40,7 @@ var Init = Class.extend({
             }
             _this.cursor.put();
             $('#output').html("LogicX:" + _this.cursor.x + " LogicY:" + _this.cursor.y);
-            return false;
+            return true;
         };
     }
     ,bindMouseOverGrid : function() {
@@ -102,7 +102,7 @@ var Init = Class.extend({
     /* Create Character */
     ,createChar : function(data) {
         this.char = {};
-        for(x in data){
+        for (var x in data) {
             this.char.player = eval('new '+ data[x].name);
             this.char.player.cID = data[x].cID;
             this.char.player.setSelf();
@@ -111,7 +111,7 @@ var Init = Class.extend({
     }
     ,createOtherChar : function(data){
         var cID;
-        for(x in data){
+        for (var x in data) {
             var cID = data[x].cID;
             if (this.otherChar[cID]) continue;
             this.otherChar[cID] = eval('new ' + data[x].name);
