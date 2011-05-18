@@ -41,7 +41,11 @@ var character = function(cID, name) {
     this.recDuration = 3000; // ms , freerecover while not in combat
     this.hpRecVal = 10; // HP freerecover val
     this.nvRecVal = 10; // NV freerecover val
-    
+    this.defRF = 0;  // Defense Aura Reinforcement
+    this.atkRF = 0;  // Attack Aura Reinforcement
+    this.recRF = 0;  // Free Recover Aura Reinforcement
+    this.skillRF = 0;  // Skill Power Aura Reinforcement
+
     this.baseNein = {
         wrap : 1
         ,obstruct : 1
@@ -65,6 +69,7 @@ var character = function(cID, name) {
     this.nextGridIndex = null;
 
     this.freeRecover();
+    this.auraRF(this.getAura());
 }
 
 character.prototype.getInfo = function() {
@@ -85,7 +90,25 @@ character.prototype.getInfo = function() {
         ,x : this.x
         ,y : this.y
         ,timestamp : fc.getTimestamp()
+    };
+}
+character.prototype.getAura = function() {
+    return {
+        5000 : 1
+        ,5001 : 1
+        ,5002 : 1
+        ,5003 : 1
+    };
+}
+character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
+    var x;
+    for(x in auraz){
+        this.skill[x] = skill.get(x);
     }
+    this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod;
+    this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod;
+    this.recRF = this.skill[5002].auraRFVal + auraz[5002] * this.skill[5002].lvUpMod;
+    this.skillRF = this.skill[5003].auraRFVal + auraz[5003] * this.skill[5003].lvUpMod;
 }
 character.prototype.getCID = function() {
     return this.cID;
@@ -160,6 +183,10 @@ character.prototype.getTowardNewGridDirection = function(x, y) {
     var deltaIndex = fc.getCoordinateIndex(deltaX, deltaY);
     return this.DIRECTIONS[deltaIndex];
 }
+character.prototype.getSkillPower = function(skill) {
+    var skillDmg = skill.damage * ( 1 + this.skillRF);
+    return skillDmg;
+}
 //attribute
 character.prototype.getHP = function() {
     return this.hp;
@@ -173,7 +200,11 @@ character.prototype.addHP = function(hp) {
     this.hp = (newHP > this.maxHP) ? this.maxHP : newHP;
     return this.hp;
 }
-character.prototype.subHP = function(hp) {
+character.prototype.subHP = function(damage, tangoAtkRF) {
+
+    var hp = damage * (1 + tangoAtkRF)  - damage * this.defRF;   // Damage reduction formulation
+    hp = fc.fix(hp);
+
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
     if (this.hp == 0) {
         this.status = 0;
@@ -226,12 +257,14 @@ character.prototype.freeRecover = function() {
     var _this = this;
     if (this.status != 1) return;
     this.setFreeRecInterval = setInterval(function(){
-        _this.hp = (_this.hp + _this.hpRecVal) < _this.maxHP ? _this.hp + _this.hpRecVal : _this.maxHP;
-        _this.nv = (_this.nv + _this.nvRecVal) < _this.maxNV ? _this.nv + _this.nvRecVal : _this.maxNV;
+        var hpInc = fc.fix(_this.hpRecVal * ( 1 + _this.recRF ));
+        var nvInc = fc.fix(_this.nvRecVal * ( 1 + _this.recRF ));
+        _this.hp = (_this.hp + hpInc) < _this.maxHP ? fc.fix(_this.hp + hpInc) : _this.maxHP;
+        _this.nv = (_this.nv + nvInc) < _this.maxNV ? fc.fix(_this.nv + nvInc) : _this.maxNV;
         var stream = io.create();
         var cID = _this.getCID();
         stream.setSelfCID(cID);
-        stream.addOutputData(cID, 'freeRecover', 'self', {cID : cID, hp : _this.hp , hpRec : _this.hpRecVal , nv : _this.nv , nvRec : _this.nvRecVal });
+        stream.addOutputData(cID, 'freeRecover', 'all', {cID : cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
         stream.response();
     }, this.recDuration);
 }

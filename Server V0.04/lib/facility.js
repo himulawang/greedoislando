@@ -33,6 +33,9 @@ global.fc = {
     ,getCoordinateIndex : function(x, y) {
             return x + ',' + y;
     }
+    ,fix : function(float) {
+        return typeof(float) === 'number' ? parseInt(float.toFixed()) : float;
+    }
 }
 
 
