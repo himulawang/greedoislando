@@ -112,7 +112,8 @@ var castSkill = function(io) {
         }else{
             //skill cause damage
             var preHP = target.getHP();
-            var nowHP = target.subHP(skill.damage);
+            var damage = character.getSkillPower(skill);
+            var nowHP = target.subHP(damage, target.atkRF);
             io.addOutputData(cID, 'hpChange', 'all', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
             if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'all', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
         }
