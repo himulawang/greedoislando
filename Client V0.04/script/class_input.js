@@ -3,7 +3,13 @@ var Input = Class.extend({
         this.data = e.data;
         this.e = e;
         if(e.type === "initMyCharacter"){
-            new UI().initMyCharacterProfile();
+            var cID = e.data.cID;
+            var myStatus = new UI_MyStatus(cID);
+            var targetStatus = new UI_TargetStatus(cID);
+            GI.ui = {
+                myStatus : myStatus
+                ,targetStatus : targetStatus
+            }
             this.generateMyChar();
             this.generateMapData();
         } else if (e.type === "newCharacterLogin" || e.type === "getOnlineCharacter"){
@@ -17,11 +23,13 @@ var Input = Class.extend({
         } else if (e.type === "keepSession"){
             this.getLag();
         } else if (e.type === "hpChange") {
-            console.log(e.data.cID);
-            console.log(GI.char.player.cID);
-            if (e.data.cID === GI.char.player.cID) $("#hp-my-character").html(e.data.nowHP);
+            var cID = e.data.cID;
+            if (cID === GI.char.player.cID) GI.ui.myStatus.setHP(e.data.nowHP);
+            GI.otherChar[cID].setHP(e.data.nowHP);
         } else if (e.type === "nvChange") {
-            if (e.data.cID === GI.char.player.cID) $("#nv-my-character").html(e.data.nowNV);
+            var cID = e.data.cID;
+            if (cID === GI.char.player.cID) GI.ui.myStatus.setNV(e.data.nowNV);
+            GI.otherChar[cID].setNV(e.data.nowNV);
         } else if (e.type === "castSkill") {
             console.log(e);
         } else if (e.type === "castSkillOutOfRange") {
@@ -32,8 +40,13 @@ var Input = Class.extend({
         } else if (e.type === "statusChange") {
             console.log(e.type);
         } else if (e.type === "freeRecover") {
-            if (e.data.cID === GI.char.player.cID) $("#hp-my-character").html(e.data.hp);
-            if (e.data.cID === GI.char.player.cID) $("#nv-my-character").html(e.data.nv);
+            var cID = e.data.cID;
+            if (cID === GI.char.player.cID) {
+                GI.ui.myStatus.setHP(e.data.hp);
+                GI.ui.myStatus.setNV(e.data.nv);
+            }
+            GI.otherChar[cID].setHP(e.data.hp);
+            GI.otherChar[cID].setNV(e.data.nv);
         } else if (e.type === "skillMiss") {
             console.log(e.type);
             console.log(e.data.skillID);
