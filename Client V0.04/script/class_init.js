@@ -33,7 +33,7 @@ var Init = Class.extend({
             } else if (e.which >= 49 && e.which <= 53) {
                 var obj = {
                     type : "castSkill"
-                    ,target : GI.target
+                    ,target : GI.targetCID
                     ,skillID: 10000
                 }
                 wsocket.sendMessage(obj);
