@@ -5,7 +5,6 @@ var Character = Coordinate.extend({
         this.targeted = false;
     }
     ,make : function(data) {
-        console.log(data);
         this.cID = data.cID;
         this.setHP(data.hp);
         this.setNV(data.nv);
@@ -16,6 +15,7 @@ var Character = Coordinate.extend({
 
         this.caculateRunOffset();
         this.caculateStandOffset();
+        this.caculateAttackOffset();
         this.offset = {
             run : {
                 x : this.runOffsetX
@@ -24,6 +24,10 @@ var Character = Coordinate.extend({
             ,stand : {
                 x : this.standOffsetX
                 ,y : this.standOffsetY
+            }
+            ,attack : {
+                x : this.attackOffsetX
+                ,y : this.attackOffsetY
             }
         };
         
