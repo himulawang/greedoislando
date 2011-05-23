@@ -45,14 +45,17 @@ list.prototype.disconnect = function(cID) {
 
     // recycle Resources , Important!!!
     var character = giUserList.getCharacter(cID);
-    clearTimeout(character.setFreeTimeout);
-    clearInterval(character.setFreeRecInterval);
+    if (character) {
+        clearTimeout(character.setFreeTimeout);
+        clearInterval(character.setFreeRecInterval);
+        clearInterval(character.moveTimeout);
+    }
     
     delete this.onlineUser[cID];
 
     var stream = io.create();
     stream.setSelfCID(cID);
-    stream.addOutputData(cID, 'logout', 'all', {cID : cID});
+    stream.addOutputData(cID, 'logout', 'logged', {cID : cID});
     stream.response();
 }
 list.prototype.getCharacter = function(cID) {
@@ -94,6 +97,14 @@ list.prototype.responseSelf = function(output, cID) {
 list.prototype.responseOther = function(output, selfCID /* self cID*/) {
     for (var cID in this.onlineUser) {
         if (cID === selfCID) continue;
+        this.onlineUser[cID].client.write(JSON.stringify(output));
+    }
+}
+list.prototype.responseLogged = function(output) {
+    var character;
+    for (var cID in this.onlineUser) {
+        character = this.onlineUser[cID].character;
+        if (character === null) continue; 
         this.onlineUser[cID].client.write(JSON.stringify(output));
     }
 }

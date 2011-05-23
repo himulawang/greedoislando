@@ -1,5 +1,6 @@
 var io = require('./io')
-    ,skill = require('./skill');
+    ,skill = require('./skill')
+    ,system = require('./system');
 
 var character = function(cID, name) {
     /* 500 UpRight
@@ -24,7 +25,8 @@ var character = function(cID, name) {
      * 1 strengthening
      *
      * */
-    this.system = 1;
+    this.systemID = this.getSystem(this.name);
+    this.system = system.get(this.systemID);
     // Attribute Begin
     this.hp = 1000;
     this.maxHP = 1000;
@@ -68,8 +70,11 @@ var character = function(cID, name) {
     this.way = null;
     this.nextGridIndex = null;
 
+    this.setFreeTimeout = null;
+    this.setFreeRecInterval = null;
     this.freeRecover();
     this.auraRF(this.getAura());
+    this.systemRF();
 }
 
 character.prototype.getInfo = function() {
@@ -92,6 +97,10 @@ character.prototype.getInfo = function() {
         ,timestamp : fc.getTimestamp()
     };
 }
+character.prototype.getSystem = function(systemName) {
+    // reserved for fetching character's system data info ...
+    return 100;
+}
 character.prototype.getAura = function() {
     return {
         5000 : 1
@@ -102,13 +111,23 @@ character.prototype.getAura = function() {
 }
 character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
     var x;
-    for(x in auraz){
+    for(x in auraz) {
         this.skill[x] = skill.get(x);
     }
     this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod;
     this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod;
     this.recRF = this.skill[5002].auraRFVal + auraz[5002] * this.skill[5002].lvUpMod;
     this.skillRF = this.skill[5003].auraRFVal + auraz[5003] * this.skill[5003].lvUpMod;
+}
+character.prototype.systemRF = function() {
+    // reinforce skill power by NIEN system , judge by skill attribution & system reinforce type
+    var x;
+    for (x in this.skill) {
+        if (this.skill[x].triggerType === 'aura') continue;
+        if (this.system.sysRFType === this.skill[x].attribution) {
+            this.skill[x].damage = ( this.skill[x].damage * ( 1 + this.system.sysRFVal ) ) * ( 1 + this.skillRF );
+        }
+    }
 }
 character.prototype.getCID = function() {
     return this.cID;
@@ -142,7 +161,7 @@ character.prototype.moveWay = function() {
         this.moveTimeout = null;
         this.way = null;
         this.nextGridIndex = null;
-        stream.addOutputData(cID, 'characterStand', 'all', {cID : cID, timestamp : fc.getTimestamp(), nowLocation : this.position });
+        stream.addOutputData(cID, 'characterStand', 'logged', {cID : cID, timestamp : fc.getTimestamp(), nowLocation : this.position });
         stream.response();
         
         return;
@@ -161,7 +180,7 @@ time *= 1.4;
     }
 
     //moveCharacter -> Other
-    stream.addOutputData(cID, 'moveCharacter', 'all', {cID : cID, nowLocation : this.position, nextLocation : this.nextGridIndex, duration : time, timestamp : fc.getTimestamp() });
+    stream.addOutputData(cID, 'moveCharacter', 'logged', {cID : cID, nowLocation : this.position, nextLocation : this.nextGridIndex, duration : time, timestamp : fc.getTimestamp() });
     stream.response();
 
     this.moveTimeout = setTimeout(function(){
@@ -184,8 +203,7 @@ character.prototype.getTowardNewGridDirection = function(x, y) {
     return this.DIRECTIONS[deltaIndex];
 }
 character.prototype.getSkillPower = function(skill) {
-    var skillDmg = skill.damage * ( 1 + this.skillRF);
-    return skillDmg;
+    return skill.damage;
 }
 //attribute
 character.prototype.getHP = function() {
@@ -264,7 +282,7 @@ character.prototype.freeRecover = function() {
         var stream = io.create();
         var cID = _this.getCID();
         stream.setSelfCID(cID);
-        stream.addOutputData(cID, 'freeRecover', 'all', {cID : cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
+        stream.addOutputData(cID, 'freeRecover', 'logged', {cID : cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
         stream.response();
     }, this.recDuration);
 }
