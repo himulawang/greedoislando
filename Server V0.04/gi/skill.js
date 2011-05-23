@@ -29,8 +29,8 @@ var skill = {
         ,triggerType : "aura"
         ,target : "self"
         ,sEffect : null   //side effect
-        ,auraType : "recRF"
-        ,auraRFVal : 0.1
+        ,auraType : "recRF"   
+        ,auraRFVal : 0.1    // aura reinforce value
         ,lvUpMod : 0.1
     }
     ,5002 : {

@@ -56,6 +56,8 @@ io.prototype.response = function() {
             giUserList.responseSelf(output, cID);
         }else if (object.sendTo === 'other') {
             giUserList.responseOther(output, cID);
+        }else if (object.sendTo === 'logged') {
+            giUserList.responseLogged(output);
         }
     }
 }

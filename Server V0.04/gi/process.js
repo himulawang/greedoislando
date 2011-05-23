@@ -97,25 +97,25 @@ var castSkill = function(io) {
             return;
         }
         //skill effect
-        io.addOutputData(cID, 'castSkill', 'all', {cID : cID, target : targetCID, skillID : skillID});
+        io.addOutputData(cID, 'castSkill', 'logged', {cID : cID, target : targetCID, skillID : skillID});
 
         //skill costNV
         var preNV = character.getNV();
         var nowNV = character.subNV(skill.costNV);
-        io.addOutputData(cID, 'nvChange', 'all', {cID : cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
+        io.addOutputData(cID, 'nvChange', 'logged', {cID : cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
 
         //skill miss
         var tangoDodgeRate = target.getDodgeRate();
         var ifHit = character.hitProc(tangoDodgeRate);
         if(ifHit === 0){
-            io.addOutputData(cID, 'skillMiss', 'all', {cID : cID , target : targetCID , skillID : skillID});
+            io.addOutputData(cID, 'skillMiss', 'logged', {cID : cID , target : targetCID , skillID : skillID});
         }else{
             //skill cause damage
             var preHP = target.getHP();
             var damage = character.getSkillPower(skill);
             var nowHP = target.subHP(damage, target.atkRF);
-            io.addOutputData(cID, 'hpChange', 'all', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
-            if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'all', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
+            io.addOutputData(cID, 'hpChange', 'logged', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
+            if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'logged', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
         }
         
         character.cCD = 0;  // GCD -- cant use skill in the next 1.5s
