@@ -24,14 +24,20 @@ var Input = Class.extend({
             this.getLag();
         } else if (e.type === "hpChange") {
             var cID = e.data.cID;
-            if (cID === GI.char.player.cID) GI.ui.myStatus.setHP(e.data.nowHP);
+            if (cID === GI.char.player.cID) {
+                GI.ui.myStatus.setHP(e.data.nowHP);
+                return;
+            }
             GI.otherChar[cID].setHP(e.data.nowHP);
         } else if (e.type === "nvChange") {
             var cID = e.data.cID;
-            if (cID === GI.char.player.cID) GI.ui.myStatus.setNV(e.data.nowNV);
+            if (cID === GI.char.player.cID) {
+                GI.ui.myStatus.setNV(e.data.nowNV);
+                return;
+            }
             GI.otherChar[cID].setNV(e.data.nowNV);
         } else if (e.type === "castSkill") {
-            console.log(e);
+            this.charActionQueue();
         } else if (e.type === "castSkillOutOfRange") {
             console.log(e);
         } else if (e.type === "commonCD") {
@@ -41,9 +47,10 @@ var Input = Class.extend({
             console.log(e.type);
         } else if (e.type === "freeRecover") {
             var cID = e.data.cID;
-            if (cID === GI.char.player.cID) {
+            if (GI.char && GI.char.player && cID === GI.char.player.cID) {
                 GI.ui.myStatus.setHP(e.data.hp);
                 GI.ui.myStatus.setNV(e.data.nv);
+                return;
             }
             GI.otherChar[cID].setHP(e.data.hp);
             GI.otherChar[cID].setNV(e.data.nv);

@@ -12,6 +12,7 @@ var Animation = Coordinate.extend({
         this.canvasMoving = false;
         this.lastCanvasTimestamp = 0;
         this.directionID = 0;
+        this.runOnce = false;
         this.actionQueue = [];
         this.nowShift = null;
         this.getQueueTimeout = null;
@@ -57,6 +58,11 @@ var Animation = Coordinate.extend({
             this.moveCanvasDuration = this.nowShift.data.duration;
             this.animationSwitch('run');
             this.moveCanvas();
+        } else if (this.nowShift.type === 'castSkill') {
+            this.animationSwitch('attack');
+            this.nowShift = null;
+            this.put();
+            this.runOnce = true;
         }
     }
     ,animationSwitch : function(action){
@@ -80,7 +86,17 @@ var Animation = Coordinate.extend({
             this.animateHeight = nowImageSuit[0].height;
             this.el.width = this.animateWidth;
             this.el.height = this.animateHeight;
-            this.animateIndex = (this.animateIndex < nowImageSuit.length - 1) ? this.animateIndex + 1 : 0;
+            if (this.animateIndex < nowImageSuit.length - 1) {
+                ++this.animateIndex;
+            } else {
+                this.animateIndex = 0;
+                if (this.runOnce === true) { //attack animation
+                    this.runOnce = false;
+                    this.animationSwitch('stand');
+                    this.nowShift = null;
+                    this.put();
+                }
+            }
             this.canvas.clearRect(0, 0, this.animateWidth, this.animateHeight);
             this.addTargeted();
             this.canvas.drawImage(nowImageSuit[this.animateIndex], 0, 0);
@@ -153,6 +169,9 @@ var Animation = Coordinate.extend({
 
         var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
         var screenY = this.transferLogicToScreenY(this.x, this.y) - this.offset[this.action].y;
+
+        console.log("x", this.offset[this.action].x);
+        console.log("y", this.offset[this.action].y);
 
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 

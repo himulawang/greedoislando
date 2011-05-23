@@ -13,10 +13,10 @@ var Material = Class.extend({
                             'frames' : 2
                             ,'duration' : 500
                         }
-                        /*,'attack' : {
-                            'frames' : 12
+                        ,'attack' : {
+                            'frames' : 7
                             ,'duration' : 500
-                        }*/
+                        }
                         ,'run' : {
                             'frames' : 8
                             ,'duration' : 100
