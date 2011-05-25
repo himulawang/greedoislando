@@ -6,9 +6,11 @@ var Input = Class.extend({
             var cID = e.data.cID;
             var myStatus = new UI_MyStatus(cID);
             var targetStatus = new UI_TargetStatus(cID);
+            var communication = new UI_Communication(cID);
             GI.ui = {
                 myStatus : myStatus
                 ,targetStatus : targetStatus
+                ,communication : communication
             }
             this.generateMyChar();
             this.generateMapData();
