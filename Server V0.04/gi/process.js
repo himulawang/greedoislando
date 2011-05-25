@@ -43,12 +43,13 @@ var moveCharacter = function (io) {
     //character is moving
     if (character.characterMoving) {
         character.setNewDestinationTrigger = true;
-        character.nextXY = endPoint;
-        var way = giMap.getWay(nowLocation, endPoint);
+        var way = giMap.getWay(character.nextGridIndex, endPoint);
         character.setWay(way);
         return;
     }
     var way = giMap.getWay(nowLocation, endPoint);
+
+    character.setDoAction('toMove');  // trigger for move / attack switch
 
     character.setWay(way);
     character.startWay();
@@ -64,7 +65,8 @@ var keepSession = function(io) {
 var castSkill = function(io) {
     var cID = io.iData.cID;
     var character = giUserList.getCharacter(cID);
-    if (character.getStatus() === 0) return;
+    character.setDoAction('toAttack');  // trigger for attack action pausing the moving action
+    if (character.getStatus() === 0) return;  // character dead , no action permitted
     if (character.getcCD() === 0) {
         io.addOutputData(cID, 'commonCD', 'self', {cID : cID, timestamp : fc.getTimestamp()});
         io.response();
@@ -78,6 +80,7 @@ var castSkill = function(io) {
     if (skill.target === "single") {
         var targetCID = io.iData.target;
         var target = giUserList.getCharacter(targetCID);
+        if (target.getStatus() === 0) return;  //  target dead , no more attack on dead body!!
         if (!target) return;
         //check range
         var targetLocation = target.getLocation();
@@ -104,6 +107,9 @@ var castSkill = function(io) {
         var nowNV = character.subNV(skill.costNV);
         io.addOutputData(cID, 'nvChange', 'logged', {cID : cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
 
+        character.setCombat();  // set self status to combat 
+        target.setCombat();  // set tango status to combat 
+
         //skill miss
         var tangoDodgeRate = target.getDodgeRate();
         var ifHit = character.hitProc(tangoDodgeRate);
@@ -120,10 +126,10 @@ var castSkill = function(io) {
         
         character.cCD = 0;  // GCD -- cant use skill in the next 1.5s
         character.commonCD();  // 1.5s CoolDown Proc begins
-        character.setCombat();  // set self status to combat 
-        target.setCombat();  // set tango status to combat 
+
         character.setFree();  // 10s later set self status to free
         target.setFree();  // 10s later set tango status to free
+
         io.response();
     }
 }

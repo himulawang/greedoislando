@@ -47,6 +47,13 @@ var character = function(cID, name) {
     this.atkRF = 0;  // Attack Aura Reinforcement
     this.recRF = 0;  // Free Recover Aura Reinforcement
     this.skillRF = 0;  // Skill Power Aura Reinforcement
+    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill
+
+    this.doActionList = {
+        toStand : 0
+        ,toMove : 1
+        ,toAttack : 2
+    }
 
     this.baseNein = {
         wrap : 1
@@ -102,6 +109,7 @@ character.prototype.getSystem = function(systemName) {
     return 100;
 }
 character.prototype.getAura = function() {
+    // reserved for fetching character's aura skill data info...
     return {
         5000 : 1
         ,5001 : 1
@@ -141,6 +149,9 @@ character.prototype.setLocation = function(index) {
     this.x = xy.x;
     this.y = xy.y;
 }
+character.prototype.setDoAction = function(action) {
+    this.doAction = this.doActionList[action];
+}
 character.prototype.setWay = function(way) {
     this.way = way;
 }
@@ -155,15 +166,15 @@ character.prototype.moveWay = function() {
     var cID = this.getCID();
     var stream = io.create();
     stream.setSelfCID(cID);
-    if (this.wayIndex >= this.way.length) {
+    if (this.wayIndex >= this.way.length || this.doAction === 2) {   // doAction pause the moving action for attacking
         this.characterMoving = false;
         this.nextXY = null;
         this.moveTimeout = null;
         this.way = null;
         this.nextGridIndex = null;
+        this.setDoAction('toStand');    // trigger for move / attack switch
         stream.addOutputData(cID, 'characterStand', 'logged', {cID : cID, timestamp : fc.getTimestamp(), nowLocation : this.position });
         stream.response();
-        
         return;
     }
     var _this = this;
@@ -176,7 +187,7 @@ character.prototype.moveWay = function() {
     var time = GI_CHARACTER_MOVING_SPEED;
     this.directionID = this.getTowardNewGridDirection(this.nextXY.x, this.nextXY.y);
     if (this.directionID % 2 === 1) {
-time *= 1.4;
+        time *= 1.4;
     }
 
     //moveCharacter -> Other
@@ -184,13 +195,14 @@ time *= 1.4;
     stream.response();
 
     this.moveTimeout = setTimeout(function(){
+        
+        _this.setLocation(_this.nextGridIndex);
+
         if (_this.setNewDestinationTrigger) {
             _this.setNewDestinationTrigger = false;
             _this.startWay();
             return;
         }
-
-        _this.setLocation(_this.nextGridIndex);
 
         ++_this.wayIndex;
         _this.moveWay();
@@ -224,10 +236,15 @@ character.prototype.subHP = function(damage, tangoAtkRF) {
     hp = fc.fix(hp);
 
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
-    if (this.hp == 0) {
-        this.status = 0;
+    if (this.hp === 0) {
+        this.setDead();
     }
     return this.hp;
+}
+character.prototype.setDead = function() {
+    //clearInterval(this.setFreeRecInterval);
+    clearTimeout(this.setFreeTimeout);
+    this.status = 0;
 }
 character.prototype.getNV = function() {
     return this.nv;
@@ -262,19 +279,20 @@ character.prototype.getcCD = function() {
 character.prototype.setFree = function() {
     var _this = this;
     clearTimeout(this.setFreeTimeout);
+    if (this.status === 0) return;
     this.setFreeTimeout = setTimeout(function(){ 
         _this.status = 1;
-        _this.freeRecover();
+        //_this.freeRecover();
     }, this.freeDuration);
 }
 character.prototype.setCombat = function() {
-    clearInterval(this.setFreeRecInterval);
+    //clearInterval(this.setFreeRecInterval);
     this.status = 2;
 }
 character.prototype.freeRecover = function() {
     var _this = this;
-    if (this.status != 1) return;
     this.setFreeRecInterval = setInterval(function(){
+        if (_this.status != 1) return;
         var hpInc = fc.fix(_this.hpRecVal * ( 1 + _this.recRF ));
         var nvInc = fc.fix(_this.nvRecVal * ( 1 + _this.recRF ));
         _this.hp = (_this.hp + hpInc) < _this.maxHP ? fc.fix(_this.hp + hpInc) : _this.maxHP;
