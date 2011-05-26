@@ -2,9 +2,20 @@ var UI_SkillBar = UI.extend({
     init : function(cID) {
         this._super(cID);
         var html = '';
-        html += "<div style='width: 358px; height: 198px; border: 1px solid #DDDDDD; position: absolute; top: 400px; z-index: 100;'>";
-        html += "<div style='margin-left: auto; margin-right: auto; width: 338px; height: 178px; border: 1px solid #DDDDDD;' id='ui-chat-history'></div>";
-        html += "<input style='width: 356px; height: 12px; margin-left: auto; margin-right: auto;'>";
+        html += "<div id='ui-skill-bar-div' class='radius center'>";
+        html += "<div id='ui-skill-bar'>";
+        html += "<table id='ui-skill-table'>";
+        html += "<tr>";
+        html += "<td class='ui-skill-td' onclick=''>拳</td>";
+        html += "<td class='ui-skill-td'>拳</td>";
+        html += "<td class='ui-skill-td'>拳</td>";
+        html += "<td class='ui-skill-td'>拳</td>";
+        html += "<td class='ui-skill-td'>体</td>";
+        html += "<td class='ui-skill-td'>爆</td>";
+        html += "<td class='ui-skill-td'>光</td>";
+        html += "</tr>";
+        html += "</table>";
+        html += "</div>";
         html += "</div>";
         $("body").prepend(html);
     }
