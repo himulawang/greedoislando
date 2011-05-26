@@ -7,10 +7,12 @@ var Input = Class.extend({
             var myStatus = new UI_MyStatus(cID);
             var targetStatus = new UI_TargetStatus(cID);
             var communication = new UI_Communication(cID);
+            var skillbar = new UI_SkillBar(cID);
             GI.ui = {
                 myStatus : myStatus
                 ,targetStatus : targetStatus
                 ,communication : communication
+                ,skillbar : skillbar
             }
             this.generateMyChar();
             this.generateMapData();
