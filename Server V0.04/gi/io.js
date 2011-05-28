@@ -31,11 +31,15 @@ io.prototype.addOutputData = function(cID, protocol, sendTo, data) {
 }
 io.prototype.process = function() {
     var type = this.iData.type;
+    var cID = this.iData.cID;
     if (!type) return;
-    var action = PROCESS[type];
+    //Confirm the client Character is logged or not...
+    var character = giUserList.getCharacter(cID);
+    var clientStat = character === null ? 'unlogged' : 'logged';
+    var action = PROCESS[clientStat][type];
     if (!action) return;
 
-    return PROCESS[type](this);
+    return PROCESS[clientStat][type](this);
 }
 io.prototype.response = function() {
     var i, x, object, output;

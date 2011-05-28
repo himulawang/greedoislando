@@ -80,8 +80,8 @@ var castSkill = function(io) {
     if (skill.target === "single") {
         var targetCID = io.iData.target;
         var target = giUserList.getCharacter(targetCID);
-        if (target.getStatus() === 0) return;  //  target dead , no more attack on dead body!!
         if (!target) return;
+        if (target.getStatus() === 0) return;  //  target dead , no more attack on dead body!!
         //check range
         var targetLocation = target.getLocation();
         var location = character.getLocation();
@@ -138,9 +138,16 @@ var castSkill = function(io) {
 
 
 global.PROCESS = {
-    keepSession : keepSession
-    ,selectCharacter: selectCharacter
-    ,logout : logout
-    ,moveCharacter : moveCharacter
-    ,castSkill : castSkill
+    logged : {
+        keepSession : keepSession
+        ,selectCharacter: selectCharacter
+        ,logout : logout
+        ,moveCharacter : moveCharacter
+        ,castSkill : castSkill
+    }
+    ,unlogged : {
+        keepSession : keepSession
+        ,selectCharacter: selectCharacter
+    }
 }
+
