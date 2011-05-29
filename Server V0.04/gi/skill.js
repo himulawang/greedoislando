@@ -1,15 +1,21 @@
 var skill = {
     10000 : {
         skillID : 10000
-        ,name : "stoneScissorsCloth"
-        ,damage : 50
+        ,name : "rightStraightPunch"
+        ,damage : 80
         ,costNV : 100
         ,range : 6
         ,attribution : "physics"
         ,triggerType : "positive"
         ,target : "single"
         ,sEffect : null
-        ,lvUPMod : 30
+        ,adtEffect : null
+        ,adtEffectVal : null
+        ,adtEffectTime : null
+        ,skillCD : null
+        ,lvUPMod : {
+            damage : 30
+        }
     }
     ,5000 : {
         skillID : 5000
@@ -18,9 +24,14 @@ var skill = {
         ,triggerType : "aura"
         ,target : "self"
         ,sEffect : null
+        ,adtEffect : null
+        ,adtEffectVal : null
+        ,skillCD : null
         ,auraType : "defRF"
         ,auraRFVal : 0.05
-        ,lvUpMod : 0.05
+        ,lvUpMod : {
+            auraRFVal : 0.05
+        }
     }
     ,5001 : {
         skillID : 5001
@@ -29,9 +40,14 @@ var skill = {
         ,triggerType : "aura"
         ,target : "self"
         ,sEffect : null   //side effect
+        ,adtEffect : null
+        ,adtEffectVal : null
+        ,skillCD : null
         ,auraType : "recRF"   
         ,auraRFVal : 0.1    // aura reinforce value
-        ,lvUpMod : 0.1
+        ,lvUpMod : {
+            auraRFVal : 0.1
+        }
     }
     ,5002 : {
         skillID : 5002
@@ -40,9 +56,14 @@ var skill = {
         ,triggerType : "aura"
         ,target : "self"
         ,sEffect : null
+        ,adtEffect : null
+        ,adtEffectVal : null
+        ,skillCD : null
         ,auraType : "atkRF"
         ,auraRFVal : 0.05
-        ,lvUpMod : 0.05
+        ,lvUpMod : {
+            auraRFVal : 0.05
+        }
     }
     ,5003 : {
         skillID : 5003
@@ -51,9 +72,68 @@ var skill = {
         ,triggerType : "aura"
         ,target : "self"
         ,sEffect : null
+        ,adtEffect : null
+        ,adtEffectVal : null
+        ,skillCD : null
         ,auraType : "skillRF"
         ,auraRFVal : 0.03
-        ,lvUpMod : 0.03
+        ,lvUpMod : {
+            auraRFVal : 0.03
+        }
+    }
+    ,10001 : {
+        skillID : 10001
+        ,name : "moraStone"
+        ,damage : 200
+        ,costNV : 200
+        ,range : 6
+        ,attribution : "physics"
+        ,triggerType : "positive"
+        ,target : "single"
+        ,sEffect : null
+        ,adtEffect : "repel"
+        ,adtEffectVal : 6
+        ,adtEffectTime : 200
+        ,skillCD : 5
+        ,lvUPMod : {
+            damage : 100
+        }
+    }
+    ,10002 : {
+        skillID : 10002
+        ,name : "moraScissors"
+        ,damage : 0
+        ,costNV : 50
+        ,range : 18
+        ,attribution : "physics"
+        ,triggerType : "positive"
+        ,target : "single"
+        ,sEffect : null
+        ,adtEffect : "bleed"
+        ,adtEffectVal : 50
+        ,adtEffectTime : 15000
+        ,skillCD : null
+        ,lvUPMod : {
+            adtEffectVal : 10
+        }
+    }
+    ,10003 : {
+        skillID : 10003
+        ,name : "moraFabric"
+        ,damage : 30
+        ,costNV : 100
+        ,range : 24
+        ,attribution : "physics"
+        ,triggerType : "positive"
+        ,target : "single"
+        ,sEffect : null
+        ,adtEffect : "slow"
+        ,adtEffectVal : 0.7
+        ,adtEffectTime : 5000
+        ,skillCD : 10
+        ,lvUPMod : {
+            adtEffectTime : 3
+        }
     }
 }
 
