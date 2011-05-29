@@ -63,6 +63,11 @@ var Animation = Coordinate.extend({
             this.nowShift = null;
             this.put();
             this.runOnce = true;
+        } else if (this.nowShift.type === 'moveRepel') {
+            console.log('moveRepel', this.nowShift.data);
+            this.moveCanvasDuration = this.nowShift.data.duration;
+            this.animationSwitch('stand');
+            this.dragCanvas();
         }
     }
     ,animationSwitch : function(action){
@@ -152,7 +157,7 @@ var Animation = Coordinate.extend({
             var _this = this;
             var nowDisplacementX = fc.fix(this.nowScreenX + deltaTime / this.moveCanvasDuration * this.displacementX);
             var nowDisplacementY = fc.fix(this.nowScreenY + deltaTime / this.moveCanvasDuration * this.displacementY);
-        	$(this.el).css({ left : nowDisplacementX + 'px' , top : nowDisplacementY + 'px' });
+        	$(this.el).css({left : nowDisplacementX + 'px' , top : nowDisplacementY + 'px' });
             this.moveAnimationID = requestAnimationFrame(function() { _this.moveCanvas(); });
             return;
         }
@@ -162,16 +167,52 @@ var Animation = Coordinate.extend({
         this.y = this.serverNextXY.y;
         this.canvasMoving = false;
         this.nowShift = null;
-        return;
+    }
+    ,dragCanvas : function() {
+        var timestamp = fc.getNowTimestamp();
+
+        if (!this.canvasMoving) {
+            this.canvasMoving = true;
+
+            this.moveProgress = fc.getNowTimestamp();
+            
+            this.serverNowXY = this.getCoordinateXY(this.nowShift.data.nowLocation);
+            this.serverNextXY = this.getCoordinateXY(this.nowShift.data.endLocation);
+
+            var directionRe = this.getTowardNewGridDirection(this.serverNextXY.x, this.serverNextXY.y);
+            this.directionID = (directionRe != undefined) ? directionRe : this.directionID;
+
+            this.nowScreenX = this.transferLogicToScreenX(this.serverNowXY.x,this.serverNowXY.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
+            this.nowScreenY = this.transferLogicToScreenY(this.serverNowXY.x,this.serverNowXY.y) - this.offset[this.action].y;
+
+            var nextScreenX = this.transferLogicToScreenX(this.serverNextXY.x,this.serverNextXY.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
+            var nextScreenY = this.transferLogicToScreenY(this.serverNextXY.x,this.serverNextXY.y) - this.offset[this.action].y;
+
+            this.displacementX = nextScreenX - this.nowScreenX;
+            this.displacementY = nextScreenY - this.nowScreenY;
+        }
+
+        var deltaTime = timestamp - this.moveProgress;
+        if (deltaTime <= this.moveCanvasDuration) {
+            var _this = this;
+            var nowDisplacementX = fc.fix(this.nowScreenX + deltaTime / this.moveCanvasDuration * this.displacementX);
+            var nowDisplacementY = fc.fix(this.nowScreenY + deltaTime / this.moveCanvasDuration * this.displacementY);
+        	$(this.el).css({left : nowDisplacementX + 'px' , top : nowDisplacementY + 'px' });
+            this.moveAnimationID = requestAnimationFrame(function() { _this.dragCanvas(); });
+            return;
+        }
+            
+        this.moveProgress = 0;
+        this.x = this.serverNextXY.x;
+        this.y = this.serverNextXY.y;
+        this.canvasMoving = false;
+        this.nowShift = null;
     }
     ,put : function() {
         var originalScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
 
         var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + this.offset[this.action].x;
         var screenY = this.transferLogicToScreenY(this.x, this.y) - this.offset[this.action].y;
-
-        console.log("x", this.offset[this.action].x);
-        console.log("y", this.offset[this.action].y);
 
         $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 

@@ -4,6 +4,7 @@ var consoleDiv;
 //var WS_HOST = "ws://ginodedemo.duostack.net:9980";
 var WS_HOST = "ws://192.168.0.130:8080";
 //var WS_HOST = "ws://giworld.gicp.net:8081";
+//var WS_HOST = "ws://gi.no.de:8080";
 
 var WsConnect = Class.extend({
     init : function(){
@@ -31,7 +32,7 @@ var WsConnect = Class.extend({
         }
         ws.onmessage = function(e) {
             var stream = JSON.parse(e.data);
-            new Input(stream);
+            GI.input.execute(stream);
         }
     }
     ,initDisconnect : function(){

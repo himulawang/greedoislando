@@ -4,10 +4,9 @@ var Init = Class.extend({
         this.lag = null;
         this.target = null;
         this.otherChar = {};
+        this.initInput();
         this.initMaterial();
         this.initCursor();
-        //this.initShowWay();
-        this.initMap();
         this.disableContextMenu();
         this.bindArrowKey();
         this.bindMouseOverGrid();
@@ -30,11 +29,32 @@ var Init = Class.extend({
                 _this.cursor.moveLeft();
             } else if (e.which === 39) { //Right
                 _this.cursor.moveRight();
-            } else if (e.which >= 49 && e.which <= 53) {
+            } else if (e.which === 49) {
                 var obj = {
                     type : "castSkill"
                     ,target : GI.targetCID
-                    ,skillID: 10000
+                    ,skillID: 10000 // right punch
+                }
+                wsocket.sendMessage(obj);
+            } else if (e.which === 50) {
+                var obj = {
+                    type : "castSkill"
+                    ,target : GI.targetCID
+                    ,skillID: 10001 // stone
+                }
+                wsocket.sendMessage(obj);
+            } else if (e.which === 51) {
+                var obj = {
+                    type : "castSkill"
+                    ,target : GI.targetCID
+                    ,skillID: 10002 // scissors
+                }
+                wsocket.sendMessage(obj);
+            } else if (e.which === 52) {
+                var obj = {
+                    type : "castSkill"
+                    ,target : GI.targetCID
+                    ,skillID: 10003 // fabric
                 }
                 wsocket.sendMessage(obj);
             }
@@ -61,21 +81,18 @@ var Init = Class.extend({
             var y = _this.map.transferScreenToLogicY(xPX, yPX);
             if (!_this.map.checkMoveOut(x, y)) return;
             var endPoint = _this.map.getCoordinateIndex(x, y);
-            //Old Pattern , no longer use , Delete for efficiency
-            //var startPoint = _this.map.getCoordinateIndex(_this.char.player.x, _this.char.player.y);            
-            //var obj = { type : 'moveCharacter', startPoint : startPoint, endPoint : endPoint };
             var obj = { type : 'moveCharacter', endPoint : endPoint };
             //move
             if (e.which === 3) {
-                //verify click grid is movePossible
                 var index = _this.map.getCoordinateIndex(x, y);
-                //console.log(_this.map.verifyMovePossible(index));
                 if(!_this.map.verifyClickMovePossible(index)) return;
-                //_this.char.player.charMove(startPoint,endPoint);
                 wsocket.sendMessage(obj);
             }
             return false;
         }
+    }
+    ,initInput : function() {
+        this.input = new Input;
     }
     /* Draw Basic Element */
     ,initMaterial : function() {
@@ -86,7 +103,8 @@ var Init = Class.extend({
         this.map.getCanvas($('#grid')[0]);
         this.map.getData();
         this.map.draw();
-    }    
+        this.map.initObstacle();
+    }
     ,initCursor : function() {
         this.cursor = new Cursor;
         this.cursor.getCanvas($('#cursor')[0]);
@@ -99,24 +117,9 @@ var Init = Class.extend({
         this.showWayCursor.draw();
         this.showWayCursor.startBreath();
     }
-    /* Create Character */
-    ,createChar : function(data) {
-        this.char = {};
-        for (var x in data) {
-            this.char.player = eval('new '+ data[x].name);
-            this.char.player.cID = data[x].cID;
-            this.char.player.setSelf();
-            this.char.player.make(data[x]);
-        }
-    }
-    ,createOtherChar : function(data){
-        var cID;
-        for (var x in data) {
-            var cID = data[x].cID;
-            if (this.otherChar[cID]) continue;
-            this.otherChar[cID] = eval('new ' + data[x].name);
-            this.otherChar[cID].make(data[x]);
-        }
+    ,isSelf : function(cID) {
+        if (cID === this.cID) return true;
+        return false;
     }
 });
 
