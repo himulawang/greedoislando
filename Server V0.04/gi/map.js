@@ -830,6 +830,9 @@ map.prototype.setObstacleToFindWay = function() {
         }
     }
 }
+map.prototype.getObstableList = function() {
+    return this.findway.getObstacleList(); 
+}
 map.prototype.getWay = function(startPoint, endPoint) {
     var startXY = fc.getCoordinateXY(startPoint);
     var endXY = fc.getCoordinateXY(endPoint);
@@ -844,4 +847,75 @@ map.prototype.getRange = function(a, b) {
     var deltaX = Math.abs(aXY.x - bXY.x);
     var deltaY = Math.abs(aXY.y - bXY.y);
     return Math.round(Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)));
+}
+map.prototype.getDirection = function(startPoint, endPoint) {
+    var startXY = fc.getCoordinateXY(startPoint);
+    var endXY = fc.getCoordinateXY(endPoint);
+    if (startXY.x === endXY.x && startXY.y > endXY.y) {
+        return 0;
+    } else if (startXY.x === endXY.x && startXY.y < endXY.y) {
+        return 4;
+    } else if (startXY.y === endXY.y && startXY.x > endXY.x) {
+        return 6;
+    } else if (startXY.y === endXY.y && startXY.x < endXY.x) {
+        return 2;
+    } else if (startXY.x > endXY.x && startXY.y > endXY.y) {
+        return 7;
+    } else if (startXY.x < endXY.x && startXY.y > endXY.y) {
+        return 1;
+    } else if (startXY.x > endXY.x && startXY.y < endXY.y) {
+        return 5;
+    } else if (startXY.x < endXY.x && startXY.y < endXY.y) {
+        return 3;
+    }
+}
+map.prototype.getLineCoordinateWithoutObstacle = function(startPoint, direction, range) {
+    var line = [];
+    var startPointXY = fc.getCoordinateXY(startPoint);
+    var tmpXY = startPointXY;
+    if (direction === 0) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(tmpXY.x, ++tmpXY.y));
+        }
+    } else if (direction === 4) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(tmpXY.x, --tmpXY.y));
+        }
+    } else if (direction === 6) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(++tmpXY.x, tmpXY.y));
+        }
+    } else if (direction === 2) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(--tmpXY.x, tmpXY.y));
+        }
+    } else if (direction === 7) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(++tmpXY.x, ++tmpXY.y));
+        }
+    } else if (direction === 1) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(--tmpXY.x, ++tmpXY.y));
+        }
+    } else if (direction === 5) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(++tmpXY.x, --tmpXY.y));
+        }
+    } else if (direction === 3) {
+        for (var i = 0; i < range; ++i) {
+            line.push(fc.getCoordinateIndex(--tmpXY.x, --tmpXY.y));
+        }
+    }
+
+    var obstacleList = this.getObstableList();
+    var validLine = [];
+
+    for (var x in line) {
+        if (obstacleList[line[x]]) {
+            return validLine;
+        } else {
+            validLine.push(line[x]);
+        }
+    }
+    return validLine;
 }

@@ -9,13 +9,13 @@ var selectCharacter = function(io) {
     giUserList.initCharacter(cID, io.iData.character);
     var myCharacter = giUserList.getCharacter(cID);
     var myCharacterData = {};
-    myCharacterData[cID] = myCharacter.getInfo();
+    myCharacterData = myCharacter.getInfo();
     io.addOutputData(cID, 'initMyCharacter', 'self', myCharacterData);
 
     //newCharacterLogin -> Other
     var newCharacterLoginData = {};
-    newCharacterLoginData[cID] = myCharacter.getInfo();
-    io.addOutputData(cID, 'newCharacterLogin', 'other', newCharacterLoginData);
+    newCharacterLoginData = myCharacter.getInfo();
+    io.addOutputData(cID, 'newCharacterLogin', 'loggedOther', newCharacterLoginData);
 
     io.response();
 }
@@ -24,7 +24,7 @@ var logout = function (io) {
     
     //logout -> Other
     giUserList.disconnect(cID);
-    io.add(addOutputData, 'logout', 'other', {cID : cID});
+    io.add(addOutputData, 'logout', 'loggedOther', {cID : cID});
 
     io.response();
 }
@@ -82,6 +82,7 @@ var castSkill = function(io) {
         var target = giUserList.getCharacter(targetCID);
         if (!target) return;
         if (target.getStatus() === 0) return;  //  target dead , no more attack on dead body!!
+        if (target.doAction === 3) return;  // target being repeled ... TODO
         //check range
         var targetLocation = target.getLocation();
         var location = character.getLocation();
@@ -122,6 +123,8 @@ var castSkill = function(io) {
             var nowHP = target.subHP(damage, target.atkRF);
             io.addOutputData(cID, 'hpChange', 'logged', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
             if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'logged', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
+            //skill cause additional effect
+            if (skill.adtEffect != null) target.doSkillAdtEffect(cID, skill, character.position);
         }
         
         character.cCD = 0;  // GCD -- cant use skill in the next 1.5s

@@ -14,6 +14,9 @@ findway.prototype.reset = function() {
 findway.prototype.setObstacle = function(x, y) {
     this.obstacleList[this.getIndex(x, y)] = {x : parseInt(x), y : parseInt(y)};
 }
+findway.prototype.getObstacleList = function() {
+    return this.obstacleList;
+}
 findway.prototype.setStart = function(x, y) {
     this.startPoint = {x : parseInt(x), y : parseInt(y)};
 }

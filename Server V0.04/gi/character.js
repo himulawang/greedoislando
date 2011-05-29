@@ -47,12 +47,15 @@ var character = function(cID, name) {
     this.atkRF = 0;  // Attack Aura Reinforcement
     this.recRF = 0;  // Free Recover Aura Reinforcement
     this.skillRF = 0;  // Skill Power Aura Reinforcement
-    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill
+    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel
+    this.speedFactor = 1; // Init Speed  = 100%
+    this.dotTimer = 3000; // ms , take dot effect per 3s
 
     this.doActionList = {
         toStand : 0
         ,toMove : 1
         ,toAttack : 2
+        ,toRepel : 3
     }
 
     this.baseNein = {
@@ -62,8 +65,6 @@ var character = function(cID, name) {
         ,launch : 1
     }
     this.skill = {};
-    //stoneScissorsCloth
-    this.skill[10000] = skill.get(10000);
     // Attribute End
     do {
         this.x = 12;
@@ -82,6 +83,7 @@ var character = function(cID, name) {
     this.freeRecover();
     this.auraRF(this.getAura());
     this.systemRF();
+    this.avbSkill();
 }
 
 character.prototype.getInfo = function() {
@@ -117,15 +119,28 @@ character.prototype.getAura = function() {
         ,5003 : 1
     };
 }
-character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
+// Init Gon's Skill list
+character.prototype.avbSkill = function() {
+    var charSkill = {
+        10000 : 1
+        ,10001 : 1
+        ,10002 : 1
+        ,10003 : 1
+    };
     var x;
-    for(x in auraz) {
+    for (x in charSkill) {
         this.skill[x] = skill.get(x);
     }
-    this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod;
-    this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod;
-    this.recRF = this.skill[5002].auraRFVal + auraz[5002] * this.skill[5002].lvUpMod;
-    this.skillRF = this.skill[5003].auraRFVal + auraz[5003] * this.skill[5003].lvUpMod;
+}
+character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
+    var x;
+    for (x in auraz) {
+        this.skill[x] = skill.get(x);
+    }
+    this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod.auraRFVal;
+    this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod.auraRFVal;
+    this.recRF = this.skill[5002].auraRFVal + auraz[5002] * this.skill[5002].lvUpMod.auraRFVal;
+    this.skillRF = this.skill[5003].auraRFVal + auraz[5003] * this.skill[5003].lvUpMod.auraRFVal;
 }
 character.prototype.systemRF = function() {
     // reinforce skill power by NIEN system , judge by skill attribution & system reinforce type
@@ -166,7 +181,7 @@ character.prototype.moveWay = function() {
     var cID = this.getCID();
     var stream = io.create();
     stream.setSelfCID(cID);
-    if (this.wayIndex >= this.way.length || this.doAction === 2) {   // doAction pause the moving action for attacking
+    if (this.wayIndex >= this.way.length || this.doAction === 2 || this.doAction === 3) {   // doAction pause the moving action for attacking
         this.characterMoving = false;
         this.nextXY = null;
         this.moveTimeout = null;
@@ -184,7 +199,7 @@ character.prototype.moveWay = function() {
     this.nextGridIndex = this.way[this.wayIndex];
     this.nextXY = fc.getCoordinateXY(this.nextGridIndex);
 
-    var time = GI_CHARACTER_MOVING_SPEED;
+    var time = fc.fix(GI_CHARACTER_MOVING_SPEED / this.speedFactor); // speedup / slow status
     this.directionID = this.getTowardNewGridDirection(this.nextXY.x, this.nextXY.y);
     if (this.directionID % 2 === 1) {
         time *= 1.4;
@@ -312,6 +327,105 @@ character.prototype.hitProc = function(tangoDodgeRate) {
     var rand = fc.random(100);
     var hit = (rand <= chance) ? 1 : 0;
     return hit;
+}
+character.prototype.doSkillAdtEffect = function(scID, skill, tPos) {
+    if (skill.adtEffect === 'repel') {
+        this.doRepel(skill, tPos);        
+    } else if (skill.adtEffect === 'bleed') {
+        this.startBleed(skill, scID);
+    } else if (skill.adtEffect === 'slow') {
+        this.doSlow(skill, scID);
+    }
+}
+character.prototype.doRepel = function(skill, tPos) {
+    var _this = this;
+    this.setDoAction('toRepel');
+    var direction = giMap.getDirection(this.position, tPos);
+    var validLine = giMap.getLineCoordinateWithoutObstacle(this.position, direction, skill.adtEffectVal);
+    console.log(validLine);
+    var len = validLine.length;
+    if (len === 0) {
+        var endGridIndex = this.position;
+    } else {
+        var endGridIndex = validLine[len - 1];
+    }
+
+    var stream = io.create();
+    var cID = this.getCID();
+    var repelDuration = skill.adtEffectTime;
+
+    stream.setSelfCID(cID);
+    stream.addOutputData(cID, 'moveRepel', 'logged', {cID : cID, nowLocation : this.position, endLocation : endGridIndex, duration : repelDuration, timestamp : fc.getTimestamp() });
+    stream.response();
+
+    setTimeout(function(){
+        _this.setLocation(endGridIndex);
+        _this.setDoAction('toStand');
+    }, repelDuration);
+
+}
+character.prototype.startBleed = function(skill, scID) {
+    var _this = this;
+
+    var stream = io.create();
+    var cID = this.getCID();
+    stream.setSelfCID(cID);
+
+    var doTimes = skill.adtEffectTime / this.dotTimer;
+
+    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1 , isOn : 1 });
+    stream.response();
+
+    this.dotCounts = 0;
+    this.doBleed(skill, scID, doTimes);
+}
+character.prototype.doBleed = function(skill, scID, doTimes) {
+    var _this =this;
+    
+    var stream = io.create();
+    var cID = this.getCID();
+    stream.setSelfCID(cID);
+
+    setTimeout(function(){
+        _this.doDotDamage(skill, scID);
+        _this.dotCounts++;
+        if (_this.dotCounts === doTimes) {
+            stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1 , isOn : 0 });
+            stream.response();
+            _this.dotCounts = 0;
+            return;
+        }
+        _this.doBleed(skill, scID, doTimes);
+    },this.dotTimer);
+}
+character.prototype.doDotDamage = function(skill, scID) {
+    var hp = skill.adtEffectVal;   // No Damage reduction formulation for Dot
+    hp = fc.fix(hp);
+    var preHP = this.getHP();
+    this.hp = (hp < this.hp) ? this.hp - hp : 0;
+    if (this.hp === 0) {
+        this.setDead();
+    }
+    var stream = io.create();
+    var cID = this.getCID();
+    stream.setSelfCID(cID);
+    // Dot Damage Data Stream
+    stream.addOutputData(cID, 'hpChange', 'logged', {cID : cID, preHP : preHP, nowHP : this.hp, hpDelta : this.hp - preHP});
+    stream.response();
+}
+character.prototype.doSlow = function(skill, scID) {
+    var _this = this;
+    var stream = io.create();
+    var cID = this.getCID();
+    stream.setSelfCID(cID);
+    this.speedFactor = 1 - skill.adtEffectVal;
+    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 1 });
+    stream.response();
+    setTimeout(function(){
+        _this.speedFactor = 1;
+        stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
+        stream.response();
+    }, skill.adtEffectTime);
 }
 exports.create = function(cID, name) {
     return new character(cID, name);
