@@ -133,10 +133,9 @@ var Map = Coordinate.extend({
             var offsetX = this.DEFINE[objID].offsetX;
             var offsetY = this.DEFINE[objID].offsetY;
             //console.log(objID);
-            if(objID == 2001  || objID == 2002 || objID == 2004)
-            {
+            if(objID == 2001  || objID == 2002 || objID == 2004) {
                 img.src = 'images/terrain/' + terrainType + '-1-s.png';
-                this.context.drawImage(img,this.transferLogicToScreenX(x, y) - offsetX,this.transferLogicToScreenY(x, y) - offsetY);
+                this.context.drawImage(img, this.transferLogicToScreenX(x, y) - offsetX,this.transferLogicToScreenY(x, y) - offsetY);
             }
         }
     }
@@ -164,8 +163,6 @@ var Map = Coordinate.extend({
         return x + ',' + y;
     }
     ,initObstacle : function() {
-        //this.findWay = new FindWay;
-        //add obstacle to findway's obstacleList
         this.obstacleList = {};
         var xy, i, j;
         for (var index in this.grid) {

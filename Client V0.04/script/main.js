@@ -19,8 +19,8 @@ var GI_TERRAIN_DEFINE = {
 
 var GI;
 $(function(){
-    wsocket = new WsConnect;
     GI = new Init;
+    wsocket = new WsConnect;
 });
 
 

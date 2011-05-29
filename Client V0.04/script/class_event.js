@@ -4,7 +4,7 @@ var Event = {
             if (e.which != 1) return;
 
             var targetCID = $(el).attr('id');
-            if (targetCID === GI.char.player.cID) return;
+            if (targetCID === GI.player.cID) return;
 
             GI.targetCID = targetCID;
             //cancel other targets
