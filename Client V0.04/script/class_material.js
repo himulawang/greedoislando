@@ -28,6 +28,7 @@ var Material = Class.extend({
     }
     ,initMaterial : function(){
         this.loadCharacterList();
+        this.loadMapElement();
     }
     ,loadCharacterList : function() {
         for (var character in this.materialData.character) {
@@ -48,5 +49,19 @@ var Material = Class.extend({
             }
             this.images[characterName][action] = tmp;
         }
+    }
+    ,loadMapElement : function() {
+        var terrains = {
+            2001 : 'rock'
+            ,2002 : 'tree'
+            ,2004 : 'pillar'
+        };
+        var tmp = {}
+        for (var objID in terrains) {
+            var img = new Image();
+            img.src = 'images/terrain/' + terrains[objID] + '-1-s.png';
+            tmp[objID] = img;
+        }
+        this.images['map'] = tmp;
     }
 });
