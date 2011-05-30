@@ -52,17 +52,17 @@
 #ui-my-profile {
     position: absolute;
     width: 200px;
-    height: 110px;
+    height: 60px;
     border: 1px solid #DDDDDD;
     left: 360px;
-    top: 400px;
+    top: 450px;
     z-index: 100;
     background-color: #FFFFFF;
     opacity: .8;
 }
 #ui-my-avartar {
     width: 100px;
-    height: 100px;
+    height: 60px;
     border: 1px solid #DDDDDD;
     float: left;
 }
@@ -78,17 +78,17 @@
 #ui-target-profile {
     position: absolute;
     width: 200px;
-    height: 110px;
+    height: 60px;
     border: 1px solid #DDDDDD;
     left: 560px;
-    top: 400px;
+    top: 450px;
     z-index: 100;
     background-color: #FFFFFF;
     opacity: .8;
 }
 #ui-target-avartar {
     width: 100px;
-    height: 100px;
+    height: 60px;
     border: 1px solid #DDDDDD;
     float: left;
 }

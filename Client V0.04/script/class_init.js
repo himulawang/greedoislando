@@ -98,7 +98,7 @@ var Init = Class.extend({
     ,initMaterial : function() {
         this.material = new Material;
     }
-    ,initMap : function(data) {
+    ,initMap : function() {
         this.map = new Map;
         this.map.getCanvas($('#grid')[0]);
         this.map.getData();

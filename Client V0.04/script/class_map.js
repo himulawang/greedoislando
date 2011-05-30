@@ -128,13 +128,12 @@ var Map = Coordinate.extend({
             */
             
             //Init Terrain
-            var img = new Image();
             var objID = this.grid[index].objID;
             var offsetX = this.DEFINE[objID].offsetX;
             var offsetY = this.DEFINE[objID].offsetY;
-            //console.log(objID);
+            var lib = GI.material.images.map;
             if(objID == 2001  || objID == 2002 || objID == 2004) {
-                img.src = 'images/terrain/' + terrainType + '-1-s.png';
+                var img = lib[objID];
                 this.context.drawImage(img, this.transferLogicToScreenX(x, y) - offsetX,this.transferLogicToScreenY(x, y) - offsetY);
             }
         }
