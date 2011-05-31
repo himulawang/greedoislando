@@ -67,6 +67,7 @@ var castSkill = function(io) {
     var character = giUserList.getCharacter(cID);
     character.setDoAction('toAttack');  // trigger for attack action pausing the moving action
     if (character.getStatus() === 0) return;  // character dead , no action permitted
+    if (character.getStatus() === 5) return;  // character being repeled ... cant do anything
     if (character.getcCD() === 0) {
         io.addOutputData(cID, 'commonCD', 'self', {cID : cID, timestamp : fc.getTimestamp()});
         io.response();
@@ -82,7 +83,7 @@ var castSkill = function(io) {
         var target = giUserList.getCharacter(targetCID);
         if (!target) return;
         if (target.getStatus() === 0) return;  //  target dead , no more attack on dead body!!
-        if (target.doAction === 3) return;  // target being repeled ... TODO
+        if (target.getStatus() === 5) return;  // target being repeled ... invincible ... cant attack on target
         //check range
         var targetLocation = target.getLocation();
         var location = character.getLocation();
