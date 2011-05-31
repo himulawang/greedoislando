@@ -117,6 +117,9 @@ var Init = Class.extend({
         this.showWayCursor.draw();
         this.showWayCursor.startBreath();
     }
+    ,initLog : function() {
+        log = new Log;
+    }
     ,isSelf : function(cID) {
         if (cID === this.cID) return true;
         return false;

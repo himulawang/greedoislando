@@ -10,7 +10,7 @@ var Input = Class.extend({
             ,keepSession : this.keepSession
             ,hpChange : this.hpChange
             ,nvChange : this.nvChange
-            ,castSkill : this.addActionQueue
+            ,castSkill : this.castSkill
             ,castSkillOutOfRange : this.castSkillOutOfRange
             ,commonCD : this.commonCD
             ,statusChange : this.statusChange
@@ -18,6 +18,7 @@ var Input = Class.extend({
             ,skillMiss : this.skillMiss
             ,moveRepel : this.addActionQueue
             ,debuff : this.debuff
+            ,addActionQueue : this.addActionQueue
         }
     }
     ,execute : function(stream) {
@@ -52,6 +53,7 @@ var Input = Class.extend({
             });
         });
         GI.initMap();
+        GI.initLog();
     }
     ,newCharacterLogin : function(data, stream) {
         var cID = data.cID;
@@ -69,6 +71,7 @@ var Input = Class.extend({
         }
     }
     ,hpChange : function(data, stream) {
+        log.hpChange(data);
         var cID = data.cID;
         if (GI.isSelf(cID)) {
             GI.ui.myStatus.setHP(data.nowHP);
@@ -77,6 +80,7 @@ var Input = Class.extend({
         GI.otherChar[cID].setHP(data.nowHP);
     }
     ,nvChange : function(data, stream) {
+        log.nvChange(data);
         var cID = data.cID;
         if (GI.isSelf(cID)) {
             GI.ui.myStatus.setNV(data.nowNV);
@@ -85,16 +89,14 @@ var Input = Class.extend({
         GI.otherChar[cID].setNV(data.nowNV);
     }
     ,castSkillOutOfRange : function(data, stream) {
-        console.log(data);
     }
     ,commonCD : function(data, stream) {
-        console.log(data);
+        log.commonCD(data);
     }
     ,skillMiss : function(data, stream) {
-        console.log(data);
     }
     ,statusChange : function(data, stream) {
-        console.log(data);
+        log.statusChange(data);
     }
     ,freeRecover : function(data, stream) {
         var cID = data.cID;
@@ -131,6 +133,10 @@ var Input = Class.extend({
         GI.otherChar[cID].animation.getQueueAction();
     }
     ,debuff : function(data, stream) {
-        console.log(stream);
+        log.debuff(data);
+    }
+    ,castSkill : function(data, stream) {
+        log.castSkill(data);
+        this.addActionQueue(data, stream);
     }
 });
