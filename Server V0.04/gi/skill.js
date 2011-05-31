@@ -110,7 +110,7 @@ var skill = {
         ,target : "single"
         ,sEffect : null
         ,adtEffect : "bleed"
-        ,adtEffectVal : 50
+        ,adtEffectVal : 10
         ,adtEffectTime : 15000
         ,skillCD : null
         ,lvUPMod : {

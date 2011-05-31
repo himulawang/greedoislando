@@ -36,7 +36,8 @@ var character = function(cID, name) {
     this.basicHit = 75; // Basic Hit Rate = 75%
     this.hitRateAdd = 10; // Additional Hit Rate = 10% , Suppose
     this.dodgeRateAdd = 5; // Additional Hit Rate = 5% , Suppose
-    this.status = 1; // 0 = dead , 1 = free , 2 = combat , 3 = criminal
+    // 0 = Dead , 1 = Free , 2 = Combat , 3 = Criminal , 4 = Invincible , 5 = KnockOut
+    this.status = 1; 
     this.cCD = 1; // GCD status , 0 = CoolDowning , 1 = Cooledowned
     this.cDuration = 1500; // ms , GCD
     this.freeDuration = 5000; // ms , status to free
@@ -50,6 +51,7 @@ var character = function(cID, name) {
     this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel
     this.speedFactor = 1; // Init Speed  = 100%
     this.dotTimer = 3000; // ms , take dot effect per 3s
+    this.debuffList = {};
 
     this.doActionList = {
         toStand : 0
@@ -199,7 +201,7 @@ character.prototype.moveWay = function() {
     this.nextGridIndex = this.way[this.wayIndex];
     this.nextXY = fc.getCoordinateXY(this.nextGridIndex);
 
-    var time = fc.fix(GI_CHARACTER_MOVING_SPEED / this.speedFactor); // speedup / slow status
+    var time = fc.fix(GI_CHARACTER_MOVING_SPEED / this.speedFactor); 
     this.directionID = this.getTowardNewGridDirection(this.nextXY.x, this.nextXY.y);
     if (this.directionID % 2 === 1) {
         time *= 1.4;
@@ -294,15 +296,24 @@ character.prototype.getcCD = function() {
 character.prototype.setFree = function() {
     var _this = this;
     clearTimeout(this.setFreeTimeout);
-    if (this.status === 0) return;
     this.setFreeTimeout = setTimeout(function(){ 
+        if (this.status === 0) return;
         _this.status = 1;
-        //_this.freeRecover();
+        var stream = io.create();
+        var cID = _this.getCID();
+        stream.setSelfCID(cID);
+        stream.addOutputData(cID, 'statusChange', 'logged', {cID : cID, status : _this.getStatus(), timestamp : fc.getTimestamp()});
+        stream.response();
     }, this.freeDuration);
 }
 character.prototype.setCombat = function() {
     //clearInterval(this.setFreeRecInterval);
     this.status = 2;
+    var stream = io.create();
+    var cID = this.getCID();
+    stream.setSelfCID(cID);
+    stream.addOutputData(cID, 'statusChange', 'logged', {cID : cID, status : this.getStatus(), timestamp : fc.getTimestamp()});
+    stream.response();
 }
 character.prototype.freeRecover = function() {
     var _this = this;
@@ -329,26 +340,36 @@ character.prototype.hitProc = function(tangoDodgeRate) {
     return hit;
 }
 character.prototype.doSkillAdtEffect = function(scID, skill, tPos) {
+    this.pushDebuffList(scID, skill, tPos);
     if (skill.adtEffect === 'repel') {
-        this.doRepel(skill, tPos);        
+        this.doRepel(scID, skill, tPos);
     } else if (skill.adtEffect === 'bleed') {
-        this.startBleed(skill, scID);
+        this.startBleed(scID, skill, tPos);
     } else if (skill.adtEffect === 'slow') {
-        this.doSlow(skill, scID);
+        this.doSlow(scID, skill, tPos);
     }
 }
-character.prototype.doRepel = function(skill, tPos) {
+character.prototype.pushDebuffList = function(scID, skill, tPos) {
+    var dID = scID + "_" + skill.skillID;
+    if (!this.debuffList[dID]) {
+        var debuff = { skillName : skill.name, debuff : skill.adtEffect, stack : 0 };
+        this.debuffList[dID] = debuff;
+    }
+    this.getDebuffList();
+}
+character.prototype.getDebuffList = function() {
+    return this.debuffList;
+}
+character.prototype.doRepel = function(scID, skill, tPos) {
     var _this = this;
+    //var lastStatus = this.getStatus();
+    //if (lastStatus === 0) return;
+    //this.status = 5;
     this.setDoAction('toRepel');
     var direction = giMap.getDirection(this.position, tPos);
     var validLine = giMap.getLineCoordinateWithoutObstacle(this.position, direction, skill.adtEffectVal);
-    console.log(validLine);
     var len = validLine.length;
-    if (len === 0) {
-        var endGridIndex = this.position;
-    } else {
-        var endGridIndex = validLine[len - 1];
-    }
+    var endGridIndex = (len === 0) ? this.position : validLine[len - 1] ;
 
     var stream = io.create();
     var cID = this.getCID();
@@ -358,48 +379,65 @@ character.prototype.doRepel = function(skill, tPos) {
     stream.addOutputData(cID, 'moveRepel', 'logged', {cID : cID, nowLocation : this.position, endLocation : endGridIndex, duration : repelDuration, timestamp : fc.getTimestamp() });
     stream.response();
 
+    var dID = scID + "_" + skill.skillID;
+
     setTimeout(function(){
+        delete _this.debuffList[dID];
+        //_this.status = lastStatus;
         _this.setLocation(endGridIndex);
         _this.setDoAction('toStand');
     }, repelDuration);
 
 }
-character.prototype.startBleed = function(skill, scID) {
+character.prototype.startBleed = function(scID, skill, tPos) {
     var _this = this;
 
     var stream = io.create();
     var cID = this.getCID();
     stream.setSelfCID(cID);
 
+    var dID = scID + "_" + skill.skillID;
+
+    if (this.debuffList[dID].stack < 5) {
+        ++this.debuffList[dID].stack;
+    }
+
     var doTimes = skill.adtEffectTime / this.dotTimer;
 
-    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1 , isOn : 1 });
+    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : this.debuffList[dID].stack , isOn : 1 });
     stream.response();
 
     this.dotCounts = 0;
-    this.doBleed(skill, scID, doTimes);
+    
+    if (this.debuffList[dID].stack > 1) return;
+
+    this.doBleed(scID, skill, doTimes);
 }
-character.prototype.doBleed = function(skill, scID, doTimes) {
+character.prototype.doBleed = function(scID, skill, doTimes) {
     var _this =this;
     
     var stream = io.create();
     var cID = this.getCID();
     stream.setSelfCID(cID);
 
+    var dID = scID + "_" + skill.skillID;
+
     setTimeout(function(){
-        _this.doDotDamage(skill, scID);
+        _this.doDotDamage(scID, skill);
         _this.dotCounts++;
         if (_this.dotCounts === doTimes) {
-            stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1 , isOn : 0 });
+            stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : _this.debuffList[dID].stack , isOn : 0 });
             stream.response();
             _this.dotCounts = 0;
+            delete _this.debuffList[dID];
             return;
         }
-        _this.doBleed(skill, scID, doTimes);
+        _this.doBleed(scID, skill, doTimes);
     },this.dotTimer);
 }
-character.prototype.doDotDamage = function(skill, scID) {
-    var hp = skill.adtEffectVal;   // No Damage reduction formulation for Dot
+character.prototype.doDotDamage = function(scID, skill) {
+    var dID = scID + "_" + skill.skillID;
+    var hp = skill.adtEffectVal * this.debuffList[dID].stack;   // No Damage reduction formulation for Dot
     hp = fc.fix(hp);
     var preHP = this.getHP();
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
@@ -413,7 +451,7 @@ character.prototype.doDotDamage = function(skill, scID) {
     stream.addOutputData(cID, 'hpChange', 'logged', {cID : cID, preHP : preHP, nowHP : this.hp, hpDelta : this.hp - preHP});
     stream.response();
 }
-character.prototype.doSlow = function(skill, scID) {
+character.prototype.doSlow = function(scID, skill, tPos) {
     var _this = this;
     var stream = io.create();
     var cID = this.getCID();
@@ -421,8 +459,12 @@ character.prototype.doSlow = function(skill, scID) {
     this.speedFactor = 1 - skill.adtEffectVal;
     stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 1 });
     stream.response();
+
+    var dID = scID + "_" + skill.skillID;
+
     setTimeout(function(){
         _this.speedFactor = 1;
+        delete _this.debuffList[dID];
         stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
         stream.response();
     }, skill.adtEffectTime);
