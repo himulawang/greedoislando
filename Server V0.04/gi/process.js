@@ -65,18 +65,27 @@ var keepSession = function(io) {
 var castSkill = function(io) {
     var cID = io.iData.cID;
     var character = giUserList.getCharacter(cID);
+    var skillID = io.iData.skillID;
+    var skill = character.getSkill(skillID);
+
+    //check character has this skill
+    if (!skill) return;
+
     character.setDoAction('toAttack');  // trigger for attack action pausing the moving action
+
     if (character.getStatus() === 0) return;  // character dead , no action permitted
     if (character.getStatus() === 5) return;  // character being repeled ... cant do anything
+
     if (character.getcCD() === 0) {
         io.addOutputData(cID, 'commonCD', 'self', {cID : cID, timestamp : fc.getTimestamp()});
         io.response();
         return;
+    } else if (character.getSkillCDList(skillID)) {
+        io.addOutputData(cID, 'skillCDing', 'self', {cID : cID, skillID : skillID, timestamp : fc.getTimestamp()});
+        io.response();
+        return;
     }
-    var skillID = io.iData.skillID;
-    var skill = character.getSkill(skillID);
-    //check character has this skill
-    if (!skill) return;
+    
     //getSkillType
     if (skill.target === "single") {
         var targetCID = io.iData.target;
@@ -131,15 +140,14 @@ var castSkill = function(io) {
         character.cCD = 0;  // GCD -- cant use skill in the next 1.5s
         character.commonCD();  // 1.5s CoolDown Proc begins
 
+        character.setSkillCD(skill);
+
         character.setFree();  // 10s later set self status to free
         target.setFree();  // 10s later set tango status to free
 
         io.response();
     }
 }
-
-
-
 
 global.PROCESS = {
     logged : {

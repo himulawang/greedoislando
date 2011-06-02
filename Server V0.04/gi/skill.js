@@ -94,7 +94,7 @@ var skill = {
         ,adtEffect : "repel"
         ,adtEffectVal : 6
         ,adtEffectTime : 200
-        ,skillCD : 5
+        ,skillCD : 5000
         ,lvUPMod : {
             damage : 100
         }
@@ -112,7 +112,7 @@ var skill = {
         ,adtEffect : "bleed"
         ,adtEffectVal : 10
         ,adtEffectTime : 15000
-        ,skillCD : null
+        ,skillCD : 5000
         ,lvUPMod : {
             adtEffectVal : 10
         }
@@ -130,7 +130,7 @@ var skill = {
         ,adtEffect : "slow"
         ,adtEffectVal : 0.7
         ,adtEffectTime : 5000
-        ,skillCD : 10
+        ,skillCD : 10000
         ,lvUPMod : {
             adtEffectTime : 3
         }

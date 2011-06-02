@@ -52,20 +52,12 @@ var character = function(cID, name) {
     this.speedFactor = 1; // Init Speed  = 100%
     this.dotTimer = 3000; // ms , take dot effect per 3s
     this.debuffList = {};
+    this.skillCDList = {};
+    this.skillCDTimeout = {};
 
-    this.doActionList = {
-        toStand : 0
-        ,toMove : 1
-        ,toAttack : 2
-        ,toRepel : 3
-    }
+    this.doActionList = { toStand : 0, toMove : 1, toAttack : 2, toRepel : 3 };
+    this.baseNein = { wrap : 1, obstruct : 1, charge : 1,launch : 1 };
 
-    this.baseNein = {
-        wrap : 1
-        ,obstruct : 1
-        ,charge : 1
-        ,launch : 1
-    }
     this.skill = {};
     // Attribute End
     do {
@@ -254,14 +246,13 @@ character.prototype.subHP = function(damage, tangoAtkRF) {
 
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
     if (this.hp === 0) {
-        this.setDead();
+        clearTimeout(this.setFreeTimeout);
+        this.setStatus(0);
     }
     return this.hp;
 }
-character.prototype.setDead = function() {
-    //clearInterval(this.setFreeRecInterval);
-    clearTimeout(this.setFreeTimeout);
-    this.status = 0;
+character.prototype.setStatus = function(status) {
+    this.status = status;
 }
 character.prototype.getNV = function() {
     return this.nv;
@@ -297,8 +288,8 @@ character.prototype.setFree = function() {
     var _this = this;
     clearTimeout(this.setFreeTimeout);
     this.setFreeTimeout = setTimeout(function(){ 
-        if (this.status === 0) return;
-        _this.status = 1;
+        if (_this.status === 0) return;
+        _this.setStatus(1);
         var stream = io.create();
         var cID = _this.getCID();
         stream.setSelfCID(cID);
@@ -307,8 +298,7 @@ character.prototype.setFree = function() {
     }, this.freeDuration);
 }
 character.prototype.setCombat = function() {
-    //clearInterval(this.setFreeRecInterval);
-    this.status = 2;
+    this.setStatus(2);
     var stream = io.create();
     var cID = this.getCID();
     stream.setSelfCID(cID);
@@ -355,16 +345,14 @@ character.prototype.pushDebuffList = function(scID, skill, tPos) {
         var debuff = { skillName : skill.name, debuff : skill.adtEffect, stack : 0 };
         this.debuffList[dID] = debuff;
     }
-    this.getDebuffList();
 }
 character.prototype.getDebuffList = function() {
     return this.debuffList;
 }
 character.prototype.doRepel = function(scID, skill, tPos) {
     var _this = this;
-    //var lastStatus = this.getStatus();
-    //if (lastStatus === 0) return;
-    //this.status = 5;
+    var lastStatus = this.getStatus();
+    this.setStatus(5);
     this.setDoAction('toRepel');
     var direction = giMap.getDirection(this.position, tPos);
     var validLine = giMap.getLineCoordinateWithoutObstacle(this.position, direction, skill.adtEffectVal);
@@ -383,7 +371,7 @@ character.prototype.doRepel = function(scID, skill, tPos) {
 
     setTimeout(function(){
         delete _this.debuffList[dID];
-        //_this.status = lastStatus;
+        _this.setStatus(lastStatus);
         _this.setLocation(endGridIndex);
         _this.setDoAction('toStand');
     }, repelDuration);
@@ -442,7 +430,7 @@ character.prototype.doDotDamage = function(scID, skill) {
     var preHP = this.getHP();
     this.hp = (hp < this.hp) ? this.hp - hp : 0;
     if (this.hp === 0) {
-        this.setDead();
+        this.setStatus(0);
     }
     var stream = io.create();
     var cID = this.getCID();
@@ -468,6 +456,23 @@ character.prototype.doSlow = function(scID, skill, tPos) {
         stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
         stream.response();
     }, skill.adtEffectTime);
+}
+character.prototype.setSkillCD = function(skill) {
+    if (skill.skillCD === null) return;
+    if (!this.skillCDList[skill.skillID]) {
+        this.skillCDList[skill.skillID] = { cdStatus : 1, cdTime : skill.skillCD };  // cdStatus : 1 = CDing, Skill Unavailable 0 = CDed , Skill available
+    }
+    this.startSkillCDProc(skill);
+}
+character.prototype.startSkillCDProc = function(skill) {
+    var _this = this;
+    this.skillCDTimeout[skill.skillID] = setTimeout(function(){  // For later Version : Some New skill reset the skillCD...
+        delete _this.skillCDList[skill.skillID];
+        _this.skillCDTimeout[skill.skillID] = null;  // recycle the resource
+    }, skill.skillCD);
+}
+character.prototype.getSkillCDList = function(skillID) {
+    return this.skillCDList[skillID];
 }
 exports.create = function(cID, name) {
     return new character(cID, name);
