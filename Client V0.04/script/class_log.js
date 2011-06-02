@@ -197,4 +197,8 @@ var Log = Class.extend({
         var skillName = this.getSkillName(data.skillID);
         this.log(caster + ' castSkill ' + skillName + ' -> ' + target + ' Miss!!');
     }
+    ,skillCDing : function(data) {
+        var caster = this.truncateCID(data.cID);
+        this.log(caster + ' skill ' + data.skillID + ' is cooling down');
+    }
 });

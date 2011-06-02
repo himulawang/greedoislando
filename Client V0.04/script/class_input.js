@@ -19,6 +19,7 @@ var Input = Class.extend({
             ,moveRepel : this.addActionQueue
             ,debuff : this.debuff
             ,addActionQueue : this.addActionQueue
+            ,skillCDing : this.skillCDing
         }
     }
     ,execute : function(stream) {
@@ -27,6 +28,7 @@ var Input = Class.extend({
     }
     /* Process Start */
     ,initMyCharacter : function(data, stream) {
+        console.log(data);
         var cID = data.cID;
         var myStatus = new UI_MyStatus(cID);
         var targetStatus = new UI_TargetStatus(cID);
@@ -45,6 +47,13 @@ var Input = Class.extend({
         GI.player.make(data);
         // for GI.isSelf
         GI.cID = cID;
+        // init skill
+        GI.skill = {};
+        for (var skillID in data.skill) {
+            if (skillID < 10000) continue;
+            GI.skill[skillID] = new Skill(data.skill[skillID]);
+        }
+        GI.ui.skillbar.makeBar();
         // init map
         $("#login").fadeOut(100, function(){
             $("#login").remove();
@@ -138,5 +147,8 @@ var Input = Class.extend({
     ,castSkill : function(data, stream) {
         log.castSkill(data);
         this.addActionQueue(data, stream);
+    }
+    ,skillCDing : function(data, stream) {
+        log.skillCDing(data);
     }
 });
