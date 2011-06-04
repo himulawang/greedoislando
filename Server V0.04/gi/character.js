@@ -180,7 +180,6 @@ character.prototype.moveWay = function() {
     if (this.wayIndex >= this.way.length || this.doAction === 2 || this.doAction === 3) {   // doAction pause the moving action for attacking
         this.characterMoving = false;
         this.nextXY = null;
-        this.moveTimeout = null;
         this.way = null;
         this.nextGridIndex = null;
         this.setDoAction('toStand');    // trigger for move / attack switch
@@ -281,7 +280,9 @@ character.prototype.getSkill = function(skillID) {
 }
 character.prototype.commonCD = function() {
     var _this = this;
-    setTimeout(function(){ _this.cCD = 1; }, this.cDuration);
+    this.commonCDTimeout = setTimeout(function(){ 
+        _this.cCD = 1;
+    }, this.cDuration);
 }
 character.prototype.getcCD = function() {
     return this.cCD;
@@ -371,7 +372,7 @@ character.prototype.doRepel = function(scID, skill, tPos) {
 
     var dID = scID + "_" + skill.skillID;
 
-    setTimeout(function(){
+    this.doRepelTimeout = setTimeout(function(){
         delete _this.debuffList[dID];
         _this.setStatus(lastStatus);
         _this.setLocation(endGridIndex);
@@ -409,10 +410,9 @@ character.prototype.doBleed = function(scID, skill, doTimes) {
     var stream = io.create();
     var cID = this.getCID();
     stream.setSelfCID(cID);
-
     var dID = scID + "_" + skill.skillID;
 
-    setTimeout(function(){
+    this.doBleedTimeout = setTimeout(function(){
         _this.doDotDamage(scID, skill);
         _this.dotCounts++;
         if (_this.dotCounts === doTimes) {
@@ -452,7 +452,7 @@ character.prototype.doSlow = function(scID, skill, tPos) {
 
     var dID = scID + "_" + skill.skillID;
 
-    setTimeout(function(){
+    this.doSlowTimeout = setTimeout(function(){
         _this.speedFactor = 1;
         delete _this.debuffList[dID];
         stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
@@ -470,7 +470,6 @@ character.prototype.startSkillCDProc = function(skill) {
     var _this = this;
     this.skillCDTimeout[skill.skillID] = setTimeout(function(){  // For later Version : Some New skill reset the skillCD...
         delete _this.skillCDList[skill.skillID];
-        _this.skillCDTimeout[skill.skillID] = null;  // recycle the resource
     }, skill.skillCD);
 }
 character.prototype.getSkillCDList = function(skillID) {
