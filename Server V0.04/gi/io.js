@@ -39,10 +39,6 @@ io.prototype.process = function() {
     var action = PROCESS[clientStat][type];
     if (!action) return;
 
-    if (character != null) {
-        if (character.doAction === 3) return; // Character is being Repeled, cant do anything
-    }
-
     return PROCESS[clientStat][type](this);
 }
 io.prototype.response = function() {

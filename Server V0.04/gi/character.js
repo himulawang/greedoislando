@@ -54,6 +54,8 @@ var character = function(cID, name) {
     this.debuffList = {};
     this.skillCDList = {};
     this.skillCDTimeout = {};
+    this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
+    this.skillCharge = {};
 
     this.doActionList = { toStand : 0, toMove : 1, toAttack : 2, toRepel : 3 };
     this.baseNein = { wrap : 1, obstruct : 1, charge : 1,launch : 1 };
@@ -392,7 +394,7 @@ character.prototype.startBleed = function(scID, skill, tPos) {
 
     var doTimes = skill.adtEffectTime / this.dotTimer;
 
-    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : this.debuffList[dID].stack , isOn : 1 });
+    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : this.debuffList[dID].stack , isOn : 1 });
     stream.response();
 
     this.dotCounts = 0;
@@ -414,7 +416,7 @@ character.prototype.doBleed = function(scID, skill, doTimes) {
         _this.doDotDamage(scID, skill);
         _this.dotCounts++;
         if (_this.dotCounts === doTimes) {
-            stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : _this.debuffList[dID].stack , isOn : 0 });
+            stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : _this.debuffList[dID].stack , isOn : 0 });
             stream.response();
             _this.dotCounts = 0;
             delete _this.debuffList[dID];
@@ -445,7 +447,7 @@ character.prototype.doSlow = function(scID, skill, tPos) {
     var cID = this.getCID();
     stream.setSelfCID(cID);
     this.speedFactor = 1 - skill.adtEffectVal;
-    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 1 });
+    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 1 });
     stream.response();
 
     var dID = scID + "_" + skill.skillID;
@@ -453,7 +455,7 @@ character.prototype.doSlow = function(scID, skill, tPos) {
     setTimeout(function(){
         _this.speedFactor = 1;
         delete _this.debuffList[dID];
-        stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourcecID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
+        stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
         stream.response();
     }, skill.adtEffectTime);
 }
@@ -473,6 +475,31 @@ character.prototype.startSkillCDProc = function(skill) {
 }
 character.prototype.getSkillCDList = function(skillID) {
     return this.skillCDList[skillID];
+}
+character.prototype.chargeStart = function(skillID) {
+    this.skillCharge[skillID] = fc.getTimestamp();
+}
+character.prototype.getChargeLevel = function(skillID) {
+    var chargeTimeDelta = fc.getTimestamp() - this.skillCharge[skillID];
+    console.log(fc.getTimestamp() + ' - ' + this.skillCharge[skillID] + ' = ' + chargeTimeDelta);
+    var skillChargeLevel;
+    if (chargeTimeDelta >= 0 && chargeTimeDelta < 1000) {
+        skillChargeLevel = 1;
+    } else if (chargeTimeDelta >= 1000 && chargeTimeDelta < 2000) {
+        skillChargeLevel = 2;
+    } else if (chargeTimeDelta >= 2000) {
+        skillChargeLevel = 3;
+    } else {
+        return;
+    }
+    this.skillCharge = {};
+    return skillChargeLevel;
+}
+character.prototype.getSkillChargeDamage = function(skillID, skillChargeLevel) {
+    if (this.skill[skillID].chargeLevel) {
+        console.log(this.skill[skillID].chargeLevel[skillChargeLevel]);
+        return this.skill[skillID].chargeLevel[skillChargeLevel]; // Fetch Charge Level Factor Mapping By skillID From Skill Setting
+    }
 }
 exports.create = function(cID, name) {
     return new character(cID, name);

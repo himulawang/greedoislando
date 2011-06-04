@@ -62,7 +62,8 @@ var keepSession = function(io) {
 
     io.response();
 }
-var castSkill = function(io) {
+var castSkill = function(io, skillChargeDamageFactor) {
+    if (skillChargeDamageFactor === undefined) var skillChargeDamageFactor = 1;
     var cID = io.iData.cID;
     var character = giUserList.getCharacter(cID);
     var skillID = io.iData.skillID;
@@ -129,7 +130,7 @@ var castSkill = function(io) {
         }else{
             //skill cause damage
             var preHP = target.getHP();
-            var damage = character.getSkillPower(skill);
+            var damage = character.getSkillPower(skill) * skillChargeDamageFactor;  // charged Attack!
             var nowHP = target.subHP(damage, target.atkRF);
             io.addOutputData(cID, 'hpChange', 'logged', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
             if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'logged', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
@@ -148,6 +149,26 @@ var castSkill = function(io) {
         io.response();
     }
 }
+var skillCharge = function(io) {
+    var cID = io.iData.cID;
+    var character = giUserList.getCharacter(cID);
+    var skillID = io.iData.skillID;
+    var skill = character.getSkill(skillID);
+    
+    if (!skill) return; //check character if has this skill or not
+    if (character.getStatus() === 0) return;  // character dead , no action permitted
+    if (character.getStatus() === 5) return;  // character being repeled ... cant do anything
+
+    if (io.iData.status === 1) {
+        character.chargeStart(skillID);
+    } else if (io.iData.status === 0) {
+        var skillChargeLevel = character.getChargeLevel(skillID);
+        var skillChargeDamageFactor = character.getSkillChargeDamage(skillID, skillChargeLevel);
+        if (skillChargeDamageFactor) castSkill(io, skillChargeDamageFactor);
+    } else {
+        return; // reserved for later , eg. INTERUPTED
+    }
+}
 
 global.PROCESS = {
     logged : {
@@ -156,6 +177,7 @@ global.PROCESS = {
         ,logout : logout
         ,moveCharacter : moveCharacter
         ,castSkill : castSkill
+        ,skillCharge :　skillCharge
     }
     ,unlogged : {
         keepSession : keepSession
