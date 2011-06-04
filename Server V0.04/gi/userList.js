@@ -47,7 +47,13 @@ list.prototype.disconnect = function(cID) {
     var character = giUserList.getCharacter(cID);
     if (character) {
         clearInterval(character.setFreeRecInterval);
-        clearInterval(character.moveTimeout);
+        clearTimeout(character.moveTimeout);
+        clearTimeout(character.commonCDTimeout);
+        clearTimeout(character.setFreeTimeout);
+        clearTimeout(character.doRepelTimeout);
+        clearTimeout(character.doBleedTimeout);
+        clearTimeout(character.doSlowTimeout);
+        clearTimeout(character.skillCDTimeout);
     }
     
     delete this.onlineUser[cID];
