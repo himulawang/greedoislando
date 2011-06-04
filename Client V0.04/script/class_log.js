@@ -182,7 +182,7 @@ var Log = Class.extend({
         this.log(object + ' is in CommonCD');
     }
     ,debuff : function(data) {
-        var caster = this.truncateCID(data.sourcecID);
+        var caster = this.truncateCID(data.sourceCID);
         var target = this.truncateCID(data.cID);
         var skillName = this.getSkillName(data.skillID);
         if (data.isOn) {

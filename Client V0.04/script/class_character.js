@@ -10,6 +10,7 @@ var Character = Coordinate.extend({
         this.setNV(data.nv);
         this.setMaxHP(data.maxHP);
         this.setMaxNV(data.maxNV);
+        this.buff = {};
         this.faceTo = data.faceTo;
         this.initPos = this.getCoordinateXY(data.position);
 
@@ -74,6 +75,21 @@ var Character = Coordinate.extend({
     }
     ,setSkill : function(skill) {
         this.skill = skill;
+    }
+    ,setBuff : function(buff) {
+        var index = this.makeBuffIndex(buff.getSourceCID(), buff.getSkillID());
+        this.buff[index] = buff;
+        if (this.self) GI.ui.myStatus.setBuff(buff);
+        if (this.targeted) GI.ui.targetStatus.setBuff(buff);
+    }
+    ,delBuff : function(sourceCID, skillID) {
+        var index = this.makeBuffIndex(sourceCID, skillID);
+        delete this.buff[index];
+        if (this.self) GI.ui.myStatus.delBuff(sourceCID, skillID);
+        if (this.targeted) GI.ui.targetStatus.delBuff(sourceCID, skillID);
+    }
+    ,makeBuffIndex : function(sourceCID, skillID) {
+        return sourceCID + '-' + skillID;
     }
     ,getHP : function() {
         return this.hp;
