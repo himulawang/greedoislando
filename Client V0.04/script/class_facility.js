@@ -2,6 +2,9 @@ var fc = {
     getNowTimestamp : function() {
         return Date.now();
     }
+    ,getBuffTime : function(duration) {
+        return this.fix(duration / 1000) + 'S';
+    }
     ,fix : function(float) {
         return typeof(float) === 'number' ? parseInt(float.toFixed()) : float;
     }

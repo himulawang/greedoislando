@@ -76,6 +76,11 @@ div {
 #ui-my-profile-status-div {
     float: left;
 }
+#ui-my-buff-div {
+    width: 198px;
+    height: 32px;
+    border: 1px solid #DDDDDD;
+}
 /* My Profile end */
 /* Target Profile start */
 #ui-target-profile {
@@ -102,7 +107,31 @@ div {
 #ui-target-profile-status-div {
     float: left;
 }
+#ui-target-buff-div {
+    width: 198px;
+    height: 32px;
+    border: 1px solid #DDDDDD;
+}
 /* Target Profile end */
+/* Buff start */
+.ui-buff-div {
+    font-size: 10px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #DDDDDD;
+    float: left;
+    background-color: #FFFFFF;
+}
+.ui-buff-name {
+    height: 10px;
+}
+.ui-buff-stack {
+    height: 10px;
+}
+.ui-buff-time {
+    height: 10px;
+}
+/* Buff end */
 /* Skill bar start */
 #ui-skill-bar-div {
     width: 398px;

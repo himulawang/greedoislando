@@ -8,7 +8,7 @@ var Init = Class.extend({
         this.initMaterial();
         this.initCursor();
         this.disableContextMenu();
-        this.bindArrowKey();
+        this.bindKey();
         this.bindMouseOverGrid();
         this.bindMouseClick();
     }
@@ -18,50 +18,9 @@ var Init = Class.extend({
             return false;
         }
     }
-    ,bindArrowKey : function() {
-        var _this = this;
-        document.onkeydown = function(e) {
-            if (e.which === 38) { //UP
-                _this.cursor.moveUp();
-            } else if (e.which === 40) { //Down
-                _this.cursor.moveDown();
-            } else if (e.which === 37) { //Left
-                _this.cursor.moveLeft();
-            } else if (e.which === 39) { //Right
-                _this.cursor.moveRight();
-            } else if (e.which === 49) {
-                var obj = {
-                    type : "castSkill"
-                    ,target : GI.targetCID
-                    ,skillID: 10000 // right punch
-                }
-                wsocket.sendMessage(obj);
-            } else if (e.which === 50) {
-                var obj = {
-                    type : "castSkill"
-                    ,target : GI.targetCID
-                    ,skillID: 10001 // stone
-                }
-                wsocket.sendMessage(obj);
-            } else if (e.which === 51) {
-                var obj = {
-                    type : "castSkill"
-                    ,target : GI.targetCID
-                    ,skillID: 10002 // scissors
-                }
-                wsocket.sendMessage(obj);
-            } else if (e.which === 52) {
-                var obj = {
-                    type : "castSkill"
-                    ,target : GI.targetCID
-                    ,skillID: 10003 // fabric
-                }
-                wsocket.sendMessage(obj);
-            }
-            _this.cursor.put();
-            $('#output').html("LogicX:" + _this.cursor.x + " LogicY:" + _this.cursor.y);
-            return true;
-        };
+    ,bindKey : function() {
+        this.keyboard = new Keyboard;
+        this.keyboard.make();
     }
     ,bindMouseOverGrid : function() {
         var _this = this;
@@ -119,6 +78,9 @@ var Init = Class.extend({
     }
     ,initLog : function() {
         log = new Log;
+    }
+    ,initTimer : function() {
+        this.timer = new Timer;
     }
     ,isSelf : function(cID) {
         if (cID === this.cID) return true;

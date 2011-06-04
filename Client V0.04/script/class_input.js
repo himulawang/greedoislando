@@ -28,7 +28,6 @@ var Input = Class.extend({
     }
     /* Process Start */
     ,initMyCharacter : function(data, stream) {
-        console.log(data);
         var cID = data.cID;
         var myStatus = new UI_MyStatus(cID);
         var targetStatus = new UI_TargetStatus(cID);
@@ -62,7 +61,10 @@ var Input = Class.extend({
             });
         });
         GI.initMap();
+        // init log
         GI.initLog();
+        // init timers
+        GI.initTimer();
     }
     ,newCharacterLogin : function(data, stream) {
         var cID = data.cID;
@@ -74,7 +76,6 @@ var Input = Class.extend({
     ,getOnlineCharacter : function(data, stream) {
         for (var cID in data) {
             if (GI.otherChar[cID] || GI.isSelf(cID)) continue;
-            console.log('getOnlineCharacter new ', cID);
             GI.otherChar[cID] = eval('new ' + data[cID].name);
             GI.otherChar[cID].make(data[cID]);
         }
@@ -142,6 +143,21 @@ var Input = Class.extend({
         GI.otherChar[cID].animation.getQueueAction();
     }
     ,debuff : function(data, stream) {
+        var cID = data.cID;
+        var buff = new Buff(data);
+        if (data.isOn === 1) {
+            if (GI.isSelf(cID)) {
+                GI.player.setBuff(buff);
+            } else {
+                GI.otherChar[cID].setBuff(buff);
+            }
+        } else if (data.isOn === 0) {
+            if (GI.isSelf(cID)) {
+                GI.player.delBuff(buff.getSourceCID(), buff.getSkillID());
+            } else {
+                GI.otherChar[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
+            }
+        }
         log.debuff(data);
     }
     ,castSkill : function(data, stream) {

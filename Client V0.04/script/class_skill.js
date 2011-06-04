@@ -4,7 +4,7 @@ var Skill = Class.extend({
             10000 : {
                 skillID : 10000
                 ,name : "rightStraightPunch"
-                ,abbreviation : "RSP"
+                ,abbreviation : "拳"
                 ,damage : 80
                 ,costNV : 100
                 ,range : 6
@@ -87,7 +87,7 @@ var Skill = Class.extend({
             ,10001 : {
                 skillID : 10001
                 ,name : "moraStone"
-                ,abbreviation : "MST"
+                ,abbreviation : "石"
                 ,damage : 200
                 ,costNV : 200
                 ,range : 6
@@ -106,7 +106,7 @@ var Skill = Class.extend({
             ,10002 : {
                 skillID : 10002
                 ,name : "moraScissors"
-                ,abbreviation : "MSC"
+                ,abbreviation : "剪"
                 ,damage : 0
                 ,costNV : 50
                 ,range : 18
@@ -125,7 +125,7 @@ var Skill = Class.extend({
             ,10003 : {
                 skillID : 10003
                 ,name : "moraFabric"
-                ,abbreviation : "MFA"
+                ,abbreviation : "布"
                 ,damage : 30
                 ,costNV : 100
                 ,range : 24
