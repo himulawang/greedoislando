@@ -98,6 +98,11 @@ var skill = {
         ,lvUPMod : {
             damage : 100
         }
+        ,chargeLevel : {
+            1 : 0.5
+            ,2 : 1
+            ,3 : 2
+        }
     }
     ,10002 : {
         skillID : 10002
