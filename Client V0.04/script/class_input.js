@@ -33,11 +33,13 @@ var Input = Class.extend({
         var targetStatus = new UI_TargetStatus(cID);
         var communication = new UI_Communication(cID);
         var skillbar = new UI_SkillBar(cID);
+        var chargebar = new UI_ChargeBar(cID);
         GI.ui = {
             myStatus : myStatus
             ,targetStatus : targetStatus
             ,communication : communication
             ,skillbar : skillbar
+            ,chargebar : chargebar
         }
         // init my character
         GI.player = eval('new '+ data.name);
@@ -104,6 +106,7 @@ var Input = Class.extend({
         log.commonCD(data);
     }
     ,skillMiss : function(data, stream) {
+        log.skillMiss(data);
     }
     ,statusChange : function(data, stream) {
         log.statusChange(data);

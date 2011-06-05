@@ -195,10 +195,16 @@ var Log = Class.extend({
         var caster = this.truncateCID(data.cID);
         var target = this.truncateCID(data.target);
         var skillName = this.getSkillName(data.skillID);
-        this.log(caster + ' castSkill ' + skillName + ' -> ' + target + ' Miss!!');
+        this.log(caster + ' castSkill ' + skillName + ' -> ' + target + ' Out Of Range');
     }
     ,skillCDing : function(data) {
         var caster = this.truncateCID(data.cID);
         this.log(caster + ' skill ' + data.skillID + ' is cooling down');
+    }
+    ,skillMiss : function(data) {
+        var caster = this.truncateCID(data.cID);
+        var target = this.truncateCID(data.target);
+        var skillName = this.getSkillName(data.skillID);
+        this.log(caster + ' castSkill ' + skillName + ' -> ' + target + ' Miss');
     }
 });

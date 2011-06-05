@@ -167,6 +167,28 @@ div {
     cursor: pointer;
 }
 /* Skill bar end */
+/* Charge bar start */
+#ui-charge-bar-div {
+    position: absolute;
+    top: 400px;
+    left: 360px;
+    width: 200px;
+    height: 30px;
+    z-index: 100;
+    background-color: #B4B4B4;
+    opacity: .7;
+    overflow: hidden;
+    border-radius: 5px;
+}
+#ui-charge-bar-progress {
+    width: 200px;
+    height: 30px;
+    background-color: #FF55AA;
+    position: absolute;
+    left: -200px;
+    border-radius: 5px;
+}
+/* Charge bar end */
 
 /* Communication*/
 #ui-chat-history {

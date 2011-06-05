@@ -12,12 +12,9 @@ var UI_Profile = UI.extend({
     }
     ,setBuff : function(buff) {
         var buffEl = this.getBuffEl(buff.getSourceCID(), buff.getSkillID());
-        if (buffEl === false) console.log('FALSE');
         if (buffEl) {
-            console.log('refreshBuff');
             this.refreshBuff(buff);
         } else {
-            console.log('createBuff');
             this.createBuff(buff);
         }
     }
@@ -50,6 +47,7 @@ var UI_Profile = UI.extend({
     }
     ,refreshBuff : function(buff) {
         var buffEl = this.getBuffEl(buff.getSourceCID(), buff.getSkillID());
+        buffEl.children(".ui-buff-stack").html(buff.getStack() + 'stk');
         buffEl.children(".ui-buff-time").html(fc.getBuffTime(buff.getRemainDuration()));
     }
 });
