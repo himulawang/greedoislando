@@ -5,8 +5,15 @@ var Keyboard = Class.extend({
     ,make : function() {
         var _this = this;
         document.onkeydown = function(e) {
-            if (e.which === 50) {
-                if (!_this.setKeyDownStamp(e.which)) return true;
+            var keyCode = e.which;
+            if (keyCode === 50) {
+                if (!_this.setKeyDownStamp(keyCode)) {
+                    var duration = _this.getKeyPressDuration(keyCode);
+                    var effectDuration = duration > 2000 ? 2000 : duration;
+                    var rate = effectDuration / 2000;
+                    GI.ui.chargebar.setProgress(rate);
+                    return true;
+                }
                 var obj = {
                     type : "skillCharge"
                     ,target : GI.targetCID
@@ -17,8 +24,9 @@ var Keyboard = Class.extend({
             }
         }
         document.onkeyup = function(e) {
-            var duration = _this.getKeyPressDuration(e.which);
+            var duration = _this.delKeyPressDuration(e.which);
             if (e.which === 50) {
+                GI.ui.chargebar.resetProgress();
                 var obj = {
                     type : "skillCharge"
                     ,target : GI.targetCID
@@ -64,6 +72,9 @@ var Keyboard = Class.extend({
     ,getKeyPressDuration : function(keyCode) {
         if (!this.key[keyCode]) return 0;
         var duration = fc.getNowTimestamp() - this.key[keyCode];
+        return duration;
+    }
+    ,delKeyPressDuration : function(keyCode) {
         delete this.key[keyCode];
     }
 });
