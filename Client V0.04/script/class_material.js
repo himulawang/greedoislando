@@ -23,6 +23,22 @@ var Material = Class.extend({
                         }
                     }
                 }
+                ,killua : {
+                    animateList : {
+                        'stand' : {
+                            'frames' : 2
+                            ,'duration' : 500
+                        }
+                        ,'attack' : {
+                            'frames' : 6
+                            ,'duration' : 500
+                        }
+                        ,'run' : {
+                            'frames' : 4
+                            ,'duration' : 150
+                        }
+                    }
+                }
             }
         }
     }

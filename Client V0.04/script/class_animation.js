@@ -64,7 +64,6 @@ var Animation = Coordinate.extend({
             this.put();
             this.runOnce = true;
         } else if (this.nowShift.type === 'moveRepel') {
-            console.log('moveRepel', this.nowShift.data);
             this.moveCanvasDuration = this.nowShift.data.duration;
             this.animationSwitch('stand');
             this.dragCanvas();
@@ -83,7 +82,7 @@ var Animation = Coordinate.extend({
         var timeDelta = this.lastCanvasTimestamp ? (timestamp - this.lastCanvasTimestamp) : 0;
         this.canvasProgress += timeDelta;
         this.lastCanvasTimestamp = timestamp;
-        if(this.canvasProgress >= this.canvasDuration){
+        if (this.canvasProgress >= this.canvasDuration) {
             this.canvasProgress = 0;
             var nowImageSuit = this.animateImages[this.action][this.directionID];
             //targeted
