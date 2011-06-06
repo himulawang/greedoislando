@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 global.fc = {
     //generate a GUID
     guid : function() {
@@ -35,6 +37,12 @@ global.fc = {
     }
     ,fix : function(float) {
         return typeof(float) === 'number' ? parseInt(float.toFixed()) : float;
+    }
+    ,readFile : function(path) {
+        var content = fs.readFileSync(path, 'utf8');
+        var array = content.split("\n");
+        delete array[0];
+        return JSON.parse(content);
     }
 }
 

@@ -1,5 +1,5 @@
 var io = require('./io')
-    ,skill = require('./skill')
+    ,skillconfig = require('./skillconfig')
     ,system = require('./system');
 
 var character = function(cID, name) {
@@ -123,15 +123,13 @@ character.prototype.avbSkill = function() {
         ,10002 : 1
         ,10003 : 1
     };
-    var x;
-    for (x in charSkill) {
-        this.skill[x] = skill.get(x);
+    for (var x in charSkill) {
+        this.skill[x] = skillconfig.get(x);
     }
 }
 character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
-    var x;
-    for (x in auraz) {
-        this.skill[x] = skill.get(x);
+    for (var x in auraz) {
+        this.skill[x] = skillconfig.get(x);
     }
     this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod.auraRFVal;
     this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod.auraRFVal;
@@ -140,8 +138,7 @@ character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Re
 }
 character.prototype.systemRF = function() {
     // reinforce skill power by NIEN system , judge by skill attribution & system reinforce type
-    var x;
-    for (x in this.skill) {
+    for (var x in this.skill) {
         if (this.skill[x].triggerType === 'aura') continue;
         if (this.system.sysRFType === this.skill[x].attribution) {
             this.skill[x].damage = ( this.skill[x].damage * ( 1 + this.system.sysRFVal ) ) * ( 1 + this.skillRF );
@@ -342,8 +339,11 @@ character.prototype.doSkillAdtEffect = function(scID, skill, tPos) {
         this.doSlow(scID, skill, tPos);
     }
 }
+character.prototype.getDebuffID = function(scID, skill) {
+    return scID + "_" + skill.skillID;
+}
 character.prototype.pushDebuffList = function(scID, skill, tPos) {
-    var dID = scID + "_" + skill.skillID;
+    var dID = this.getDebuffID();
     if (!this.debuffList[dID]) {
         var debuff = { skillName : skill.name, debuff : skill.adtEffect, stack : 0 };
         this.debuffList[dID] = debuff;
@@ -370,7 +370,7 @@ character.prototype.doRepel = function(scID, skill, tPos) {
     stream.addOutputData(cID, 'moveRepel', 'logged', {cID : cID, nowLocation : this.position, endLocation : endGridIndex, duration : repelDuration, timestamp : fc.getTimestamp() });
     stream.response();
 
-    var dID = scID + "_" + skill.skillID;
+    var dID = this.getDebuffID();
 
     this.doRepelTimeout = setTimeout(function(){
         delete _this.debuffList[dID];
@@ -387,7 +387,7 @@ character.prototype.startBleed = function(scID, skill, tPos) {
     var cID = this.getCID();
     stream.setSelfCID(cID);
 
-    var dID = scID + "_" + skill.skillID;
+    var dID = this.getDebuffID();
 
     if (this.debuffList[dID].stack < 5) {
         ++this.debuffList[dID].stack;
@@ -410,7 +410,7 @@ character.prototype.doBleed = function(scID, skill, doTimes) {
     var stream = io.create();
     var cID = this.getCID();
     stream.setSelfCID(cID);
-    var dID = scID + "_" + skill.skillID;
+    var dID = this.getDebuffID();
 
     this.doBleedTimeout = setTimeout(function(){
         _this.doDotDamage(scID, skill);
@@ -426,7 +426,7 @@ character.prototype.doBleed = function(scID, skill, doTimes) {
     },this.dotTimer);
 }
 character.prototype.doDotDamage = function(scID, skill) {
-    var dID = scID + "_" + skill.skillID;
+    var dID = this.getDebuffID();
     var hp = skill.adtEffectVal * this.debuffList[dID].stack;   // No Damage reduction formulation for Dot
     hp = fc.fix(hp);
     var preHP = this.getHP();
@@ -450,7 +450,7 @@ character.prototype.doSlow = function(scID, skill, tPos) {
     stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 1 });
     stream.response();
 
-    var dID = scID + "_" + skill.skillID;
+    var dID = this.getDebuffID();
 
     this.doSlowTimeout = setTimeout(function(){
         _this.speedFactor = 1;
