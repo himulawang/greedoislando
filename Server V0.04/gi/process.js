@@ -67,81 +67,31 @@ var castSkill = function(io, skillChargeDamageFactor) {
     var cID = io.iData.cID;
     var character = giUserList.getCharacter(cID);
     var skillID = io.iData.skillID;
-    var skill = character.getSkill(skillID);
+    var skill = character.skill.getSkill(skillID);
 
     //check character has this skill
     if (!skill) return;
 
-    character.setDoAction('toAttack');  // trigger for attack action pausing the moving action
+    character.setDoAction(2);  // trigger for attack action pausing the moving action
 
-    if (character.getStatus() === 0) return;  // character dead , no action permitted
-    if (character.getStatus() === 5) return;  // character being repeled ... cant do anything
-
-    if (character.getcCD() === 0) {
-        io.addOutputData(cID, 'commonCD', 'self', {cID : cID, timestamp : fc.getTimestamp()});
-        io.response();
-        return;
-    } else if (character.getSkillCDList(skillID)) {
-        io.addOutputData(cID, 'skillCDing', 'self', {cID : cID, skillID : skillID, timestamp : fc.getTimestamp()});
-        io.response();
-        return;
-    }
+    if (character.castSelfCheck(io, skillID) === 0) return;
     
     //getSkillType
     if (skill.target === "single") {
         var targetCID = io.iData.target;
         var target = giUserList.getCharacter(targetCID);
         if (!target) return;
-        if (target.getStatus() === 0) return;  //  target dead , no more attack on dead body!!
-        if (target.getStatus() === 5) return;  // target being repeled ... invincible ... cant attack on target
-        //check range
-        var targetLocation = target.getLocation();
-        var location = character.getLocation();
-        var range = giMap.getRange(location, targetLocation);
-
-        if (range > skill.range + GI_SKILL_CAST_BLUR_RANGE) {
-            io.addOutputData(cID, 'castSkillOutOfRange', 'self', {cID : cID, target : targetCID, skillID : skillID});
-            io.response();
-            return;
-        }
-        //check NV
-        var nv = character.getNV();
-        if (skill.costNV > nv) {
-            io.addOutputData(cID, 'castSkillOutOfNV', 'self', {cID : cID, target : targetCID, skillID : skillID});
-            io.response();
-            return;
-        }
-        //skill effect
-        io.addOutputData(cID, 'castSkill', 'logged', {cID : cID, target : targetCID, skillID : skillID});
-
-        //skill costNV
-        var preNV = character.getNV();
-        var nowNV = character.subNV(skill.costNV);
-        io.addOutputData(cID, 'nvChange', 'logged', {cID : cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
-
-        character.setCombat();  // set self status to combat 
-        target.setCombat();  // set tango status to combat 
-
-        //skill miss
-        var tangoDodgeRate = target.getDodgeRate();
-        var ifHit = character.hitProc(tangoDodgeRate);
-        if(ifHit === 0){
-            io.addOutputData(cID, 'skillMiss', 'logged', {cID : cID , target : targetCID , skillID : skillID});
-        }else{
-            //skill cause damage
-            var preHP = target.getHP();
-            var damage = character.getSkillPower(skill) * skillChargeDamageFactor;  // charged Attack!
-            var nowHP = target.subHP(damage, target.atkRF);
-            io.addOutputData(cID, 'hpChange', 'logged', {cID : targetCID, preHP : preHP, nowHP : nowHP, hpDelta : nowHP - preHP});
-            if (nowHP === 0) io.addOutputData(cID, 'statusChange', 'logged', {cID : targetCID, status : target.getStatus(), timestamp : fc.getTimestamp()});
-            //skill cause additional effect
-            if (skill.adtEffect != null) target.doSkillAdtEffect(cID, skill, character.position);
-        }
+        
+        if (character.castTargetCheck(io, target, skill) === 0) return;
+        
+        var ifHit = character.skill.castProc(skill, target);
+        
+        if (ifHit != 0) character.skill.castSkill(skill, target, skillChargeDamageFactor);
         
         character.cCD = 0;  // GCD -- cant use skill in the next 1.5s
         character.commonCD();  // 1.5s CoolDown Proc begins
 
-        character.setSkillCD(skill);
+        character.skill.setSkillCD(skill);
 
         character.setFree();  // 10s later set self status to free
         target.setFree();  // 10s later set tango status to free
@@ -157,13 +107,13 @@ var skillCharge = function(io) {
     
     if (!skill) return; //check character if has this skill or not
     if (character.getStatus() === 0) return;  // character dead , no action permitted
-    if (character.getStatus() === 5) return;  // character being repeled ... cant do anything
+    if (character.doAction === 1 || character.doAction === 3) return; // must standing while charging
 
     if (io.iData.status === 1) {
-        character.chargeStart(skillID);
+        character.skill.chargeStart(skillID);
     } else if (io.iData.status === 0) {
-        var skillChargeLevel = character.getChargeLevel(skillID);
-        var skillChargeDamageFactor = character.getSkillChargeDamage(skillID, skillChargeLevel);
+        var skillChargeLevel = character.skill.getChargeLevel(skillID);
+        var skillChargeDamageFactor = character.getSkillChargeDamageFactor(skill, skillChargeLevel);
         if (skillChargeDamageFactor) castSkill(io, skillChargeDamageFactor);
     } else {
         return; // reserved for later , eg. INTERUPTED
