@@ -1,5 +1,5 @@
 var io = require('./io')
-    ,skillconfig = require('./skillconfig')
+    ,skill = require('./skill')
     ,system = require('./system');
 
 var character = function(cID, name) {
@@ -52,12 +52,10 @@ var character = function(cID, name) {
     this.speedFactor = 1; // Init Speed  = 100%
     this.dotTimer = 3000; // ms , take dot effect per 3s
     this.debuffList = {};
-    this.skillCDList = {};
-    this.skillCDTimeout = {};
+    this.skillCDList = {};    
     this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
     this.skillCharge = {};
-
-    this.doActionList = { toStand : 0, toMove : 1, toAttack : 2, toRepel : 3 };
+    
     this.baseNein = { wrap : 1, obstruct : 1, charge : 1,launch : 1 };
 
     this.skill = {};
@@ -80,6 +78,8 @@ var character = function(cID, name) {
     this.auraRF(this.getAura());
     this.systemRF();
     this.avbSkill();
+    
+    this.skill = skill.create(this);
 }
 
 character.prototype.getInfo = function() {
@@ -158,7 +158,7 @@ character.prototype.setLocation = function(index) {
     this.y = xy.y;
 }
 character.prototype.setDoAction = function(action) {
-    this.doAction = this.doActionList[action];
+    this.doAction = action;
 }
 character.prototype.setWay = function(way) {
     this.way = way;
@@ -330,7 +330,7 @@ character.prototype.hitProc = function(tangoDodgeRate) {
     return hit;
 }
 character.prototype.doSkillAdtEffect = function(scID, skill, tPos) {
-    this.pushDebuffList(scID, skill, tPos);
+    this.pushDebuffList(scID, skill);
     if (skill.adtEffect === 'repel') {
         this.doRepel(scID, skill, tPos);
     } else if (skill.adtEffect === 'bleed') {
@@ -342,8 +342,8 @@ character.prototype.doSkillAdtEffect = function(scID, skill, tPos) {
 character.prototype.getDebuffID = function(scID, skill) {
     return scID + "_" + skill.skillID;
 }
-character.prototype.pushDebuffList = function(scID, skill, tPos) {
-    var dID = this.getDebuffID();
+character.prototype.pushDebuffList = function(scID, skill) {
+    var dID = this.getDebuffID(scID, skill);
     if (!this.debuffList[dID]) {
         var debuff = { skillName : skill.name, debuff : skill.adtEffect, stack : 0 };
         this.debuffList[dID] = debuff;
@@ -370,13 +370,13 @@ character.prototype.doRepel = function(scID, skill, tPos) {
     stream.addOutputData(cID, 'moveRepel', 'logged', {cID : cID, nowLocation : this.position, endLocation : endGridIndex, duration : repelDuration, timestamp : fc.getTimestamp() });
     stream.response();
 
-    var dID = this.getDebuffID();
+    var dID = this.getDebuffID(skill.skillID);
 
     this.doRepelTimeout = setTimeout(function(){
         delete _this.debuffList[dID];
         _this.setStatus(lastStatus);
         _this.setLocation(endGridIndex);
-        _this.setDoAction('toStand');
+        _this.setDoAction(0);
     }, repelDuration);
 
 }
@@ -480,7 +480,6 @@ character.prototype.chargeStart = function(skillID) {
 }
 character.prototype.getChargeLevel = function(skillID) {
     var chargeTimeDelta = fc.getTimestamp() - this.skillCharge[skillID];
-    console.log(fc.getTimestamp() + ' - ' + this.skillCharge[skillID] + ' = ' + chargeTimeDelta);
     var skillChargeLevel;
     if (chargeTimeDelta >= 0 && chargeTimeDelta < 1000) {
         skillChargeLevel = 1;
@@ -496,10 +495,67 @@ character.prototype.getChargeLevel = function(skillID) {
 }
 character.prototype.getSkillChargeDamage = function(skillID, skillChargeLevel) {
     if (this.skill[skillID].chargeLevel) {
-        console.log(this.skill[skillID].chargeLevel[skillChargeLevel]);
         return this.skill[skillID].chargeLevel[skillChargeLevel]; // Fetch Charge Level Factor Mapping By skillID From Skill Setting
     }
 }
+// CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL START
+character.prototype.castSelfCheck = function(io, skillID) {
+	var checked = this.checkAlive() && this.checkCommonCD(io) && this.checkSkillCD(io, skillID);
+	return checked;
+}
+character.prototype.checkAlive = function() {
+	return this.getStatus();
+}
+character.prototype.checkCommonCD = function(io) {
+	if (this.getcCD() === 0) {
+		io.addOutputData(this.cID, 'commonCD', 'self', {cID : this.cID, timestamp : fc.getTimestamp()});
+        io.response();
+	}
+	return this.getcCD();
+}
+character.prototype.checkSkillCD = function(io, skillID) {
+	if (this.skill.getSkillCDList(skillID)) {
+		io.addOutputData(this.cID, 'skillCDing', 'self', {cID : this.cID, skillID : skillID, timestamp : fc.getTimestamp()});
+        io.response();
+        return 0;
+	} else {
+		return 1;
+	}
+}
+// CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL END
+
+// CHECK IF CHARACTER CAN CAST SKILL ON TARGET START
+character.prototype.castTargetCheck = function(io, target, skill) {
+	var checked = this.checkTargetAlive(target) && this.checkRange(io, target, skill) && this.checkNV(io, target, skill);
+	return checked;
+}
+character.prototype.checkTargetAlive = function(target) {
+	return target.getStatus();
+}
+character.prototype.checkRange = function(io, target, skill) {
+	var targetLocation = target.getLocation();
+	var range = giMap.getRange(this.position, targetLocation);
+	
+	if (range > skill.range + GI_SKILL_CAST_BLUR_RANGE) {
+		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, target : target.cID, skillID : skill.skillID});
+        io.response();
+        return 0;
+	} else {
+		return 1;
+	}
+}
+character.prototype.checkNV = function(io, target, skill) {
+	var nv = this.getNV();
+	if (skill.costNV > nv) {
+		io.addOutputData(this.cID, 'castSkillOutOfNV', 'self', {cID : this.cID, target : target.cID, skillID : skill.skillID});
+        io.response();
+        return 0;
+	} else {
+		return 1;
+	}
+}
+// CHECK IF CHARACTER CAN CAST SKILL ON TARGET END
+
 exports.create = function(cID, name) {
     return new character(cID, name);
 }

@@ -1,4 +1,4 @@
-var SKILl = 
+var SKILL = 
 {
     "10000" : {
         "skillID" : 10000
@@ -20,7 +20,7 @@ var SKILl =
     }
     ,"5000" : {
         "skillID" : 5000
-        ,"name" : "warp"
+        ,"name" : "wrap"
         ,"attribution" : "physics"
         ,"triggerType" : "aura"
         ,"target" : "self"
