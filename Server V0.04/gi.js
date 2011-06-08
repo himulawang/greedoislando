@@ -1,101 +1,54 @@
+/* System */
 var sys = require('sys')
-    ,ws = require('./lib/websocket')
-    ,fc = require('./lib/facility');
+    ,ws = require('./lib/websocket');
+require('./lib/facility');
+/* Configuration */
+require('./config');
+require('./constant');
+/* GI World */
+global.giUserList = require('./gi/userList').create();
+giUserList.initInactiveUserRecycle();
 
-var config = require('./config')
-    ,io = require('./gi/io')
-    ,world = require('./gi/world')
-    ,gm = require('./gi/gm');
+global.giMap = require('./gi/map').create();
+giMap.setObstacleToFindWay();
 
-var clients = {};
-
-function getCID(websocket) {
-    for (var cID in clients) {
-        if (clients[cID] === websocket) return cID;
-    }
-}
-function send(output) {
-    for (var i = 0; i < output.length; ++i) {
-        io.output(output[i], clients);
-    }
-}
-function destroyWorldInfo(cID) {
-    var object = {
-        cID : cID
-        ,type : 'logout'
-    };
-    var output = world.entrance(cID, object);
-    send(output);
-}
-function clearConnectionPool(cID) {
-    if (!clients[cID]) return;
-    clients[cID].end();
-    delete clients[cID];
-}
-function logout(cID) {
-    destroyWorldInfo(cID);
-    clearConnectionPool(cID);
-}
+require('./gi/process');
+var io = require('./gi/io')
+//    ,gm = require('./gi/gm');
 
 //game server
-ws.createServer(function (websocket) {
-    websocket.addListener("connect", function () { 
-        sys.log(websocket.remoteAddress + ' Connected');
-        websocket.sessionTime = fc.getTimestamp();
-        clients[fc.guid()] = websocket;
-    }).addListener("data", function (data) {
-        var object, output, i;
-        var cID = getCID(websocket);
+ws.createServer(function(websocket) {
+    websocket.addListener("connect", function() { 
+        var cID = giUserList.newConnect(websocket);
+        sys.log(websocket.remoteAddress + ' Connected; cID: ' + cID);
+    }).addListener("data", function(data) {
+        var stream = io.create();
+        stream.getInputData(websocket, data);
 
-        object = io.input(cID, data);
-        //invalid message
-        if (!object) return;
-        //keepSession
-        if (object.type === 'keepSession') {
-            clients[cID].sessionTime = fc.getTimestamp();
-            return;
-        }
-        console.log(cID, '->', data);
-        if (object.type === 'logout') {
-            logout(cID);
-            return;
-        }
-
-        output = world.entrance(cID, object);
-        if (!output) return;
-        //send
-        send(output);
-    }).addListener("close", function () { 
-        var cID = getCID(websocket);
-        if (cID) logout(cID);
+        if (!stream.iData) return;
+        stream.process();
+    }).addListener("close", function() {
+        var cID = giUserList.getCIDByClient(websocket);
+        if (cID) giUserList.disconnect(cID);
+    }).addListener("error", function(e) {
+        console.log(e);
     });
-}).listen(config.port());
+}).listen(SERVER_LISTEN_PORT);
 
 //admin console
-ws.createServer(function (websocket) {
-    websocket.addListener("connect", function () { 
+/*
+ws.createServer(function(websocket) {
+    websocket.addListener("connect", function() { 
         sys.log('GM Connected');
-    }).addListener("data", function (data) {
+    }).addListener("data", function(data) {
         var json = io.input('gm', data);
         if (json.cmd === 'getAllCharacter') {
             websocket.write(world.gm(json.cmd));
         }else if (json.cmd === 'getClient') {
             websocket.write(JSON.stringify(clients));
         }
-    }).addListener("close", function () { 
+    }).addListener("close", function() { 
         sys.debug("GM Disconnect");
     });
-}).listen(config.gmPort());
-
-//session recycle
-setInterval(function(){
-    sys.log('Begin recycle');
-    var now = fc.getTimestamp();
-    for (var cID in clients) {
-        if (now - clients[cID].sessionTime < 40000) continue;
-        sys.log(cID + ' be recycled');
-        logout(cID);
-    }
-}, 40000);
-
-world.init();
+}).listen(SERVER_LISTEN_GM_PORT);
+*/
