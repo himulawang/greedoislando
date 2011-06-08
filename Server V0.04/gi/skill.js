@@ -95,7 +95,37 @@ skill.prototype.pushDebuffList = function(skill) {
         this.target.debuffList[dID] = debuff;
     }
 }
+skill.prototype.getBuffID = function(skill) {
+    return this.cID + "_" + skill.skillID;
+}
+skill.prototype.pushBuffList = function(skill) {
+    var bID = this.getBuffID(skill);
+    if (!this.buffList[bID]) {
+        var buff = { skillName : skill.name, buff : skill.adtEffect, stack : 0 };
+        this.target.buffList[dID] = buff;
+    }
+}
 // CAST SKILL END
+
+// CAST DIRECTLY SKILL START
+skill.prototype.castDirectlySkill = function(skill, coordinate) {
+	this.castDirectlySkillProc(skill, coordinate);
+}
+skill.prototype.castDirectlySkillProc = function(skill, coordinate) {
+	this.ooSkill = skill.name.create(coordinate);  //TODO
+	this.io.response();
+}
+skill.prototype.coordinateVerify = function(skill, coordinate) {
+	var direction = giMap.getDirection(this.self.position, coordinate);
+	var startXY = fc.getCoordinateXY(this.self.postion);
+	var endXY = fc.getCoordinateXY(coordinate);
+	var range = Math.max(Math.abs(startXY.x - endXY.y), Math.abs(startXY.y - endXY.y));
+	var validLine = giMap.getLineCoordinateWithoutObstacle(this.self.position, direction, range);
+	var len = validLine.length;
+	var endGridIndex = (len === 0) ? this.target.position : validLine[len - 1];
+	return endGridIndex;
+}
+// CAST DIRECTLY SKILL END
 
 // SKILL CD START
 skill.prototype.setSkillCD = function(skill) {

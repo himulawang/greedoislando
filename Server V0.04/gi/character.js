@@ -52,6 +52,7 @@ var character = function(cID, name) {
     this.speedFactor = 1; // Init Speed  = 100%
     this.dotTimer = 3000; // ms , take dot effect per 3s
     this.debuffList = {};
+    this.buffList = {};
     this.skillCDList = {};    
     this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
     this.skillCharge = {};
