@@ -141,4 +141,76 @@ var SKILL =
             "adtEffectTime" : 3
         }
     }
+    ,"10100" : {
+        "skillID" : 10100
+        ,"name" : "handHack"
+        ,"damage" : 80
+        ,"costNV" : 100
+        ,"range" : 6
+        ,"attribution" : "physics"
+        ,"triggerType" : "positive"
+        ,"target" : "single"
+        ,"sEffect" : null
+        ,"adtEffect" : null
+        ,"adtEffectVal" : null
+        ,"adtEffectTime" : null
+        ,"skillCD" : null
+        ,"lvUPMod" : {
+            "damage" : 30
+        }
+    }
+    ,"10101" : {
+    	"skillID" : 10101
+    	,"name" : "fadingSteps"
+    	,"damage" : 0
+        ,"costNV" : 50
+        ,"range" : 24
+        ,"attribution" : "teleport"
+        ,"triggerType" : "positive"
+        ,"target" : "self"
+        ,"sEffect" : null
+        ,"adtEffect" : "speedup"
+        ,"adtEffectVal" : 0.3
+        ,"adtEffectTime" : 5000
+        ,"skillCD" : 5
+        ,"lvUPMod" : {
+        	"skillCD" : -1
+        }
+    }
+    ,"10102" : {
+    	"skillID" : 10102
+    	,"name" : "patheticChildhood"
+    	,"damage" : 120
+        ,"costNV" : 130
+        ,"range" : 6
+        ,"attribution" : "lightening"
+        ,"triggerType" : "positive"
+        ,"target" : "single"
+        ,"sEffect" : null
+        ,"adtEffect" : "paralysis"
+        ,"adtEffectVal" : null
+        ,"adtEffectTime" : 6000
+        ,"skillCD" : 8
+        ,"lvUPMod" : {
+        	"skillCD" : -1
+        }
+    }
+    ,"10103" : {
+    	"skillID" : 10103
+    	,"name" : "flyingLighteningBall"
+    	,"damage" : 250
+        ,"costNV" : 130
+        ,"range" : 24
+        ,"attribution" : "lightening"
+        ,"triggerType" : "positive"
+        ,"target" : "single"
+        ,"sEffect" : null
+        ,"adtEffect" : null
+        ,"adtEffectVal" : null
+        ,"adtEffectTime" : null
+        ,"skillCD" : 3
+        ,"lvUPMod" : {
+        	"rangeFactor" : 0.1
+        }
+    }
 }
