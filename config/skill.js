@@ -3,6 +3,7 @@ var SKILL =
     "10000" : {
         "skillID" : 10000
         ,"name" : "rightStraightPunch"
+        ,"abbreviation" : "拳"
         ,"damage" : 80
         ,"costNV" : 100
         ,"range" : 6
@@ -85,6 +86,7 @@ var SKILL =
     ,"10001" : {
         "skillID" : 10001
         ,"name" : "moraStone"
+        ,"abbreviation" : "石"
         ,"damage" : 200
         ,"costNV" : 200
         ,"range" : 6
@@ -108,6 +110,7 @@ var SKILL =
     ,"10002" : {
         "skillID" : 10002
         ,"name" : "moraScissors"
+        ,"abbreviation" : "剪"
         ,"damage" : 0
         ,"costNV" : 50
         ,"range" : 18
@@ -126,6 +129,7 @@ var SKILL =
     ,"10003" : {
         "skillID" : 10003
         ,"name" : "moraFabric"
+        ,"abbreviation" : "布"
         ,"damage" : 30
         ,"costNV" : 100
         ,"range" : 24
@@ -144,6 +148,7 @@ var SKILL =
     ,"10100" : {
         "skillID" : 10100
         ,"name" : "handHack"
+        ,"abbreviation" : "刀"
         ,"damage" : 80
         ,"costNV" : 100
         ,"range" : 6
@@ -162,6 +167,7 @@ var SKILL =
     ,"10101" : {
     	"skillID" : 10101
     	,"name" : "fadingSteps"
+        ,"abbreviation" : "瞬"
     	,"damage" : 0
         ,"costNV" : 50
         ,"range" : 24
@@ -180,6 +186,7 @@ var SKILL =
     ,"10102" : {
     	"skillID" : 10102
     	,"name" : "patheticChildhood"
+        ,"abbreviation" : "儿"
     	,"damage" : 120
         ,"costNV" : 130
         ,"range" : 6
@@ -198,6 +205,7 @@ var SKILL =
     ,"10103" : {
     	"skillID" : 10103
     	,"name" : "flyingLighteningBall"
+        ,"abbreviation" : "电"
     	,"damage" : 250
         ,"costNV" : 130
         ,"range" : 24
@@ -213,4 +221,4 @@ var SKILL =
         	"rangeFactor" : 0.1
         }
     }
-}
+};
