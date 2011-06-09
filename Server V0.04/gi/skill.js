@@ -2,123 +2,101 @@ global.util = require('util');
 
 var moraStone = require('skills/mora_stone')
 	,moraScissors = require('skills/mora_scissors')
-	,moraFabric = require('skills/mora_fabric');
+	,moraFabric = require('skills/mora_fabric')
+	,fadingSteps = require('skills/fading_steps');
 
-var skill = function(character) {
-	this.initSkill(character);
-}
+var skill = function() {}
 
-exports.create = function(character) {
-	return new skill(character);
-}
-
-skill.prototype.skillList = fc.readFile("../config/skill.js");
-
-skill.prototype.initSkill = function(character) {
+skill.prototype.init = function(character) {
 	this.self = character;
 	this.cID = this.self.getCID();
+	this.skill = this.self.skill[this.sID];
+	this.chargeFactor = 1;
 	this.dotTimer = 3000;
 	this.skillCDTimeout = {};
-	this.initIO();
+	this.initIO(this.self.getCID());
 }
-skill.prototype.initIO = function() {
+skill.prototype.initIO = function(cID) {
 	this.io = io.create();
-    this.io.setSelfCID(this.cID);
+    this.io.setSelfCID(cID);
 }
-skill.prototype.getSkill = function(skillID) {
-	return this.skillList[skillID];
-}
-
 //CAST PROC START
-skill.prototype.castProc = function(skill, target) {
-	this.target = target;
-	this.io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.cID, skillID : skill.skillID});
+skill.prototype.castProc = function() {
+	this.io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.getCID(), skillID : this.skill.skillID});
 	this.setToCombat();
-	this.castNVConsume(skill);
-	return this.skillHit(skill);
+	this.castNVConsume();
+	return this.skillHit();
 }
 skill.prototype.setToCombat = function() {
 	this.self.setCombat();
 	this.target.setCombat();
 }
-skill.prototype.castNVConsume = function(skill) {
+skill.prototype.castNVConsume = function() {
 	var preNV = this.self.getNV();
-	var nowNV = this.self.subNV(skill.costNV);
+	var nowNV = this.self.subNV(this.skill.costNV);
 	this.io.addOutputData(this.cID, 'nvChange', 'logged', {cID : this.cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
 }
-skill.prototype.skillHit = function(skill) {
+skill.prototype.skillHit = function() {
 	var targetDodgeRate = this.target.getDodgeRate();
 	var hitted = this.self.hitProc(targetDodgeRate);
 	if (hitted === 0) {
-		this.io.addOutputData(this.cID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : skill.skillID});
+		this.io.addOutputData(this.self.getCID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.getCID() , skillID : this.skill.skillID});
 	}
 	return hitted;
 }
 //CAST PROC END
 
 //CAST SKILL START
-skill.prototype.castSkill = function(skill, target, chargeFactor) {
-	//this.target = target;
-	this.excuteSkillProc(skill, chargeFactor);
-}
-skill.prototype.excuteSkillProc = function(skill, chargeFactor) {
-	this.pushDebuffList(skill);
-	this.ooSkill = skill.name.create(chargeFactor);  //TODO
-	this.io.response();
-}
-skill.prototype.excuteDamage = function(skill, chargeFactor) {
-	var damage = this.getSkillDamage(skill, chargeFactor);
+skill.prototype.excuteDamage = function() {	
+	var damage = this.getSkillDamage();
 	var preHP = this.target.getHP();
-	
-	var hp = damage * (1 + this.self.atkRF)  - damage * this.target.defRF;   // Damage reduction formulation
-    
+	var hp = damage * (1 + this.self.atkRF) - damage * this.target.defRF;   // Damage reduction formulation    
 	hp = fc.fix(hp);
     this.target.hp = (hp < this.target.hp) ? this.target.hp - hp : 0;
-    this.io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.getCID(), preHP : preHP, nowHP : this.target.hp, hpDelta : this.target.hp - preHP});
-    if (this.target.hp === 0) {
-        clearTimeout(this.target.setFreeTimeout);
+    this.io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.getCID(), preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
+    if (this.target.getHP() === 0) {        
         this.target.setStatus(0);
-        this.io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.getCID(), status : this.target.getStatus(), timestamp : fc.getTimestamp()});
+        this.setCharDead();
     }
-    //this.io.response();
+    this.setSkillCD();
+    this.setCommonCD();
+    this.freeStatusCountDown();
+    this.io.response();
 }
-skill.prototype.getSkillDamage = function(skill, chargeFactor) {
-	return skill.damage * chargeFactor;
+skill.prototyoe.setCharDead = function() {
+	clearTimeout(this.target.setFreeTimeout);
+	this.io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.getCID(), status : this.target.getStatus(), timestamp : fc.getTimestamp()});
 }
-skill.prototype.getDebuffID = function(skill) {
-    return this.cID + "_" + skill.skillID;
+skill.prototype.getSkillDamage = function() {
+	return this.skill.damage * this.chargeFactor;
 }
-skill.prototype.pushDebuffList = function(skill) {
-    var dID = this.getDebuffID(skill);
+skill.prototype.getDebuffID = function() {
+    return this.self.getCID + "_" + this.skill.skillID;
+}
+skill.prototype.pushDebuffList = function() {
+    var dID = this.getDebuffID();
     if (!this.debuffList[dID]) {
-        var debuff = { skillName : skill.name, debuff : skill.adtEffect, stack : 0 };
+        var debuff = { skillName : this.skill.name, debuff : this.skill.adtEffect, stack : 0 };
         this.target.debuffList[dID] = debuff;
     }
 }
-skill.prototype.getBuffID = function(skill) {
-    return this.cID + "_" + skill.skillID;
+skill.prototype.getBuffID = function() {
+    return this.self.getCID + "_" + this.skill.skillID;
 }
-skill.prototype.pushBuffList = function(skill) {
-    var bID = this.getBuffID(skill);
+skill.prototype.pushBuffList = function() {
+    var bID = this.getBuffID(cID);
     if (!this.buffList[bID]) {
-        var buff = { skillName : skill.name, buff : skill.adtEffect, stack : 0 };
+        var buff = { skillName : this.skill.name, buff : this.skill.adtEffect, stack : 0 };
         this.target.buffList[dID] = buff;
     }
 }
 // CAST SKILL END
 
 // CAST DIRECTLY SKILL START
-skill.prototype.castDirectlySkill = function(skill, coordinate) {
-	this.castDirectlySkillProc(skill, coordinate);
-}
-skill.prototype.castDirectlySkillProc = function(skill, coordinate) {
-	this.ooSkill = skill.name.create(coordinate);  //TODO
-	this.io.response();
-}
-skill.prototype.coordinateVerify = function(skill, coordinate) {
-	var direction = giMap.getDirection(this.self.position, coordinate);
+skill.prototype.excuteTeleportCoordinateVerify = function() {
+	var direction = giMap.getDirection(this.self.position, this.coordinate);
 	var startXY = fc.getCoordinateXY(this.self.postion);
-	var endXY = fc.getCoordinateXY(coordinate);
+	var endXY = fc.getCoordinateXY(this.coordinate);
 	var range = Math.max(Math.abs(startXY.x - endXY.y), Math.abs(startXY.y - endXY.y));
 	var validLine = giMap.getLineCoordinateWithoutObstacle(this.self.position, direction, range);
 	var len = validLine.length;
@@ -128,31 +106,27 @@ skill.prototype.coordinateVerify = function(skill, coordinate) {
 // CAST DIRECTLY SKILL END
 
 // SKILL CD START
-skill.prototype.setSkillCD = function(skill) {
-    if (skill.skillCD === null) return;
-    if (!this.self.skillCDList[skill.skillID]) {
-        this.self.skillCDList[skill.skillID] = { cdStatus : 0, cdTime : skill.skillCD };  // cdStatus : 0 = CDing
+skill.prototype.setSkillCD = function() {
+    if (this.skill.skillCD === null) return;
+    if (!this.self.skillCDList[this.skill.skillID]) {
+        this.self.skillCDList[this.skill.skillID] = { cdStatus : 0, cdTime : this.skill.skillCD };  // cdStatus : 0 = CDing
     }
-    this.startSkillCDProc(skill);
+    this.startSkillCDProc();
 }
-skill.prototype.startSkillCDProc = function(skill) {
+skill.prototype.startSkillCDProc = function() {
     var _this = this;
-    this.skillCDTimeout[skill.skillID] = setTimeout(function(){  // For later Version : Some New skill reset the skillCD...
-        delete _this.self.skillCDList[skill.skillID];
-    }, skill.skillCD);
-}
-skill.prototype.getSkillCDList = function(skillID) {
-    return this.self.skillCDList[skillID];
+    this.skillCDTimeout[this.skill.skillID] = setTimeout(function(){  // For later to reset skillCD...
+        delete _this.self.skillCDList[_this.skill.skillID];
+    }, this.skill.skillCD);
 }
 // SKILL CD END
 
-
 // SKILL CHARGE START
-skill.prototype.chargeStart = function(skillID) {
-    this.self.skillCharge[skillID] = fc.getTimestamp();
+skill.prototype.chargeStart = function() {
+    this.self.skillCharge[this.skill.skillID] = fc.getTimestamp();
 }
-skill.prototype.getChargeLevel = function(skillID) {
-    var chargeTimeDelta = fc.getTimestamp() - this.self.skillCharge[skillID];
+skill.prototype.setChargeLevel = function() {
+    var chargeTimeDelta = fc.getTimestamp() - this.self.skillCharge[this.skill.skillID];
     var skillChargeLevel;
     if (chargeTimeDelta >= 0 && chargeTimeDelta < 1000) {
         skillChargeLevel = 1;
@@ -163,15 +137,24 @@ skill.prototype.getChargeLevel = function(skillID) {
     } else {
         return;
     }
-    delete this.self.skillCharge[skillID]; // equal to this.self.skillCharge = {};
-    return skillChargeLevel;
-}
-skill.prototype.getSkillChargeDamageFactor = function(skill, skillChargeLevel) {
-    return skill.chargeLevel[skillChargeLevel]; // Fetch Charge Level Factor Mapping By skillID From Skill Setting
+    delete this.self.skillCharge[this.skill.skillID]; // equal to this.self.skillCharge = {};
+    this.chargeFactor = skillChargeLevel;
 }
 // SKILL CHARGE END
 
+// COMMONCD START
+skill.prototype.setCommonCD = function() {
+	this.self.cCD = 0;  // GCD -- cant use skill in the next 1.5s
+	this.self.commonCD();  // 1.5s CoolDown Proc begins
+}
+// COMMONCD END
 
+// Set to Free START
+skill.prototype.freeStatusCountDown = function() {
+	this.self.setFree();  // 10s later set self status to free
+    this.target.setFree();  // 10s later set tango status to free
+}
+// Set to Free END
 
 
 

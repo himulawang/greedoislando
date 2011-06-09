@@ -59,7 +59,9 @@ var character = function(cID, name) {
     
     this.baseNein = { wrap : 1, obstruct : 1, charge : 1,launch : 1 };
 
-    this.skill = {};
+    this.skill = fc.readFile("../config/skill.js");
+    this.intSkill = {};
+    
     // Attribute End
     do {
         this.x = 12;
@@ -79,8 +81,6 @@ var character = function(cID, name) {
     this.auraRF(this.getAura());
     this.systemRF();
     this.avbSkill();
-    
-    this.skill = skill.create(this);
 }
 
 character.prototype.getInfo = function() {
@@ -125,13 +125,10 @@ character.prototype.avbSkill = function() {
         ,10003 : 1
     };
     for (var x in charSkill) {
-        this.skill[x] = skillconfig.get(x);
+        this.intSkill[x] = new this.skill[x].name.create(this);
     }
 }
 character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
-    for (var x in auraz) {
-        this.skill[x] = skillconfig.get(x);
-    }
     this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod.auraRFVal;
     this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod.auraRFVal;
     this.recRF = this.skill[5002].auraRFVal + auraz[5002] * this.skill[5002].lvUpMod.auraRFVal;
@@ -172,10 +169,13 @@ character.prototype.startWay = function() {
     this.moveWay();
 }
 character.prototype.moveWay = function() {
+	if (this.doAction === 2 || this.doAction === 3) return;  // doAction pause the moving action for attacking
+	
     var cID = this.getCID();
     var stream = io.create();
     stream.setSelfCID(cID);
-    if (this.wayIndex >= this.way.length || this.doAction === 2 || this.doAction === 3) {   // doAction pause the moving action for attacking
+    
+    if (this.wayIndex >= this.way.length) {
         this.characterMoving = false;
         this.nextXY = null;
         this.way = null;

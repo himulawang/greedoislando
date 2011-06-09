@@ -1,33 +1,37 @@
 util.inherits(moraStone, skill);
 
-var moraStone = function(chargeFactor) {
-	this.sID = "10001";
-	this.chargeFactor = chargeFactor;
-	this.excuteSkill();
+var moraStone = function(character) {
+	this.initSkill(character);
 }
-exports.create = function(chargeFactor) {
-	return new moraStone(chargeFactor);
+exports.create = function(character) {
+	return new moraStone(character);
 }
 
-moraStone.prototype.excuteSkill = function() {
-	this.excuteDamage(this.skillList[this.sID], this.chargeFactor);
+moraStone.prototype.initSkill = function(character) {
+	this.sID = "10002";
+	this.init(character);
+}
+moraStone.prototype.excuteSkill = function(target) {
+	this.target = target;
+	if(this.castProc() === 0) return;
+	this.excuteDamage();
 	this.excuteRepel();
+	this.chargeFactor = 1;
 }
 moraStone.prototype.excuteRepel = function() {
 	var _this = this;
+	this.pushDebuffList();
 	this.target.setDoAction(3);
 	
-	var skill = this.skillList[this.sID];
 	var direction = giMap.getDirection(this.target.position, this.self.position);
-	var validLine = giMap.getLineCoordinateWithoutObstacle(this.target.position, direction, skill.adtEffectVal);
+	var validLine = giMap.getLineCoordinateWithoutObstacle(this.target.position, direction, this.skill.adtEffectVal);
 	var len = validLine.length;
 	var endGridIndex = (len === 0) ? this.target.position : validLine[len - 1];
-	var repelDuration = skill.adtEffectTime;
 	
 	this.target.setLocation(endGridIndex);
-	this.io.addOutputData(this.cID, 'moveRepel', 'logged', {cID : this.target.getCID(), nowLocation : this.target.position, endLocation : endGridIndex, duration : repelDuration, timestamp : fc.getTimestamp() });
-	
-	var dID = this.getDebuffID(this.skillList[this.sID]);
+	this.io.addOutputData(this.cID, 'moveRepel', 'logged', {cID : this.target.getCID(), nowLocation : this.target.position, endLocation : endGridIndex, duration : this.skill.adtEffectTime, timestamp : fc.getTimestamp() });
+	this.io.response();
+	var dID = this.getDebuffID();
 	
 	this.doRepelTimeout = setTimeout(function(){
 		delete _this.target.debuffList[dID];
