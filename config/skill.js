@@ -3,7 +3,7 @@ var SKILL =
     "10000" : {
         "skillID" : 10000
         ,"name" : "rightStraightPunch"
-        ,"abbreviation" : "æ‹?
+        ,"abbreviation" : "Punch"
         ,"className" : "Skill_RightStraightPunch"
         ,"damage" : 80
         ,"costNV" : 100
@@ -87,7 +87,7 @@ var SKILL =
     ,"10001" : {
         "skillID" : 10001
         ,"name" : "moraStone"
-        ,"abbreviation" : "çŸ?
+        ,"abbreviation" : "Stone"
         ,"className" : "Skill_MoraStone"
         ,"damage" : 200
         ,"costNV" : 200
@@ -112,7 +112,7 @@ var SKILL =
     ,"10002" : {
         "skillID" : 10002
         ,"name" : "moraScissors"
-        ,"abbreviation" : "å‰?
+        ,"abbreviation" : "Sciss"
         ,"className" : "Skill_MoraScissors"
         ,"damage" : 0
         ,"costNV" : 50
@@ -132,7 +132,7 @@ var SKILL =
     ,"10003" : {
         "skillID" : 10003
         ,"name" : "moraFabric"
-        ,"abbreviation" : "å¸?
+        ,"abbreviation" : "Fabri"
         ,"className" : "Skill_MoraFabric"
         ,"damage" : 30
         ,"costNV" : 100
@@ -152,7 +152,7 @@ var SKILL =
     ,"10100" : {
         "skillID" : 10100
         ,"name" : "handHack"
-        ,"abbreviation" : "åˆ€"
+        ,"abbreviation" : "Hack"
         ,"className" : "Skill_HandHack"
         ,"damage" : 80
         ,"costNV" : 100
@@ -172,7 +172,7 @@ var SKILL =
     ,"10101" : {
     	"skillID" : 10101
     	,"name" : "fadingSteps"
-        ,"abbreviation" : "çž?
+        ,"abbreviation" : "Step"
         ,"className" : "Skill_FadingSteps"
     	,"damage" : 0
         ,"costNV" : 50
@@ -192,7 +192,7 @@ var SKILL =
     ,"10102" : {
     	"skillID" : 10102
     	,"name" : "patheticChildhood"
-        ,"abbreviation" : "å„?
+        ,"abbreviation" : "Child"
         ,"className" : "Skill_PatheticChildhood"
     	,"damage" : 120
         ,"costNV" : 130
@@ -212,7 +212,7 @@ var SKILL =
     ,"10103" : {
     	"skillID" : 10103
     	,"name" : "flyingLighteningBall"
-        ,"abbreviation" : "ç”?
+        ,"abbreviation" : "Light"
         ,"className" : "Skill_FlyingLighteningBall"
     	,"damage" : 250
         ,"costNV" : 130
