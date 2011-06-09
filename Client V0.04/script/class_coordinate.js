@@ -52,9 +52,6 @@ var Coordinate = Class.extend({
         if (this.checkMoveOut(x, y)) {
             this.x = x;
             this.y = y;
-            // ila : coordinate is a class for other class to inheritance, don't put special function here
-            // if you want to use this function and make something special, rewrite this function in the child class.
-            //fw.setEnd(this.x,this.y);
             this.put();
         }
     }
