@@ -1,55 +1,16 @@
 var Material = Class.extend({
     init : function(){
         this.images = {};
-        this.initMaterialData();
         this.initMaterial();
-    }
-    ,initMaterialData : function() {
-        this.materialData = {
-            character : {
-                gon : {
-                    animateList : {
-                        'stand' : {
-                            'frames' : 2
-                            ,'duration' : 500
-                        }
-                        ,'attack' : {
-                            'frames' : 7
-                            ,'duration' : 500
-                        }
-                        ,'run' : {
-                            'frames' : 8
-                            ,'duration' : 100
-                        }
-                    }
-                }
-                ,killua : {
-                    animateList : {
-                        'stand' : {
-                            'frames' : 2
-                            ,'duration' : 500
-                        }
-                        ,'attack' : {
-                            'frames' : 6
-                            ,'duration' : 500
-                        }
-                        ,'run' : {
-                            'frames' : 4
-                            ,'duration' : 150
-                        }
-                    }
-                }
-            }
-        }
     }
     ,initMaterial : function(){
         this.loadCharacterList();
         this.loadMapElement();
     }
     ,loadCharacterList : function() {
-        for (var character in this.materialData.character) {
+        for (var character in ANIMATION_MATERIAL.character) {
             this.images[character] = {};
-            this.loadCharacter(this.materialData.character[character], character);
+            this.loadCharacter(ANIMATION_MATERIAL.character[character], character);
         }
     }
     ,loadCharacter : function(character, characterName) {
