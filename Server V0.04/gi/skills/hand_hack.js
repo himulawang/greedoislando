@@ -1,14 +1,11 @@
-util.inherits(handHack, skill);
-
 var handHack = function(chargeFactor) {
 	this.sID = "10100";
 	this.chargeFactor = chargeFactor;
-	this.excuteSkill();
+	this.castSkill();
 }
-exports.create = function(chargeFactor) {
-	return new handHack(chargeFactor);
+handHack.prototype.castSkill = function() {
+	this.doDamage(this.skillList[this.sID], this.chargeFactor);
 }
 
-handHack.prototype.excuteSkill = function() {
-	this.excuteDamage(this.skillList[this.sID], this.chargeFactor);
-}
+util.inherits(handHack, Skill);
+global.Skill_HandHack = handHack;

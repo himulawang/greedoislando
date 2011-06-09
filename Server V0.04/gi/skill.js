@@ -1,16 +1,9 @@
-global.util = require('util');
-
-var moraStone = require('skills/mora_stone')
-	,moraScissors = require('skills/mora_scissors')
-	,moraFabric = require('skills/mora_fabric')
-	,fadingSteps = require('skills/fading_steps');
-
-var skill = function() {}
-
+var skill = function() {
+}
 skill.prototype.init = function(character) {
 	this.self = character;
 	this.cID = this.self.getCID();
-	this.skill = this.self.skill[this.sID];
+	this.skill = SKILL[this.sID];
 	this.chargeFactor = 1;
 	this.dotTimer = 3000;
 	this.skillCDTimeout = {};
@@ -47,7 +40,7 @@ skill.prototype.skillHit = function() {
 //CAST PROC END
 
 //CAST SKILL START
-skill.prototype.excuteDamage = function() {	
+skill.prototype.doDamage = function() {	
 	var damage = this.getSkillDamage();
 	var preHP = this.target.getHP();
 	var hp = damage * (1 + this.self.atkRF) - damage * this.target.defRF;   // Damage reduction formulation    
@@ -63,7 +56,7 @@ skill.prototype.excuteDamage = function() {
     this.freeStatusCountDown();
     this.io.response();
 }
-skill.prototyoe.setCharDead = function() {
+skill.prototype.setCharDead = function() {
 	clearTimeout(this.target.setFreeTimeout);
 	this.io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.getCID(), status : this.target.getStatus(), timestamp : fc.getTimestamp()});
 }
@@ -93,11 +86,11 @@ skill.prototype.pushBuffList = function() {
 // CAST SKILL END
 
 // CAST DIRECTLY SKILL START
-skill.prototype.excuteTeleportCoordinateVerify = function() {
+skill.prototype.doTeleportCoordinateVerify = function() {
 	var direction = giMap.getDirection(this.self.position, this.coordinate);
 	var startXY = fc.getCoordinateXY(this.self.postion);
 	var endXY = fc.getCoordinateXY(this.coordinate);
-	var range = Math.max(Math.abs(startXY.x - endXY.y), Math.abs(startXY.y - endXY.y));
+	var range = Math.max(Math.abs(startXY.x - endXY.x), Math.abs(startXY.y - endXY.y));
 	var validLine = giMap.getLineCoordinateWithoutObstacle(this.self.position, direction, range);
 	var len = validLine.length;
 	var endGridIndex = (len === 0) ? this.target.position : validLine[len - 1];
@@ -155,6 +148,4 @@ skill.prototype.freeStatusCountDown = function() {
     this.target.setFree();  // 10s later set tango status to free
 }
 // Set to Free END
-
-
-
+global.Skill = skill;

@@ -1,24 +1,19 @@
-util.inherits(moraStone, skill);
-
 var moraStone = function(character) {
 	this.initSkill(character);
-}
-exports.create = function(character) {
-	return new moraStone(character);
 }
 
 moraStone.prototype.initSkill = function(character) {
 	this.sID = "10002";
 	this.init(character);
 }
-moraStone.prototype.excuteSkill = function(target) {
+moraStone.prototype.castSkill = function(target) {
 	this.target = target;
 	if(this.castProc() === 0) return;
-	this.excuteDamage();
-	this.excuteRepel();
+	this.doDamage();
+	this.doRepel();
 	this.chargeFactor = 1;
 }
-moraStone.prototype.excuteRepel = function() {
+moraStone.prototype.doRepel = function() {
 	var _this = this;
 	this.pushDebuffList();
 	this.target.setDoAction(3);
@@ -38,3 +33,6 @@ moraStone.prototype.excuteRepel = function() {
 		_this.target.setDoAction(0);
 	}, repelDuration);
 }
+
+util.inherits(moraStone, Skill);
+global.Skill_MoraStoneSkill = moraStone;

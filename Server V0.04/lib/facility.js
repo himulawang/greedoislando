@@ -42,6 +42,7 @@ global.fc = {
         var content = fs.readFileSync(path, 'utf8');
         var array = content.split("\n");
         delete array[0];
+        content = array.join("\n");
         return JSON.parse(content);
     }
 }

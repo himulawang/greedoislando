@@ -1,23 +1,17 @@
-util.inherits(moraScissors, skill);
-
 var moraScissors = function(character) {
 	this.initSkill(character);
 }
-exports.create = function(character) {
-	return new moraScissors(character);
-}
-
 moraScissors.prototype.initSkill = function(character) {
 	this.sID = "10002";	
 	this.init(character);
 }
-moraScissors.prototype.excuteSkill = function(target) {
+moraScissors.prototype.castSkill = function(target) {
 	this.target = target;
 	if(this.castProc() === 0) return;
-	this.excuteDamage();
-	this.excuteBleed();
+	this.doDamage();
+	this.doBleed();
 }
-moraScissors.prototype.excuteBleed = function() {
+moraScissors.prototype.doBleed = function() {
 	this.pushDebuffList();
 	this.dID = this.getDebuffID();
 	if (this.target.debuffList[this.dID].stack < 5) {
@@ -28,12 +22,12 @@ moraScissors.prototype.excuteBleed = function() {
 	this.io.response();
 	this.dotCounts = 0;
 	if (this.target.debuffList[this.dID].stack > 1) return;	
-	this.excuteBleedLoop();
+	this.doBleedLoop();
 }
-moraScissors.prototype.excuteBleedLoop = function() {
+moraScissors.prototype.doBleedLoop = function() {
 	var _this = this;
 	this.doBleedTimeout = setTimeout(function(){
-		_this.excuteBleedDamage();
+		_this.doBleedDamage();
 		++_this.dotCounts;
 		if (_this.dotCounts === _this.doTimes) {
 			_this.io.addOutputData(_this.cID, 'debuff', 'logged', { cID : _this.target.cID, sourceCID : _this.cID, skillID : _this.skill.skillID, last : _this.skill.adtEffectTime ,effect : _this.skill.adtEffect, stack : _this.tareget.debuffList[_this.dID].stack , isOn : 0 });
@@ -42,10 +36,10 @@ moraScissors.prototype.excuteBleedLoop = function() {
 			delete _this.target.debuffList[_this.dID];
 			return;
 		}
-		_this.excuteBleedLoop();
+		_this.doBleedLoop();
 	});
 }
-moraScissors.prototype.excuteBleedDamage = function() {
+moraScissors.prototype.doBleedDamage = function() {
 	var dotDamage = skill.adtEffectVal * this.target.debuffList[this.dID].stack;
 	dotDamage = fc.fix(dotDamage);
 	var preHP = this.target.getHP();
@@ -58,4 +52,5 @@ moraScissors.prototype.excuteBleedDamage = function() {
 	this.io.response();
 }
 
-
+util.inherits(moraScissors, Skill);
+global.Skill_MoraScissors = moraScissors;

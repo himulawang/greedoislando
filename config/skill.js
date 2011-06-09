@@ -3,6 +3,7 @@ var SKILL =
     "10000" : {
         "skillID" : 10000
         ,"name" : "rightStraightPunch"
+        ,"className" : "Skill_RightStraightPunch"
         ,"damage" : 80
         ,"costNV" : 100
         ,"range" : 6
@@ -85,6 +86,7 @@ var SKILL =
     ,"10001" : {
         "skillID" : 10001
         ,"name" : "moraStone"
+        ,"className" : "Skill_MoraStone"
         ,"damage" : 200
         ,"costNV" : 200
         ,"range" : 6
@@ -108,6 +110,7 @@ var SKILL =
     ,"10002" : {
         "skillID" : 10002
         ,"name" : "moraScissors"
+        ,"className" : "Skill_MoraScissors"
         ,"damage" : 0
         ,"costNV" : 50
         ,"range" : 18
@@ -126,6 +129,7 @@ var SKILL =
     ,"10003" : {
         "skillID" : 10003
         ,"name" : "moraFabric"
+        ,"className" : "Skill_MoraFabric"
         ,"damage" : 30
         ,"costNV" : 100
         ,"range" : 24
@@ -144,6 +148,7 @@ var SKILL =
     ,"10100" : {
         "skillID" : 10100
         ,"name" : "handHack"
+        ,"className" : "Skill_HandHack"
         ,"damage" : 80
         ,"costNV" : 100
         ,"range" : 6
@@ -162,12 +167,13 @@ var SKILL =
     ,"10101" : {
     	"skillID" : 10101
     	,"name" : "fadingSteps"
+        ,"className" : "Skill_FadingSteps"
     	,"damage" : 0
         ,"costNV" : 50
         ,"range" : 24
         ,"attribution" : "teleport"
         ,"triggerType" : "positive"
-        ,"target" : "self"
+        ,"target" : "location"
         ,"sEffect" : null
         ,"adtEffect" : "speedup"
         ,"adtEffectVal" : 0.3
@@ -180,6 +186,7 @@ var SKILL =
     ,"10102" : {
     	"skillID" : 10102
     	,"name" : "patheticChildhood"
+        ,"className" : "Skill_PatheticChildhood"
     	,"damage" : 120
         ,"costNV" : 130
         ,"range" : 6
@@ -198,6 +205,7 @@ var SKILL =
     ,"10103" : {
     	"skillID" : 10103
     	,"name" : "flyingLighteningBall"
+        ,"className" : "Skill_FlyingLighteningBall"
     	,"damage" : 250
         ,"costNV" : 130
         ,"range" : 24

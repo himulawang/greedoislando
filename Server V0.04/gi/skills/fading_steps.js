@@ -1,28 +1,22 @@
-util.inherits(fadingSteps, skill);
-
 var fadingSteps = function(character) {
 	this.initSkill(character);
 }
-exports.create = function(character) {
-	return new fadingSteps(character);
-}
-
 fadingSteps.prototype.initSkill = function(character) {
 	this.sID = "10101";	
 	this.init(character);
 }
-fadingSteps.prototype.excuteSkill = function(coordinate) {
+fadingSteps.prototype.castSkill = function(coordinate) {
 	this.coordinate = coordinate;
-	this.excuteFadingSteps();
-	this.excuteSpeedUp();
+	this.doFadingSteps();
+	this.doSpeedUp();
 }
-fadingSteps.prototype.excuteFadingSteps = function() {
-	var endGridIndex = this.excuteTeleportCoordinateVerify();
+fadingSteps.prototype.doFadingSteps = function() {
+	var endGridIndex = this.doTeleportCoordinateVerify();
 	this.io.addOutputData(this.cID, 'teleport', 'logged', {cID : this.cID, nowLocation : this.self.position, endLocation : endGridIndex, timestamp : fc.getTimestamp() });
 	this.self.setLocation(endGridIndex);
 	this.io.response();	
 }
-fadingSteps.prototype.excuteSpeedUp = function() {
+fadingSteps.prototype.doSpeedUp = function() {
 	var _this = this;
 	this.bID = this.getBuffID();
 	this.pushBuffList();
@@ -36,3 +30,6 @@ fadingSteps.prototype.excuteSpeedUp = function() {
     	delete _this.self.buffList[_this.bID];
     }, skill.adtEffectTime);
 }
+
+util.inherits(fadingSteps, Skill);
+global.Skill_FadingSteps = fadingSteps;

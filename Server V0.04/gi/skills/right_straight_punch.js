@@ -1,14 +1,10 @@
-util.inherits(rightStraightPunch, skill);
-
 var rightStraightPunch = function(chargeFactor) {
 	this.sID = "10000";
 	this.chargeFactor = chargeFactor;
-	this.excuteSkill();
+	this.castSkill();
 }
-exports.create = function(chargeFactor) {
-	return new rightStraightPunch(chargeFactor);
+rightStraightPunch.prototype.castSkill = function() {
+	this.doDamage(this.skillList[this.sID], this.chargeFactor);
 }
-
-rightStraightPunch.prototype.excuteSkill = function() {
-	this.excuteDamage(this.skillList[this.sID], this.chargeFactor);
-}
+util.inherits(rightStraightPunch, Skill);
+global.Skill_RightStraightPunch = rightStraightPunch;

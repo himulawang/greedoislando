@@ -1,23 +1,17 @@
-util.inherits(moraFabric, skill);
-
 var moraFabric = function(character) {
 	this.initSkill(character);
 }
-exports.create = function(character) {
-	return new moraFabric(character);
-}
-
 moraFabric.prototype.initSkill = function(character) {
 	this.sID = "10003";	
 	this.init(character);
 }
-moraFabric.prototype.excuteSkill = function(target) {
+moraFabric.prototype.castSkill = function(target) {
 	this.target = target;
 	if(this.castProc() === 0) return;
-	this.excuteDamage();
-	this.excuteSlow();
+	this.doDamage();
+	this.doSlow();
 }
-moraFabric.prototype.excuteSlow = function() {
+moraFabric.prototype.doSlow = function() {
 	var _this = this;
 	this.pushDebuffList();
 	this.dID = this.getDebuffID();
@@ -34,3 +28,6 @@ moraFabric.prototype.excuteSlow = function() {
     	delete _this.target.debuffList[_this.dID];
     }, skill.adtEffectTime);
 }
+
+util.inherits(moraFabric, Skill);
+global.Skill_MoraFabric = moraFabric;

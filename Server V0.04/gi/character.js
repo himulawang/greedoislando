@@ -50,16 +50,20 @@ var character = function(cID, name) {
     this.skillRF = 0;  // Skill Power Aura Reinforcement
     this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel
     this.speedFactor = 1; // Init Speed  = 100%
-    this.dotTimer = 3000; // ms , take dot effect per 3s
     this.debuffList = {};
     this.buffList = {};
     this.skillCDList = {};    
     this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
     this.skillCharge = {};
+    this.charSkill = {
+        //10000 : 1
+        10001 : 1
+        ,10002 : 1
+        ,10003 : 1
+    };
     
     this.baseNein = { wrap : 1, obstruct : 1, charge : 1,launch : 1 };
 
-    this.skill = fc.readFile("../config/skill.js");
     this.intSkill = {};
     
     // Attribute End
@@ -96,7 +100,7 @@ character.prototype.getInfo = function() {
         ,hitRate : this.hitRate
         ,dodgeRate : this.dodgeRate
         ,recovery : this.recovery
-        ,skill : this.skill
+        ,skill : this.charSkill
         ,baseNein : this.baseNein
         ,x : this.x
         ,y : this.y
@@ -118,28 +122,22 @@ character.prototype.getAura = function() {
 }
 // Init Gon's Skill list
 character.prototype.avbSkill = function() {
-    var charSkill = {
-        10000 : 1
-        ,10001 : 1
-        ,10002 : 1
-        ,10003 : 1
-    };
-    for (var x in charSkill) {
-        this.intSkill[x] = new this.skill[x].name.create(this);
+    for (var x in this.charSkill) {
+        this.intSkill[x] = new SKILL[x]['className'](this);
     }
 }
 character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
-    this.defRF = this.skill[5000].auraRFVal + auraz[5000] * this.skill[5000].lvUpMod.auraRFVal;
-    this.atkRF = this.skill[5001].auraRFVal + auraz[5001] * this.skill[5001].lvUpMod.auraRFVal;
-    this.recRF = this.skill[5002].auraRFVal + auraz[5002] * this.skill[5002].lvUpMod.auraRFVal;
-    this.skillRF = this.skill[5003].auraRFVal + auraz[5003] * this.skill[5003].lvUpMod.auraRFVal;
+    this.defRF = this.charSkill[5000].auraRFVal + auraz[5000] * this.charSkill[5000].lvUpMod.auraRFVal;
+    this.atkRF = this.charSkill[5001].auraRFVal + auraz[5001] * this.charSkill[5001].lvUpMod.auraRFVal;
+    this.recRF = this.charSkill[5002].auraRFVal + auraz[5002] * this.charSkill[5002].lvUpMod.auraRFVal;
+    this.charSkillRF = this.charSkill[5003].auraRFVal + auraz[5003] * this.charSkill[5003].lvUpMod.auraRFVal;
 }
 character.prototype.systemRF = function() {
     // reinforce skill power by NIEN system , judge by skill attribution & system reinforce type
-    for (var x in this.skill) {
-        if (this.skill[x].triggerType === 'aura') continue;
-        if (this.system.sysRFType === this.skill[x].attribution) {
-            this.skill[x].damage = ( this.skill[x].damage * ( 1 + this.system.sysRFVal ) ) * ( 1 + this.skillRF );
+    for (var x in this.charSkill) {
+        if (this.charSkill[x].triggerType === 'aura') continue;
+        if (this.system.sysRFType === this.charSkill[x].attribution) {
+            this.charSkill[x].damage = ( this.charSkill[x].damage * ( 1 + this.system.sysRFVal ) ) * ( 1 + this.skillRF );
         }
     }
 }
@@ -274,7 +272,7 @@ character.prototype.getStatus = function() {
 }
 //skill cast
 character.prototype.getSkill = function(skillID) {
-    return this.skill[skillID];
+    return this.charSkill[skillID];
 }
 character.prototype.commonCD = function() {
     var _this = this;
@@ -495,8 +493,8 @@ character.prototype.getChargeLevel = function(skillID) {
     return skillChargeLevel;
 }
 character.prototype.getSkillChargeDamage = function(skillID, skillChargeLevel) {
-    if (this.skill[skillID].chargeLevel) {
-        return this.skill[skillID].chargeLevel[skillChargeLevel]; // Fetch Charge Level Factor Mapping By skillID From Skill Setting
+    if (this.charSkill[skillID].chargeLevel) {
+        return this.charSkill[skillID].chargeLevel[skillChargeLevel]; // Fetch Charge Level Factor Mapping By skillID From Skill Setting
     }
 }
 // CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL START
@@ -515,7 +513,7 @@ character.prototype.checkCommonCD = function(io) {
 	return this.getcCD();
 }
 character.prototype.checkSkillCD = function(io, skillID) {
-	if (this.skill.getSkillCDList(skillID)) {
+	if (this.charSkill.getSkillCDList(skillID)) {
 		io.addOutputData(this.cID, 'skillCDing', 'self', {cID : this.cID, skillID : skillID, timestamp : fc.getTimestamp()});
         io.response();
         return 0;
@@ -556,6 +554,20 @@ character.prototype.checkNV = function(io, target, skill) {
 	}
 }
 // CHECK IF CHARACTER CAN CAST SKILL ON TARGET END
+
+// CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION START
+character.prototype.castLocationCheck = function(location, skill) {
+    var checkRes = giMap.verifyClientLocationMovePossible(location) && this.verifyCastLocationRange(location, skill);
+    return checkRes;
+}
+character.prototype.verifyCastLocationRange = function(location, skill) {
+    var locationXY = fc.getCoordinateXY(location);
+    var nowXY = fc.getCoordinateXY(this.getLocation());
+    var range = Math.max(Math.abs(nowXY.x - locationXY.x), Math.abs(nowXY.y - locationXY.y));
+    var inRange = (range > skill.range) ? false : true;
+    return inRange;
+}
+// CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION END
 
 exports.create = function(cID, name) {
     return new character(cID, name);

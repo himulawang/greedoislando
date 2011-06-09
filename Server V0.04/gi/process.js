@@ -80,7 +80,12 @@ var castSkill = function(io) {
         if (!target) return;
         if (character.castTargetCheck(io, target, skill) === 0) return;
         
-        character.intSkill[skillID].excuteSkill(target);
+        character.intSkill[skillID].castSkill(target);
+    } else if (skill.target === "location") {
+        var location = io.iData.location;
+        if (character.castLocationCheck(io, location, skill) === false) return;
+
+        character.intSkill[skillID].castSkill(location);
     }
 }
 var skillCharge = function(io) {
@@ -103,7 +108,7 @@ var skillCharge = function(io) {
             if (character.castTargetCheck(io, target, skill) === 0) return;
         	
             character.intSkill[skillID].setChargeLevel();
-            character.intSkill[skillID].excuteSkill(target);
+            character.intSkill[skillID].castSkill(target);
         } else {
             return; // reserved for later , eg. INTERUPTED
         }    	

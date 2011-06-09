@@ -1,16 +1,26 @@
 /* System */
 var sys = require('sys')
-    ,ws = require('./lib/websocket');
+    ,ws = require('./lib/websocket')
+    ,util = require('util');
 require('./lib/facility');
+global.util = util;
 /* Configuration */
 require('./config');
-require('./constant');
+require('../config/constant');
+global.SKILL = fc.readFile("../config/skill.js");
 /* GI World */
 global.giUserList = require('./gi/userList').create();
 giUserList.initInactiveUserRecycle();
 
 global.giMap = require('./gi/map').create();
 giMap.setObstacleToFindWay();
+/* GI Skills */
+require('./gi/skills/mora_stone');
+require('./gi/skills/mora_scissors');
+require('./gi/skills/mora_fabric');
+require('./gi/skills/fading_steps');
+require('./gi/skills/hand_hack');
+require('./gi/skills/right_straight_punch');
 
 require('./gi/process');
 var io = require('./gi/io')
