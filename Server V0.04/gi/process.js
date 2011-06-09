@@ -62,18 +62,15 @@ var keepSession = function(io) {
 
     io.response();
 }
-var castSkill = function(io, skillChargeDamageFactor) {
-    if (skillChargeDamageFactor === undefined) var skillChargeDamageFactor = 1;
+var castSkill = function(io) {
     var cID = io.iData.cID;
     var character = giUserList.getCharacter(cID);
     var skillID = io.iData.skillID;
-    var skill = character.skill.getSkill(skillID);
+    var skill = character.skill.getSkill(skillID);   
 
     //check character has this skill
     if (!skill) return;
-
     character.setDoAction(2);  // trigger for attack action pausing the moving action
-
     if (character.castSelfCheck(io, skillID) === 0) return;
     
     //getSkillType
@@ -81,22 +78,9 @@ var castSkill = function(io, skillChargeDamageFactor) {
         var targetCID = io.iData.target;
         var target = giUserList.getCharacter(targetCID);
         if (!target) return;
-        
         if (character.castTargetCheck(io, target, skill) === 0) return;
         
-        var ifHit = character.skill.castProc(skill, target);
-        
-        if (ifHit != 0) character.skill.castSkill(skill, target, skillChargeDamageFactor);
-        
-        character.cCD = 0;  // GCD -- cant use skill in the next 1.5s
-        character.commonCD();  // 1.5s CoolDown Proc begins
-
-        character.skill.setSkillCD(skill);
-
-        character.setFree();  // 10s later set self status to free
-        target.setFree();  // 10s later set tango status to free
-
-        io.response();
+        character.intSkill[skillID].excuteSkill(target);
     }
 }
 var skillCharge = function(io) {
@@ -106,18 +90,24 @@ var skillCharge = function(io) {
     var skill = character.getSkill(skillID);
     
     if (!skill) return; //check character if has this skill or not
-    if (character.getStatus() === 0) return;  // character dead , no action permitted
-    if (character.doAction === 1 || character.doAction === 3) return; // must standing while charging
+    character.setDoAction(2);  // trigger for attack action pausing the moving action
+    if (character.castSelfCheck(io, skillID) === 0) return;
 
-    if (io.iData.status === 1) {
-        character.skill.chargeStart(skillID);
-    } else if (io.iData.status === 0) {
-        var skillChargeLevel = character.skill.getChargeLevel(skillID);
-        var skillChargeDamageFactor = character.getSkillChargeDamageFactor(skill, skillChargeLevel);
-        if (skillChargeDamageFactor) castSkill(io, skillChargeDamageFactor);
-    } else {
-        return; // reserved for later , eg. INTERUPTED
-    }
+    if (skill.target === 'single') {
+    	if (io.iData.status === 1) {
+            character.intSkill[skillID].chargeStart();
+        } else if (io.iData.status === 0) {
+        	var targetCID = io.iData.target;
+            var target = giUserList.getCharacter(targetCID);
+            if (!target) return;
+            if (character.castTargetCheck(io, target, skill) === 0) return;
+        	
+            character.intSkill[skillID].setChargeLevel();
+            character.intSkill[skillID].excuteSkill(target);
+        } else {
+            return; // reserved for later , eg. INTERUPTED
+        }    	
+    }    
 }
 
 global.PROCESS = {
