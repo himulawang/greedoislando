@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh_TW">
+<head>
+<meta charset="utf-8">
+<script src="js/jquery-1.4.2.min.js"></script>
+<script>
+$(document).ready(function(){
+	function initSocket (url, protocol) {
+		setTimeout(connDect, 500);
+		var tmp = new WebSocket(url, protocol);
+		tmp.onmessage = function(e) {
+			var _msg = JSON.parse(e.data);
+			updateMsg('[' + _msg.name + ']: ' + _msg.msg + "\n");
+		};
+		tmp.onerror = function() {
+			updateMsg('[SYS]: 發生錯誤... \n');
+		};
+		tmp.onopen = function() {
+			updateMsg('[SYS]: 連線開啟... \n');
+		};
+		tmp.onclose = function() {
+			updateMsg('[SYS]: 連線結束... \n');
+		};
+		return tmp;
+	}
+	function updateMsg(msg) {
+		var _textarea = $("textarea[name=msg]");
+		_textarea.val(_textarea.val()+msg);
+		setTimeout(function(){
+			_textarea.scrollTop(_textarea[0].scrollHeight - _textarea.innerHeight());
+		},10);
+	}
+	function connDect() {
+		if(s && s.readyState == 1) {
+			updateMsg('[SYS]: 系統已連線，請使用...\n');
+		} else {
+			setTimeout(connDect, 500);
+		}
+	}
+	function send(msg,input) {
+		if(s.readyState==1) {
+			s.send(JSON.stringify(msg));
+			input.val('');
+			return;
+		}
+		if(s.readyState > 1) {
+			updateMsg('[SYS]: 連線中斷，請稍後送出訊息...\n');
+			s = initSocket('ws://60.248.166.82:8080/', 'chat');
+			return;
+		}
+		if(s.readyState == 0) {
+			updateMsg('[SYS]: 連線中，請稍後送出訊息...\n');
+			return;
+		}
+		alert('it is very wrong for you to get here.');
+	}
+	$("form[name=myform]").submit(function(e){
+		var _name = $("input[name=name]"),
+		_input = $("input[name=input]"),
+		_msg = '';
+			if(	_name.val().length<1 ||
+					_input.val().length<1 ) return false;
+		try {
+			_msg = {'name':_name.val(),'msg':_input.val()};
+			send(_msg, _input);
+		} catch(e) {
+			updateMsg('[SYS]: ' + e + '\n');
+		} finally {
+			return false;
+		}
+	});
+	var s = initSocket('ws://60.248.166.82:8080/', 'chat');
+});
+</script>
+</head>
+<body>
+<form name="myform">
+<!--ROOM:&nbsp;<input type="text" length="20" name="room"><br>-->
+<textarea name="msg" readonly cols="80" rows="24"></textarea><br>
+NAME:&nbsp;<input type="text" length="20" name="name"><br>
+Message:&nbsp;<input type="text" length="80" width="200" name="input"><br>
+<input type="submit" value="送出">
+</form>
+</body>
+</html>

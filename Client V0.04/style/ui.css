@@ -1,0 +1,206 @@
+/* Global */
+div {
+    font-family: Monaco;
+}
+.radius {
+    border-radius: 5px;
+}
+
+.center {
+    text-align: center;
+}
+
+.clear {
+    clear: both;
+}
+
+
+.hpslot {
+    border : 1px solid #3c3c3c;
+    height : 4px;
+    width : 60px;
+    position : absolute;
+    border-radius : 1px;
+}
+
+.hpfiller {
+    border : 1px solid #009100;
+    border : none;
+    background : #009100;
+    width : 58px;
+    height: 2px;
+    margin: 1px 0 0 1px;
+    border-radius : 1px;
+}
+
+.manaslot {
+    border : 1px solid #3c3c3c;
+    height : 4px;
+    width : 60px;
+    position : absolute;
+    top : 20px;
+    border-radius : 1px;
+}
+
+.manafiller {
+    border : 1px solid #000079;
+    border : none;
+    background : #0000C6;
+    width : 58px;
+    height: 2px;
+    margin: 1px 0 0 1px;
+    border-radius : 1px;
+}
+/* My Profile start */
+#ui-my-profile {
+    position: absolute;
+    width: 200px;
+    height: 60px;
+    border: 1px solid #DDDDDD;
+    left: 360px;
+    top: 450px;
+    z-index: 100;
+    background-color: #FFFFFF;
+    opacity: .8;
+}
+#ui-my-avartar {
+    width: 100px;
+    height: 60px;
+    border: 1px solid #DDDDDD;
+    float: left;
+}
+#ui-my-profile-hp-div {
+}
+#ui-my-profile-nv-div {
+}
+#ui-my-profile-status-div {
+    float: left;
+}
+#ui-my-buff-div {
+    width: 198px;
+    height: 32px;
+    border: 1px solid #DDDDDD;
+}
+/* My Profile end */
+/* Target Profile start */
+#ui-target-profile {
+    position: absolute;
+    width: 200px;
+    height: 60px;
+    border: 1px solid #DDDDDD;
+    left: 560px;
+    top: 450px;
+    z-index: 100;
+    background-color: #FFFFFF;
+    opacity: .8;
+}
+#ui-target-avartar {
+    width: 100px;
+    height: 60px;
+    border: 1px solid #DDDDDD;
+    float: left;
+}
+#ui-target-profile-hp-div {
+}
+#ui-target-profile-nv-div {
+}
+#ui-target-profile-status-div {
+    float: left;
+}
+#ui-target-buff-div {
+    width: 198px;
+    height: 32px;
+    border: 1px solid #DDDDDD;
+}
+/* Target Profile end */
+/* Buff start */
+.ui-buff-div {
+    font-size: 10px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #DDDDDD;
+    float: left;
+    background-color: #FFFFFF;
+}
+.ui-buff-name {
+    height: 10px;
+}
+.ui-buff-stack {
+    height: 10px;
+}
+.ui-buff-time {
+    height: 10px;
+}
+/* Buff end */
+/* Skill bar start */
+#ui-skill-bar-div {
+    width: 398px;
+    height: 48px;
+    border: 1px solid #DDDDDD;
+    position: absolute;
+    top: 550px;
+    left: 360px;
+    z-index: 100;
+    background-color: #FFFFFF;
+    opacity: .8;
+}
+
+#ui-skill-bar {
+    width: 385px;
+    height: 48px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#ui-skill-table {
+    border-collapse: collapse;
+}
+
+#ui-skill-table .ui-skill-td {
+    width: 55px;
+    height: 44px;
+    border: 1px solid #DDDDDD;
+}
+
+#ui-skill-table .ui-skill-td:hover {
+    background-color: #DDDDDD;
+    cursor: pointer;
+}
+/* Skill bar end */
+/* Charge bar start */
+#ui-charge-bar-div {
+    position: absolute;
+    top: 400px;
+    left: 360px;
+    width: 200px;
+    height: 30px;
+    z-index: 100;
+    background-color: #B4B4B4;
+    opacity: .7;
+    overflow: hidden;
+    border-radius: 5px;
+}
+#ui-charge-bar-progress {
+    width: 200px;
+    height: 30px;
+    background-color: #FF55AA;
+    position: absolute;
+    left: -200px;
+    border-radius: 5px;
+}
+/* Charge bar end */
+
+/* Communication*/
+#ui-chat-history {
+    font-size: 75%;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    width: 338px;
+    height: 178px;
+    border: 1px solid #DDDDDD;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: #FFFFFF;
+    opacity: .7;
+}
