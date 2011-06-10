@@ -8,14 +8,14 @@ moraStone.prototype.initSkill = function(character) {
 }
 moraStone.prototype.castSkill = function(target) {
 	this.target = target;
-	if(this.castProc() === 0) return;
+	if (this.castProc() === 0) return;
 	this.doDamage();
 	this.doRepel();
-	this.chargeFactor = 1;
 }
 moraStone.prototype.doRepel = function() {
 	var _this = this;
 	this.pushDebuffList();
+	this.dID = this.getDebuffID();
 	this.target.setDoAction(3);
 	
 	var direction = giMap.getDirection(this.target.position, this.self.position);
@@ -26,13 +26,12 @@ moraStone.prototype.doRepel = function() {
 	this.target.setLocation(endGridIndex);
 	this.io.addOutputData(this.cID, 'moveRepel', 'logged', {cID : this.target.getCID(), nowLocation : this.target.position, endLocation : endGridIndex, duration : this.skill.adtEffectTime, timestamp : fc.getTimestamp() });
 	this.io.response();
-	var dID = this.getDebuffID();
 	
 	this.doRepelTimeout = setTimeout(function(){
-		delete _this.target.debuffList[dID];
+		delete _this.target.debuffList[_this.dID];
 		_this.target.setDoAction(0);
-	}, repelDuration);
+	}, this.skill.adtEffectTime);
 }
 
 util.inherits(moraStone, Skill);
-global.Skill_MoraStoneSkill = moraStone;
+global.Skill_MoraStone = moraStone;

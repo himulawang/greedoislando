@@ -57,9 +57,7 @@ var moveCharacter = function (io) {
 var keepSession = function(io) {
     var cID = io.iData.cID;
     giUserList.keepSession(cID);
-
     io.addOutputData(cID, 'keepSession', 'self', {timestamp : io.iData.timestamp});
-
     io.response();
 }
 var castSkill = function(io) {
@@ -67,24 +65,19 @@ var castSkill = function(io) {
     var character = giUserList.getCharacter(cID);
     var skillID = io.iData.skillID;
     var skill = character.skill.getSkill(skillID);   
-
     //check character has this skill
     if (!skill) return;
-    character.setDoAction(2);  // trigger for attack action pausing the moving action
     if (character.castSelfCheck(io, skillID) === 0) return;
-    
     //getSkillType
     if (skill.target === "single") {
         var targetCID = io.iData.target;
         var target = giUserList.getCharacter(targetCID);
         if (!target) return;
         if (character.castTargetCheck(io, target, skill) === 0) return;
-        
         character.intSkill[skillID].castSkill(target);
     } else if (skill.target === "location") {
         var location = io.iData.location;
         if (character.castLocationCheck(io, location, skill) === false) return;
-
         character.intSkill[skillID].castSkill(location);
     }
 }
@@ -95,7 +88,6 @@ var skillCharge = function(io) {
     var skill = character.getSkill(skillID);
     
     if (!skill) return; //check character if has this skill or not
-    character.setDoAction(2);  // trigger for attack action pausing the moving action
     if (character.castSelfCheck(io, skillID) === 0) return;
 
     if (skill.target === 'single') {
@@ -106,7 +98,6 @@ var skillCharge = function(io) {
             var target = giUserList.getCharacter(targetCID);
             if (!target) return;
             if (character.castTargetCheck(io, target, skill) === 0) return;
-        	
             character.intSkill[skillID].setChargeLevel();
             character.intSkill[skillID].castSkill(target);
         } else {

@@ -1,13 +1,14 @@
 var moraScissors = function(character) {
 	this.initSkill(character);
 }
+
 moraScissors.prototype.initSkill = function(character) {
 	this.sID = "10002";	
 	this.init(character);
 }
 moraScissors.prototype.castSkill = function(target) {
 	this.target = target;
-	if(this.castProc() === 0) return;
+	if (this.castProc() === 0) return;
 	this.doDamage();
 	this.doBleed();
 }
@@ -37,7 +38,7 @@ moraScissors.prototype.doBleedLoop = function() {
 			return;
 		}
 		_this.doBleedLoop();
-	});
+	}, this.dotTimer);
 }
 moraScissors.prototype.doBleedDamage = function() {
 	var dotDamage = skill.adtEffectVal * this.target.debuffList[this.dID].stack;

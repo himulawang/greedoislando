@@ -1,6 +1,7 @@
 var fadingSteps = function(character) {
 	this.initSkill(character);
 }
+
 fadingSteps.prototype.initSkill = function(character) {
 	this.sID = "10101";	
 	this.init(character);
@@ -28,7 +29,7 @@ fadingSteps.prototype.doSpeedUp = function() {
     	_this.io.addOutputData(_this.cID, 'buff', 'logged', { cID : _this.cID, skillID : _this.skill.skillID, last : _this.skill.adtEffectTime ,effect : _this.skill.adtEffect, stack : 1, isOn : 0 });
         _this.io.response();
     	delete _this.self.buffList[_this.bID];
-    }, skill.adtEffectTime);
+    }, this.skill.adtEffectTime);
 }
 
 util.inherits(fadingSteps, Skill);

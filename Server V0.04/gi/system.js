@@ -1,36 +1,20 @@
-var neinSystem = {
-    100 : {
-        systemID : 100
-        ,name : "tough"
-        ,sysRFType : "physics"
-        ,sysRFVal : 0.2
-    }
-    ,101 : {
-        systemID : 101
-        ,name : "variable"
-        ,sysRFType : "attribution"
-        ,sysRFVal : 0.2
-    }
-    ,102 : {
-        systemID : 102
-        ,name : "emit"
-        ,sysRFType : "pet"
-        ,sysRFVal : 0.2
-    }
-    ,103 : {
-        systemID : 103
-        ,name : "operate"
-        ,sysRFType : "debuff"
-        ,sysRFVal : 0.2
-    }
-    ,104 : {
-        systemID : 104
-        ,name : "materialization"
-        ,sysRFType : "item"
-        ,sysRFVal : 0.2
+var systemBehv = function(character) {
+    this.initSystem(character);
+}
+
+systemBehv.prototype.initSystem = function(character) {
+    this.self = character;
+    this.initSystemReinforcement();
+}
+systemBehv.prototype.initSystemReinforcement = function() {
+    for (var x in this.self.charSkill) {
+        if (this.self.charSkill[x].trigger === 'aura') continue;
+        if (this.self.system.sysRFType === this.self.charSkill[x].attribution) {
+            this.self.charSkill[x].damage = ( this.self.charSkill[x].damage * ( 1 + this.self.system.sysRFVal ) ) * ( 1 + this.self.skillRF );
+        }
     }
 }
 
-exports.get = function(systemID) {
-    return neinSystem[systemID];
-}
+exports.get = function(character) {
+    return new systemBehv(character);
+} 
