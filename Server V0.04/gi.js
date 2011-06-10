@@ -21,6 +21,11 @@ require('./gi/skills/mora_fabric');
 require('./gi/skills/fading_steps');
 require('./gi/skills/hand_hack');
 require('./gi/skills/right_straight_punch');
+require('./gi/skills/pathetic_childhood');
+require('./gi/skills/flying_lightening_ball');
+
+/* SKILL Class Mapping */
+global.skillMapping = require('./gi/data/skillmapping').getSkillMapping();
 
 require('./gi/process');
 var io = require('./gi/io')

@@ -177,7 +177,7 @@ var SKILL =
     	,"damage" : 0
         ,"costNV" : 50
         ,"range" : 24
-        ,"attribution" : "teleport"
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "location"
         ,"sEffect" : null
@@ -197,7 +197,8 @@ var SKILL =
     	,"damage" : 120
         ,"costNV" : 130
         ,"range" : 6
-        ,"attribution" : "lightening"
+        ,"attribution" : "attribution"
+        ,"attributionType" : "lightening"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null
@@ -217,7 +218,8 @@ var SKILL =
     	,"damage" : 250
         ,"costNV" : 130
         ,"range" : 24
-        ,"attribution" : "lightening"
+        ,"attribution" : "attribution"
+        ,"attributionType" : "lightening"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null

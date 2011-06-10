@@ -7,15 +7,16 @@ skill.prototype.init = function(character) {
 	this.chargeFactor = 1;
 	this.dotTimer = 3000;
 	this.skillCDTimeout = {};
-	this.initIO(this.self.getCID());
+	this.initIO(this.cID);
 }
-skill.prototype.initIO = function(cID) {
+skill.prototype.initIO = function() {
 	this.io = io.create();
-    this.io.setSelfCID(cID);
+    this.io.setSelfCID(this.cID);
 }
 //CAST PROC START
 skill.prototype.castProc = function() {
-	this.io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.getCID(), skillID : this.skill.skillID});
+    this.self.setDoAction(2);
+	this.io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
 	this.setToCombat();
 	this.castNVConsume();
 	return this.skillHit();
@@ -33,7 +34,7 @@ skill.prototype.skillHit = function() {
 	var targetDodgeRate = this.target.getDodgeRate();
 	var hitted = this.self.hitProc(targetDodgeRate);
 	if (hitted === 0) {
-		this.io.addOutputData(this.self.getCID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.getCID() , skillID : this.skill.skillID});
+		this.io.addOutputData(this.self.getCID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : this.skill.skillID});
 	}
 	return hitted;
 }
@@ -46,7 +47,7 @@ skill.prototype.doDamage = function() {
 	var hp = damage * (1 + this.self.atkRF) - damage * this.target.defRF;   // Damage reduction formulation    
 	hp = fc.fix(hp);
     this.target.hp = (hp < this.target.hp) ? this.target.hp - hp : 0;
-    this.io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.getCID(), preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
+    this.io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.cID, preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
     if (this.target.getHP() === 0) {        
         this.target.setStatus(0);
         this.setCharDead();
@@ -55,10 +56,11 @@ skill.prototype.doDamage = function() {
     this.setCommonCD();
     this.freeStatusCountDown();
     this.io.response();
+    this.self.setDoAction(0);
 }
 skill.prototype.setCharDead = function() {
 	clearTimeout(this.target.setFreeTimeout);
-	this.io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.getCID(), status : this.target.getStatus(), timestamp : fc.getTimestamp()});
+	this.io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.cID, status : this.target.getStatus(), timestamp : fc.getTimestamp()});
 }
 skill.prototype.getSkillDamage = function() {
 	return this.skill.damage * this.chargeFactor;
@@ -116,6 +118,7 @@ skill.prototype.startSkillCDProc = function() {
 
 // SKILL CHARGE START
 skill.prototype.chargeStart = function() {
+    this.self.setDoAction(2);
     this.self.skillCharge[this.skill.skillID] = fc.getTimestamp();
 }
 skill.prototype.setChargeLevel = function() {

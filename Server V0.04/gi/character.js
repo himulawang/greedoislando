@@ -1,6 +1,8 @@
 var io = require('./io')
     ,skill = require('./skill')
-    ,system = require('./system');
+    ,system = require('./data/system')
+    ,systemBehv = require('./system')
+    ,auraBehv = require('./aura');
 
 var character = function(cID, name) {
     /* 500 UpRight
@@ -21,12 +23,6 @@ var character = function(cID, name) {
     };    
     this.cID = cID;
     this.name = name;
-    /* System Define List
-     * 1 strengthening
-     *
-     * */
-    this.systemID = this.getSystem(this.name);
-    this.system = system.get(this.systemID);
     // Attribute Begin
     this.hp = 1000;
     this.maxHP = 1000;
@@ -48,23 +44,19 @@ var character = function(cID, name) {
     this.atkRF = 0;  // Attack Aura Reinforcement
     this.recRF = 0;  // Free Recover Aura Reinforcement
     this.skillRF = 0;  // Skill Power Aura Reinforcement
-    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel
+    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel, 4 = paralysis
     this.speedFactor = 1; // Init Speed  = 100%
     this.debuffList = {};
     this.buffList = {};
     this.skillCDList = {};    
     this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
     this.skillCharge = {};
-    this.charSkill = {
-        //10000 : 1
-        10001 : 1
-        ,10002 : 1
-        ,10003 : 1
-    };
-    
-    this.baseNein = { wrap : 1, obstruct : 1, charge : 1,launch : 1 };
-
+    this.charSkillID = { 10000 : 1, 10001 : 1, 10002 : 1, 10003 : 1 };
+    this.charAuraID = { 5000 : 1, 5001 : 1, 5002 : 1, 5003 : 1 }
+    this.systemID = 100;
+    this.charSkill = {};
     this.intSkill = {};
+    this.system = system.get(this.systemID);
     
     // Attribute End
     do {
@@ -81,10 +73,11 @@ var character = function(cID, name) {
 
     this.setFreeTimeout = null;
     this.setFreeRecInterval = null;
-    this.freeRecover();
-    this.auraRF(this.getAura());
-    this.systemRF();
+
+    this.systemBehv = systemBehv.get(this); // ENHANCE SKILL BY SYSTEM
+    this.auraBehv = auraBehv.get(this); // ENHANCE CHAR BY AURA
     this.avbSkill();
+    this.freeRecover();
 }
 
 character.prototype.getInfo = function() {
@@ -107,38 +100,11 @@ character.prototype.getInfo = function() {
         ,timestamp : fc.getTimestamp()
     };
 }
-character.prototype.getSystem = function(systemName) {
-    // reserved for fetching character's system data info ...
-    return 100;
-}
-character.prototype.getAura = function() {
-    // reserved for fetching character's aura skill data info...
-    return {
-        5000 : 1
-        ,5001 : 1
-        ,5002 : 1
-        ,5003 : 1
-    };
-}
 // Init Gon's Skill list
 character.prototype.avbSkill = function() {
-    for (var x in this.charSkill) {
-        this.intSkill[x] = new SKILL[x]['className'](this);
-    }
-}
-character.prototype.auraRF = function(auraz) {   // auraz : array of all aura Reinforcement skillID
-    this.defRF = this.charSkill[5000].auraRFVal + auraz[5000] * this.charSkill[5000].lvUpMod.auraRFVal;
-    this.atkRF = this.charSkill[5001].auraRFVal + auraz[5001] * this.charSkill[5001].lvUpMod.auraRFVal;
-    this.recRF = this.charSkill[5002].auraRFVal + auraz[5002] * this.charSkill[5002].lvUpMod.auraRFVal;
-    this.charSkillRF = this.charSkill[5003].auraRFVal + auraz[5003] * this.charSkill[5003].lvUpMod.auraRFVal;
-}
-character.prototype.systemRF = function() {
-    // reinforce skill power by NIEN system , judge by skill attribution & system reinforce type
-    for (var x in this.charSkill) {
-        if (this.charSkill[x].triggerType === 'aura') continue;
-        if (this.system.sysRFType === this.charSkill[x].attribution) {
-            this.charSkill[x].damage = ( this.charSkill[x].damage * ( 1 + this.system.sysRFVal ) ) * ( 1 + this.skillRF );
-        }
+    for (var x in this.charSkillID) {
+        this.intSkill[x] = new skillMapping[SKILL[x].className](this);
+        this.charSkill[x] = SKILL[x];
     }
 }
 character.prototype.getCID = function() {
@@ -167,7 +133,7 @@ character.prototype.startWay = function() {
     this.moveWay();
 }
 character.prototype.moveWay = function() {
-	if (this.doAction === 2 || this.doAction === 3) return;  // doAction pause the moving action for attacking
+	if (this.doAction === 2 || this.doAction === 3 || this.doAction === 4) return;  // doAction pause the moving action for attacking
 	
     var cID = this.getCID();
     var stream = io.create();
@@ -270,7 +236,6 @@ character.prototype.subNV = function(nv) {
 character.prototype.getStatus = function() {
     return this.status;
 }
-//skill cast
 character.prototype.getSkill = function(skillID) {
     return this.charSkill[skillID];
 }
@@ -328,174 +293,8 @@ character.prototype.hitProc = function(tangoDodgeRate) {
     var hit = (rand <= chance) ? 1 : 0;
     return hit;
 }
-character.prototype.doSkillAdtEffect = function(scID, skill, tPos) {
-    this.pushDebuffList(scID, skill);
-    if (skill.adtEffect === 'repel') {
-        this.doRepel(scID, skill, tPos);
-    } else if (skill.adtEffect === 'bleed') {
-        this.startBleed(scID, skill, tPos);
-    } else if (skill.adtEffect === 'slow') {
-        this.doSlow(scID, skill, tPos);
-    }
-}
-character.prototype.getDebuffID = function(scID, skill) {
-    return scID + "_" + skill.skillID;
-}
-character.prototype.pushDebuffList = function(scID, skill) {
-    var dID = this.getDebuffID(scID, skill);
-    if (!this.debuffList[dID]) {
-        var debuff = { skillName : skill.name, debuff : skill.adtEffect, stack : 0 };
-        this.debuffList[dID] = debuff;
-    }
-}
-character.prototype.getDebuffList = function() {
-    return this.debuffList;
-}
-character.prototype.doRepel = function(scID, skill, tPos) {
-    var _this = this;
-    var lastStatus = this.getStatus();
-    this.setStatus(5);
-    this.setDoAction('toRepel');
-    var direction = giMap.getDirection(this.position, tPos);
-    var validLine = giMap.getLineCoordinateWithoutObstacle(this.position, direction, skill.adtEffectVal);
-    var len = validLine.length;
-    var endGridIndex = (len === 0) ? this.position : validLine[len - 1] ;
-
-    var stream = io.create();
-    var cID = this.getCID();
-    var repelDuration = skill.adtEffectTime;
-
-    stream.setSelfCID(cID);
-    stream.addOutputData(cID, 'moveRepel', 'logged', {cID : cID, nowLocation : this.position, endLocation : endGridIndex, duration : repelDuration, timestamp : fc.getTimestamp() });
-    stream.response();
-
-    var dID = this.getDebuffID(skill.skillID);
-
-    this.doRepelTimeout = setTimeout(function(){
-        delete _this.debuffList[dID];
-        _this.setStatus(lastStatus);
-        _this.setLocation(endGridIndex);
-        _this.setDoAction(0);
-    }, repelDuration);
-
-}
-character.prototype.startBleed = function(scID, skill, tPos) {
-    var _this = this;
-
-    var stream = io.create();
-    var cID = this.getCID();
-    stream.setSelfCID(cID);
-
-    var dID = this.getDebuffID();
-
-    if (this.debuffList[dID].stack < 5) {
-        ++this.debuffList[dID].stack;
-    }
-
-    var doTimes = skill.adtEffectTime / this.dotTimer;
-
-    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : this.debuffList[dID].stack , isOn : 1 });
-    stream.response();
-
-    this.dotCounts = 0;
-    
-    if (this.debuffList[dID].stack > 1) return;
-
-    this.doBleed(scID, skill, doTimes);
-}
-character.prototype.doBleed = function(scID, skill, doTimes) {
-    var _this =this;
-    
-    var stream = io.create();
-    var cID = this.getCID();
-    stream.setSelfCID(cID);
-    var dID = this.getDebuffID();
-
-    this.doBleedTimeout = setTimeout(function(){
-        _this.doDotDamage(scID, skill);
-        _this.dotCounts++;
-        if (_this.dotCounts === doTimes) {
-            stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : _this.debuffList[dID].stack , isOn : 0 });
-            stream.response();
-            _this.dotCounts = 0;
-            delete _this.debuffList[dID];
-            return;
-        }
-        _this.doBleed(scID, skill, doTimes);
-    },this.dotTimer);
-}
-character.prototype.doDotDamage = function(scID, skill) {
-    var dID = this.getDebuffID();
-    var hp = skill.adtEffectVal * this.debuffList[dID].stack;   // No Damage reduction formulation for Dot
-    hp = fc.fix(hp);
-    var preHP = this.getHP();
-    this.hp = (hp < this.hp) ? this.hp - hp : 0;
-    if (this.hp === 0) {
-        this.setStatus(0);
-    }
-    var stream = io.create();
-    var cID = this.getCID();
-    stream.setSelfCID(cID);
-    // Dot Damage Data Stream
-    stream.addOutputData(cID, 'hpChange', 'logged', {cID : cID, preHP : preHP, nowHP : this.hp, hpDelta : this.hp - preHP});
-    stream.response();
-}
-character.prototype.doSlow = function(scID, skill, tPos) {
-    var _this = this;
-    var stream = io.create();
-    var cID = this.getCID();
-    stream.setSelfCID(cID);
-    this.speedFactor = 1 - skill.adtEffectVal;
-    stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 1 });
-    stream.response();
-
-    var dID = this.getDebuffID();
-
-    this.doSlowTimeout = setTimeout(function(){
-        _this.speedFactor = 1;
-        delete _this.debuffList[dID];
-        stream.addOutputData(cID, 'debuff', 'logged', { cID : cID, sourceCID : scID, skillID : skill.skillID, last : skill.adtEffectTime ,effect : skill.adtEffect, stack : 1, isOn : 0 });
-        stream.response();
-    }, skill.adtEffectTime);
-}
-character.prototype.setSkillCD = function(skill) {
-    if (skill.skillCD === null) return;
-    if (!this.skillCDList[skill.skillID]) {
-        this.skillCDList[skill.skillID] = { cdStatus : 1, cdTime : skill.skillCD };  // cdStatus : 1 = CDing, Skill Unavailable 0 = CDed , Skill available
-    }
-    this.startSkillCDProc(skill);
-}
-character.prototype.startSkillCDProc = function(skill) {
-    var _this = this;
-    this.skillCDTimeout[skill.skillID] = setTimeout(function(){  // For later Version : Some New skill reset the skillCD...
-        delete _this.skillCDList[skill.skillID];
-    }, skill.skillCD);
-}
 character.prototype.getSkillCDList = function(skillID) {
     return this.skillCDList[skillID];
-}
-character.prototype.chargeStart = function(skillID) {
-    this.skillCharge[skillID] = fc.getTimestamp();
-}
-character.prototype.getChargeLevel = function(skillID) {
-    var chargeTimeDelta = fc.getTimestamp() - this.skillCharge[skillID];
-    var skillChargeLevel;
-    if (chargeTimeDelta >= 0 && chargeTimeDelta < 1000) {
-        skillChargeLevel = 1;
-    } else if (chargeTimeDelta >= 1000 && chargeTimeDelta < 2000) {
-        skillChargeLevel = 2;
-    } else if (chargeTimeDelta >= 2000) {
-        skillChargeLevel = 3;
-    } else {
-        return;
-    }
-    this.skillCharge = {};
-    return skillChargeLevel;
-}
-character.prototype.getSkillChargeDamage = function(skillID, skillChargeLevel) {
-    if (this.charSkill[skillID].chargeLevel) {
-        return this.charSkill[skillID].chargeLevel[skillChargeLevel]; // Fetch Charge Level Factor Mapping By skillID From Skill Setting
-    }
 }
 // CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL START
 character.prototype.castSelfCheck = function(io, skillID) {
@@ -513,7 +312,7 @@ character.prototype.checkCommonCD = function(io) {
 	return this.getcCD();
 }
 character.prototype.checkSkillCD = function(io, skillID) {
-	if (this.charSkill.getSkillCDList(skillID)) {
+	if (this.getSkillCDList(skillID)) {
 		io.addOutputData(this.cID, 'skillCDing', 'self', {cID : this.cID, skillID : skillID, timestamp : fc.getTimestamp()});
         io.response();
         return 0;
