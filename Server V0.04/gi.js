@@ -7,6 +7,7 @@ global.util = util;
 /* Configuration */
 require('./config');
 require('../config/constant');
+require('./gi/io');
 global.SKILL = fc.readFile("../config/skill.js");
 /* GI World */
 global.giUserList = require('./gi/userList').create();
@@ -25,10 +26,9 @@ require('./gi/skills/pathetic_childhood');
 require('./gi/skills/flying_lightening_ball');
 
 /* SKILL Class Mapping */
-global.skillMapping = require('./gi/data/skillmapping').getSkillMapping();
+require('./gi/data/skillmapping');
 
 require('./gi/process');
-var io = require('./gi/io')
 //    ,gm = require('./gi/gm');
 
 //game server
@@ -37,11 +37,9 @@ ws.createServer(function(websocket) {
         var cID = giUserList.newConnect(websocket);
         sys.log(websocket.remoteAddress + ' Connected; cID: ' + cID);
     }).addListener("data", function(data) {
-        var stream = io.create();
-        stream.getInputData(websocket, data);
-
-        if (!stream.iData) return;
-        stream.process();
+        io.getInputData(websocket, data);
+        if (!io.iData) return;
+        io.process();
     }).addListener("close", function() {
         var cID = giUserList.getCIDByClient(websocket);
         if (cID) giUserList.disconnect(cID);

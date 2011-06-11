@@ -1,6 +1,6 @@
-var flyingLighteningBall = function(character) {
-    this.initSkill(character);
-}
+var flyingLighteningBall = function() {}
+
+util.inherits(flyingLighteningBall, Skill);
 
 flyingLighteningBall.prototype.initSkill = function(character) {
     this.sID = "10103";
@@ -8,7 +8,7 @@ flyingLighteningBall.prototype.initSkill = function(character) {
 }
 flyingLighteningBall.prototype.castSkill = function(target) {
     this.target = target;
-    if (this.castProc() === 0) return;
+    if (!this.castProc()) return;
     this.doDamage();
 }
 flyingLighteningBall.prototype.doDamage = function() {    
@@ -21,7 +21,7 @@ flyingLighteningBall.prototype.doDamage = function() {
 	var hp = (damage * (1 + this.self.atkRF) - damage * this.target.defRF) * damageFactor;   // Damage reduction formulation    
 	hp = fc.fix(hp);
     this.target.hp = (hp < this.target.hp) ? this.target.hp - hp : 0;
-    this.io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.cID, preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
+    io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.cID, preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
     if (this.target.getHP() === 0) {        
         this.target.setStatus(0);
         this.setCharDead();
@@ -29,6 +29,7 @@ flyingLighteningBall.prototype.doDamage = function() {
     this.setSkillCD();
     this.setCommonCD();
     this.freeStatusCountDown();
-    this.io.response();
+    io.response();
 }
 
+global.Skill_FlyingLighteningBall = flyingLighteningBall;

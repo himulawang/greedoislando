@@ -1,5 +1,4 @@
-var character = require('./character')
-    ,io = require('./io');
+var character = require('./character');
 
 var list = function() {
     /*  user : {
@@ -46,22 +45,13 @@ list.prototype.disconnect = function(cID) {
     // recycle Resources , Important!!!
     var character = giUserList.getCharacter(cID);
     if (character) {
-        clearInterval(character.setFreeRecInterval);
-        clearTimeout(character.moveTimeout);
-        clearTimeout(character.commonCDTimeout);
-        clearTimeout(character.setFreeTimeout);
-        clearTimeout(character.doRepelTimeout);
-        clearTimeout(character.doBleedTimeout);
-        clearTimeout(character.doSlowTimeout);
-        clearTimeout(character.skillCDTimeout);
+        character.selfTimeCounterDestroy();
     }
     
     delete this.onlineUser[cID];
 
-    var stream = io.create();
-    stream.setSelfCID(cID);
-    stream.addOutputData(cID, 'logout', 'logged', {cID : cID});
-    stream.response();
+    io.addOutputData(cID, 'logout', 'logged', {cID : cID});
+    io.response();
 }
 list.prototype.getCharacter = function(cID) {
     if (!this.onlineUser[cID]) return;

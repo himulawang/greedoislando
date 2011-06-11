@@ -1,18 +1,8 @@
-var sys = require('sys');
-
 var io = function() {
     this.iData = null;
     this.oData = [];
 }
 
-exports.create = function() {
-    return new io;
-}
-io.prototype.setSelfCID = function(cID) {
-    this.iData = {
-        cID : cID
-    };
-}
 io.prototype.getInputData = function(client, data) {
     try {
         object = JSON.parse(data);
@@ -39,14 +29,14 @@ io.prototype.process = function() {
     var action = PROCESS[clientStat][type];
     if (!action) return;
 
-    return PROCESS[clientStat][type](this);
+    return PROCESS[clientStat][type]();
 }
 io.prototype.response = function() {
-    var i, x, object, output;
-    var cID = this.iData.cID;
+    var i, x, object, output, cID;    
 
     for (x in this.oData) {
         object = this.oData[x];
+        cID = this.oData[x].cID;
         output = {
             type : object.type
             ,data : object.data
@@ -66,4 +56,8 @@ io.prototype.response = function() {
             giUserList.responseLoggedOther(output, cID);
         }
     }
+    this.iData = null;
+    this.oData = [];
 }
+
+global.io = new io;
