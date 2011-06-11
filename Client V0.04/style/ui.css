@@ -1,3 +1,8 @@
+/* Reset */
+* {
+    padding: 0;
+    margin: 0;
+}
 /* Global */
 div {
     font-family: Monaco;
@@ -156,15 +161,21 @@ div {
     border-collapse: collapse;
 }
 
-#ui-skill-table .ui-skill-td {
+.ui-skill-td {
     width: 55px;
     height: 44px;
     border: 1px solid #DDDDDD;
+    vertical-align: top;
 }
 
-#ui-skill-table .ui-skill-td:hover {
+.ui-skill-td:hover {
     background-color: #DDDDDD;
     cursor: pointer;
+}
+
+.canvas-skill {
+    position: absolute;
+    z-index: -100;
 }
 /* Skill bar end */
 /* Charge bar start */

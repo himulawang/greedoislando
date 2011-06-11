@@ -23,6 +23,7 @@ var Buff = Class.extend({
     }
     ,getRemainDuration : function() {
         var remainDuration = this.getDuration() - (fc.getNowTimestamp() - this.getCreateStamp());
+        if (remainDuration < 0) remainDuration = 0;
         return fc.fix(remainDuration);
     }
 });
