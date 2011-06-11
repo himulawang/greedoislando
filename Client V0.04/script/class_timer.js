@@ -1,10 +1,12 @@
 var Timer = Class.extend({
     init : function() {
         this.buff = null;
+        this.skillCD = null;
         this.makeBuffTimer();
     }
     ,makeBuffTimer : function() {
         this.buff = setInterval(this.buffTimer, 100);
+        this.skillCD = setInterval(this.skillCDTimer, 50);
     }
     ,buffTimer : function() {
         var buffList, index, buff, cID;
@@ -23,6 +25,17 @@ var Timer = Class.extend({
                 buff = buffList[index];
                 GI.ui.targetStatus.refreshBuff(buff);
             }
+        }
+    }
+    ,skillCDTimer : function() {
+        var skillList, index, skill, cID;
+        skillList = GI.skill;
+        for (index in skillList) {
+            skill = skillList[index];
+            var progress = skill.getCDProgress();
+            if (!progress) continue;
+
+            GI.ui.skillbar.skill[index].refreshCD(progress);
         }
     }
 });

@@ -86,7 +86,7 @@ var Input = Class.extend({
         log.hpChange(data);
         var cID = data.cID;
         if (GI.isSelf(cID)) {
-            GI.ui.myStatus.setHP(data.nowHP);
+            GI.player.setHP(data.nowHP);
             return;
         }
         GI.otherChar[cID].setHP(data.nowHP);
@@ -166,6 +166,8 @@ var Input = Class.extend({
     ,castSkill : function(data, stream) {
         log.castSkill(data);
         this.addActionQueue(data, stream);
+        var skillID = data.skillID;
+        GI.skill[skillID].setCD();
     }
     ,skillCDing : function(data, stream) {
         log.skillCDing(data);
