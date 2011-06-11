@@ -1,6 +1,5 @@
-var io = require('./io')
-    ,skill = require('./skill')
-    ,system = require('./data/system')
+var skill = require('./skill')
+    ,system = fc.readFile('../config/system.js')
     ,systemBehv = require('./system')
     ,auraBehv = require('./aura');
 
@@ -44,19 +43,19 @@ var character = function(cID, name) {
     this.atkRF = 0;  // Attack Aura Reinforcement
     this.recRF = 0;  // Free Recover Aura Reinforcement
     this.skillRF = 0;  // Skill Power Aura Reinforcement
-    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel, 4 = paralysis
+    this.doAction = 0;  // 0 = stand , 1 = moving , 2 = castSkill , 3 = repel, 4 = paralysis, 5 = charge
     this.speedFactor = 1; // Init Speed  = 100%
     this.debuffList = {};
     this.buffList = {};
     this.skillCDList = {};    
     this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
     this.skillCharge = {};
-    this.charSkillID = { 10000 : 1, 10001 : 1, 10002 : 1, 10003 : 1 };
+    this.charSkillID = { 10000 : 1 , 10001 : 1, 10002 : 1, 10003 : 1 };
     this.charAuraID = { 5000 : 1, 5001 : 1, 5002 : 1, 5003 : 1 }
     this.systemID = 100;
     this.charSkill = {};
     this.intSkill = {};
-    this.system = system.get(this.systemID);
+    this.system = system[this.systemID];
     
     // Attribute End
     do {
@@ -71,12 +70,23 @@ var character = function(cID, name) {
     this.way = null;
     this.nextGridIndex = null;
 
-    this.setFreeTimeout = null;
+    // Time Counter START
     this.setFreeRecInterval = null;
+    this.moveTimeout = null;
+    this.commonCDTimeout = null;
+    this.setFreeTimeout = null;
 
+    this.skillCDTimeout = {};
+    this.doSpeedUpTimeout = {};
+    this.doSlowTimeout = {};
+    this.doBleedTimeout = {};
+    this.doRepelTimeout = {};
+    this.doParalysisTimeout = {};
+    // Time Counter END
+
+    this.avbSkill();
     this.systemBehv = systemBehv.get(this); // ENHANCE SKILL BY SYSTEM
     this.auraBehv = auraBehv.get(this); // ENHANCE CHAR BY AURA
-    this.avbSkill();
     this.freeRecover();
 }
 
@@ -103,7 +113,11 @@ character.prototype.getInfo = function() {
 // Init Gon's Skill list
 character.prototype.avbSkill = function() {
     for (var x in this.charSkillID) {
-        this.intSkill[x] = new skillMapping[SKILL[x].className](this);
+        this.intSkill[x] = new SKILLMAPPING[SKILL[x].className]();
+        this.intSkill[x].initSkill(this);
+        this.charSkill[x] = SKILL[x];
+    }
+    for (var x in this.charAuraID) {
         this.charSkill[x] = SKILL[x];
     }
 }
@@ -130,23 +144,27 @@ character.prototype.getWay = function(getWay) {
 }
 character.prototype.startWay = function() {
     this.wayIndex = 0;
+    this.setDoAction(1);
     this.moveWay();
 }
 character.prototype.moveWay = function() {
-	if (this.doAction === 2 || this.doAction === 3 || this.doAction === 4) return;  // doAction pause the moving action for attacking
-	
-    var cID = this.getCID();
-    var stream = io.create();
-    stream.setSelfCID(cID);
+	if (this.doAction === 2 || this.doAction === 3 || this.doAction === 4) {
+        this.characterMoving = false;
+        this.nextXY = null;
+        this.way = null;
+        this.nextGridIndex = null;
+        this.setDoAction(0);    // trigger for move / attack switch
+        return;  // doAction pause the moving action for attacking
+    }
     
     if (this.wayIndex >= this.way.length) {
         this.characterMoving = false;
         this.nextXY = null;
         this.way = null;
         this.nextGridIndex = null;
-        this.setDoAction('toStand');    // trigger for move / attack switch
-        stream.addOutputData(cID, 'characterStand', 'logged', {cID : cID, timestamp : fc.getTimestamp(), nowLocation : this.position });
-        stream.response();
+        this.setDoAction(0);    // trigger for move / attack switch
+        io.addOutputData(this.cID, 'characterStand', 'logged', {cID : this.cID, timestamp : fc.getTimestamp(), nowLocation : this.position });
+        io.response();
         return;
     }
     var _this = this;
@@ -163,8 +181,8 @@ character.prototype.moveWay = function() {
     }
 
     //moveCharacter -> Other
-    stream.addOutputData(cID, 'moveCharacter', 'logged', {cID : cID, nowLocation : this.position, nextLocation : this.nextGridIndex, duration : time, timestamp : fc.getTimestamp() });
-    stream.response();
+    io.addOutputData(this.cID, 'moveCharacter', 'logged', {cID : this.cID, nowLocation : this.position, nextLocation : this.nextGridIndex, duration : time, timestamp : fc.getTimestamp() });
+    io.response();
 
     this.moveTimeout = setTimeout(function(){
         
@@ -254,20 +272,14 @@ character.prototype.setFree = function() {
     this.setFreeTimeout = setTimeout(function(){ 
         if (_this.status === 0) return;
         _this.setStatus(1);
-        var stream = io.create();
-        var cID = _this.getCID();
-        stream.setSelfCID(cID);
-        stream.addOutputData(cID, 'statusChange', 'logged', {cID : cID, status : _this.getStatus(), timestamp : fc.getTimestamp()});
-        stream.response();
+        io.addOutputData(_this.cID, 'statusChange', 'logged', {cID : this.cID, status : _this.getStatus(), timestamp : fc.getTimestamp()});
+        io.response();
     }, this.freeDuration);
 }
 character.prototype.setCombat = function() {
     this.setStatus(2);
-    var stream = io.create();
-    var cID = this.getCID();
-    stream.setSelfCID(cID);
-    stream.addOutputData(cID, 'statusChange', 'logged', {cID : cID, status : this.getStatus(), timestamp : fc.getTimestamp()});
-    stream.response();
+    io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.cID, status : this.getStatus(), timestamp : fc.getTimestamp()});
+    io.response();
 }
 character.prototype.freeRecover = function() {
     var _this = this;
@@ -277,11 +289,8 @@ character.prototype.freeRecover = function() {
         var nvInc = fc.fix(_this.nvRecVal * ( 1 + _this.recRF ));
         _this.hp = (_this.hp + hpInc) < _this.maxHP ? fc.fix(_this.hp + hpInc) : _this.maxHP;
         _this.nv = (_this.nv + nvInc) < _this.maxNV ? fc.fix(_this.nv + nvInc) : _this.maxNV;
-        var stream = io.create();
-        var cID = _this.getCID();
-        stream.setSelfCID(cID);
-        stream.addOutputData(cID, 'freeRecover', 'logged', {cID : cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
-        stream.response();
+        io.addOutputData(this.cID, 'freeRecover', 'logged', {cID : this.cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
+        io.response();
     }, this.recDuration);
 }
 character.prototype.getDodgeRate = function() {
@@ -297,21 +306,21 @@ character.prototype.getSkillCDList = function(skillID) {
     return this.skillCDList[skillID];
 }
 // CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL START
-character.prototype.castSelfCheck = function(io, skillID) {
-	var checked = this.checkAlive() && this.checkCommonCD(io) && this.checkSkillCD(io, skillID);
+character.prototype.castSelfCheck = function(skillID) {
+    var checked = this.checkAlive() && this.checkCommonCD() && this.checkSkillCD(skillID) && this.checkSelfDoActionStatus();
 	return checked;
 }
 character.prototype.checkAlive = function() {
 	return this.getStatus();
 }
-character.prototype.checkCommonCD = function(io) {
+character.prototype.checkCommonCD = function() {
 	if (this.getcCD() === 0) {
 		io.addOutputData(this.cID, 'commonCD', 'self', {cID : this.cID, timestamp : fc.getTimestamp()});
         io.response();
 	}
 	return this.getcCD();
 }
-character.prototype.checkSkillCD = function(io, skillID) {
+character.prototype.checkSkillCD = function(skillID) {
 	if (this.getSkillCDList(skillID)) {
 		io.addOutputData(this.cID, 'skillCDing', 'self', {cID : this.cID, skillID : skillID, timestamp : fc.getTimestamp()});
         io.response();
@@ -320,17 +329,24 @@ character.prototype.checkSkillCD = function(io, skillID) {
 		return 1;
 	}
 }
+character.prototype.checkSelfDoActionStatus = function() {
+    if (this.doAction === 2 || this.doAction === 3 || this.doAction === 4) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 // CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL END
 
 // CHECK IF CHARACTER CAN CAST SKILL ON TARGET START
-character.prototype.castTargetCheck = function(io, target, skill) {
+character.prototype.castTargetCheck = function(target, skill) {
 	var checked = this.checkTargetAlive(target) && this.checkRange(io, target, skill) && this.checkNV(io, target, skill);
 	return checked;
 }
 character.prototype.checkTargetAlive = function(target) {
 	return target.getStatus();
 }
-character.prototype.checkRange = function(io, target, skill) {
+character.prototype.checkRange = function(target, skill) {
 	var targetLocation = target.getLocation();
 	var range = giMap.getRange(this.position, targetLocation);
 	
@@ -342,7 +358,7 @@ character.prototype.checkRange = function(io, target, skill) {
 		return 1;
 	}
 }
-character.prototype.checkNV = function(io, target, skill) {
+character.prototype.checkNV = function(target, skill) {
 	var nv = this.getNV();
 	if (skill.costNV > nv) {
 		io.addOutputData(this.cID, 'castSkillOutOfNV', 'self', {cID : this.cID, target : target.cID, skillID : skill.skillID});
@@ -367,6 +383,19 @@ character.prototype.verifyCastLocationRange = function(location, skill) {
     return inRange;
 }
 // CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION END
+
+character.prototype.selfTimeCounterDestroy = function() {
+    fc.destroyTimeInterval(this.setFreeRecInterval);
+    fc.destroyTimeout(this.moveTimeout);
+    fc.destroyTimeout(this.commonCDTimeout);
+    fc.destroyTimeout(this.setFreeTimeout);
+    fc.destroyTimeout(this.skillCDTimeout);
+    fc.destroyTimeout(this.doSpeedUpTimeout);
+    fc.destroyTimeout(this.doSlowTimeout);
+    fc.destroyTimeout(this.doBleedTimeout);
+    fc.destroyTimeout(this.doRepelTimeout);
+    fc.destroyTimeout(this.doParalysisTimeout);
+}
 
 exports.create = function(cID, name) {
     return new character(cID, name);

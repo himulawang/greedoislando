@@ -1,22 +1,16 @@
-var skill = function() {
-}
+var skill = function() {}
+
 skill.prototype.init = function(character) {
 	this.self = character;
 	this.cID = this.self.getCID();
 	this.skill = SKILL[this.sID];
 	this.chargeFactor = 1;
 	this.dotTimer = 3000;
-	this.skillCDTimeout = {};
-	this.initIO(this.cID);
-}
-skill.prototype.initIO = function() {
-	this.io = io.create();
-    this.io.setSelfCID(this.cID);
 }
 //CAST PROC START
-skill.prototype.castProc = function() {
+skill.prototype.castProc = function() {    
+	io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
     this.self.setDoAction(2);
-	this.io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
 	this.setToCombat();
 	this.castNVConsume();
 	return this.skillHit();
@@ -28,61 +22,63 @@ skill.prototype.setToCombat = function() {
 skill.prototype.castNVConsume = function() {
 	var preNV = this.self.getNV();
 	var nowNV = this.self.subNV(this.skill.costNV);
-	this.io.addOutputData(this.cID, 'nvChange', 'logged', {cID : this.cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
+	io.addOutputData(this.cID, 'nvChange', 'logged', {cID : this.cID, preNV : preNV, nowNV : nowNV, nvDelta : nowNV - preNV});
 }
 skill.prototype.skillHit = function() {
 	var targetDodgeRate = this.target.getDodgeRate();
 	var hitted = this.self.hitProc(targetDodgeRate);
-	if (hitted === 0) {
-		this.io.addOutputData(this.self.getCID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : this.skill.skillID});
+	if (!hitted) {
+        io.addOutputData(this.cID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : this.skill.skillID});
+        io.response();
 	}
 	return hitted;
 }
 //CAST PROC END
 
 //CAST SKILL START
-skill.prototype.doDamage = function() {	
+skill.prototype.doDamage = function() {
 	var damage = this.getSkillDamage();
 	var preHP = this.target.getHP();
 	var hp = damage * (1 + this.self.atkRF) - damage * this.target.defRF;   // Damage reduction formulation    
-	hp = fc.fix(hp);
+    hp = fc.fix(hp);
     this.target.hp = (hp < this.target.hp) ? this.target.hp - hp : 0;
-    this.io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.cID, preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
+    io.addOutputData(this.cID, 'hpChange', 'logged', {cID : this.target.cID, preHP : preHP, nowHP : this.target.getHP(), hpDelta : this.target.getHP() - preHP});
     if (this.target.getHP() === 0) {        
         this.target.setStatus(0);
         this.setCharDead();
     }
     this.setSkillCD();
+    this.startSkillCDProc();
     this.setCommonCD();
     this.freeStatusCountDown();
-    this.io.response();
+    io.response();
     this.self.setDoAction(0);
 }
 skill.prototype.setCharDead = function() {
 	clearTimeout(this.target.setFreeTimeout);
-	this.io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.cID, status : this.target.getStatus(), timestamp : fc.getTimestamp()});
+	io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.cID, status : this.target.getStatus(), timestamp : fc.getTimestamp()});
 }
 skill.prototype.getSkillDamage = function() {
 	return this.skill.damage * this.chargeFactor;
 }
 skill.prototype.getDebuffID = function() {
-    return this.self.getCID + "_" + this.skill.skillID;
+    return this.cID + "_" + this.skill.skillID;
 }
 skill.prototype.pushDebuffList = function() {
     var dID = this.getDebuffID();
-    if (!this.debuffList[dID]) {
+    if (!this.target.debuffList[dID]) {
         var debuff = { skillName : this.skill.name, debuff : this.skill.adtEffect, stack : 0 };
         this.target.debuffList[dID] = debuff;
     }
 }
 skill.prototype.getBuffID = function() {
-    return this.self.getCID + "_" + this.skill.skillID;
+    return this.cID + "_" + this.skill.skillID;
 }
 skill.prototype.pushBuffList = function() {
     var bID = this.getBuffID(cID);
-    if (!this.buffList[bID]) {
+    if (!this.target.buffList[bID]) {
         var buff = { skillName : this.skill.name, buff : this.skill.adtEffect, stack : 0 };
-        this.target.buffList[dID] = buff;
+        this.target.buffList[bID] = buff;
     }
 }
 // CAST SKILL END
@@ -106,11 +102,10 @@ skill.prototype.setSkillCD = function() {
     if (!this.self.skillCDList[this.skill.skillID]) {
         this.self.skillCDList[this.skill.skillID] = { cdStatus : 0, cdTime : this.skill.skillCD };  // cdStatus : 0 = CDing
     }
-    this.startSkillCDProc();
 }
 skill.prototype.startSkillCDProc = function() {
     var _this = this;
-    this.skillCDTimeout[this.skill.skillID] = setTimeout(function(){  // For later to reset skillCD...
+    this.self.skillCDTimeout[this.skill.skillID] = setTimeout(function(){  // For later to reset skillCD...
         delete _this.self.skillCDList[_this.skill.skillID];
     }, this.skill.skillCD);
 }
@@ -118,23 +113,26 @@ skill.prototype.startSkillCDProc = function() {
 
 // SKILL CHARGE START
 skill.prototype.chargeStart = function() {
-    this.self.setDoAction(2);
+    io.addOutputData(this.cID, 'characterStand', 'logged', {cID : this.cID, timestamp : fc.getTimestamp(), nowLocation : this.self.position });
+    io.response();
+    this.self.setDoAction(5);
     this.self.skillCharge[this.skill.skillID] = fc.getTimestamp();
 }
 skill.prototype.setChargeLevel = function() {
     var chargeTimeDelta = fc.getTimestamp() - this.self.skillCharge[this.skill.skillID];
     var skillChargeLevel;
     if (chargeTimeDelta >= 0 && chargeTimeDelta < 1000) {
-        skillChargeLevel = 1;
+        skillChargeLevel = 0.5;
     } else if (chargeTimeDelta >= 1000 && chargeTimeDelta < 2000) {
-        skillChargeLevel = 2;
+        skillChargeLevel = 1.5;
     } else if (chargeTimeDelta >= 2000) {
-        skillChargeLevel = 3;
+        skillChargeLevel = 2;
     } else {
         return;
     }
     delete this.self.skillCharge[this.skill.skillID]; // equal to this.self.skillCharge = {};
     this.chargeFactor = skillChargeLevel;
+    this.self.setDoAction(0);
 }
 // SKILL CHARGE END
 
