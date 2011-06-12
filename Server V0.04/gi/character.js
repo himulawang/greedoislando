@@ -30,7 +30,7 @@ var character = function(cID, name) {
     this.gCD = 1500; //ms
     this.basicHit = 75; // Basic Hit Rate = 75%
     this.hitRateAdd = 10; // Additional Hit Rate = 10% , Suppose
-    this.dodgeRateAdd = 5; // Additional Hit Rate = 5% , Suppose
+    this.dodgeRateAdd = 5; // Additional dodge Rate = 5% , Suppose
     // 0 = Dead , 1 = Free , 2 = Combat , 3 = Criminal , 4 = Invincible , 5 = KnockOut
     this.status = 1; 
     this.cCD = 1; // GCD status , 0 = CoolDowning , 1 = Cooledowned
@@ -54,6 +54,7 @@ var character = function(cID, name) {
     this.charAuraID = { 5000 : 1, 5001 : 1, 5002 : 1, 5003 : 1 }
     this.systemID = 100;
     this.charSkill = {};
+    this.charAura = {};
     this.intSkill = {};
     this.system = system[this.systemID];
     
@@ -100,11 +101,12 @@ character.prototype.getInfo = function() {
         ,maxNV : this.maxNV
         ,gCD : this.gCD
         ,position : this.position
-        ,hitRate : this.hitRate
-        ,dodgeRate : this.dodgeRate
-        ,recovery : this.recovery
+        ,hitRate : this.basicHit + this.hitRateAdd
+        ,dodgeRate : this.dodgeRateAdd
+        ,hpRecovery : this.hpRecVal
+        ,nvRecovery : this.nvRecVal
         ,skill : this.charSkill
-        ,baseNein : this.baseNein
+        ,aura : this.charAura
         ,x : this.x
         ,y : this.y
         ,timestamp : fc.getTimestamp()
@@ -118,7 +120,7 @@ character.prototype.avbSkill = function() {
         this.charSkill[x] = SKILL[x];
     }
     for (var x in this.charAuraID) {
-        this.charSkill[x] = SKILL[x];
+        this.charAura[x] = SKILL[x];
     }
 }
 character.prototype.getCID = function() {
@@ -396,6 +398,20 @@ character.prototype.selfTimeCounterDestroy = function() {
     fc.destroyTimeout(this.doRepelTimeout);
     fc.destroyTimeout(this.doParalysisTimeout);
 }
+
+// REQUEST CHAR PROFILE START
+character.prototype.getSysteminfo = function(requesterCID) {
+    var data = this.system[this.systemID];
+    io.addOutputData(requesterCID, 'systemInfo', 'self', data);
+    io.response();
+}
+
+character.prototype.getCharacterProfile = function(requesterCID) {
+    var data = this.getInfo();
+    io.addOutputData(requesterCID, 'systemInfo', 'self', data);
+    io.response();
+}
+// REQUEST CHAR PROFILE END
 
 exports.create = function(cID, name) {
     return new character(cID, name);

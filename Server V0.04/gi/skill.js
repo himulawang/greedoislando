@@ -28,6 +28,7 @@ skill.prototype.skillHit = function() {
 	var targetDodgeRate = this.target.getDodgeRate();
 	var hitted = this.self.hitProc(targetDodgeRate);
 	if (!hitted) {
+        this.chargeFactor = 1;
         io.addOutputData(this.cID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : this.skill.skillID});
         io.response();
 	}
@@ -53,13 +54,14 @@ skill.prototype.doDamage = function() {
     this.freeStatusCountDown();
     io.response();
     this.self.setDoAction(0);
+    this.chargeFactor = 1;
 }
 skill.prototype.setCharDead = function() {
 	clearTimeout(this.target.setFreeTimeout);
 	io.addOutputData(this.cID, 'statusChange', 'logged', {cID : this.target.cID, status : this.target.getStatus(), timestamp : fc.getTimestamp()});
 }
 skill.prototype.getSkillDamage = function() {
-	return this.skill.damage * this.chargeFactor;
+    return this.skill.damage * this.chargeFactor * (1 + this.self.skillRF);
 }
 skill.prototype.getDebuffID = function() {
     return this.cID + "_" + this.skill.skillID;
