@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>Greed Island</title>
+    <style>
+    #game1,#game2,#console {width: 400px; height: 800px; float: left; border: 1px solid #CCCCCC; overflow: auto;}
+    #button-container1,#button-container2,#button-container-console {width: 400px; float: left; }
+    .clear {clear: both;}
+    </style>
+    <script src='jquery-1.5.1.min.js'></script>
+</head>
+<body>
+<div id='game1'></div>
+<div id='game2'></div>
+<div id='console'></div>
+<div class='clear'></div>
+<div id='button-container1'>
+    <input type='button' onclick='connectGame1();' value='Connect'>
+    <input type='button' onclick='selectCharacter1();' value='selectCharacter'>
+    <input type='button' onclick='disconnectGame1();' value='Disconnect'>
+</div>
+<div id='button-container2'>
+    <input type='button' onclick='connectGame2();' value='Connect'>
+    <input type='button' onclick='selectCharacter2();' value='selectCharacter'>
+    <input type='button' onclick='disconnectGame2();' value='Disconnect'>
+</div>
+<div id='button-container-console'>
+    <input type='button' onclick='connectConsole();' value='Connect'>
+    <input type='button' onclick='getAllCharacter();' value='getAllCharacter'>
+    <input type='button' onclick='getClient();' value='getClient'>
+</div>
+<div class='clear'></div>
+</body>
+<script src='websocket.js'></script>
+</html>
