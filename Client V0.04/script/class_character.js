@@ -12,34 +12,16 @@ var Character = Coordinate.extend({
         this.setMaxNV(data.maxNV);
         this.buff = {};
         this.faceTo = data.faceTo;
-        this.initPos = this.getCoordinateXY(data.position);
-
-        this.caculateRunOffset();
-        this.caculateStandOffset();
-        this.caculateAttackOffset();
-        this.offset = {
-            run : {
-                x : this.runOffsetX
-                ,y : this.runOffsetY
-            }
-            ,stand : {
-                x : this.standOffsetX
-                ,y : this.standOffsetY
-            }
-            ,attack : {
-                x : this.attackOffsetX
-                ,y : this.attackOffsetY
-            }
-        };
-        
-        this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
-
+        this.initPos = this.getCoordinateXY(data.position); //TODO DELETE
         this.setPosition(this.initPos.x,this.initPos.y);
+
+        this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
 
         if (this.self) {
             GI.ui.myStatus.setName(data.name);
         }
         this.animation = new Animation(this);
+        this.actionQueue = new ActionQueue(this);
     }
     ,getTimeDifference : function(data) {
         var cNowTimestamp = Date.now();
@@ -122,5 +104,26 @@ var Character = Coordinate.extend({
     }
     ,cancelTarget : function() {
         this.targeted = false;
+    }
+    //Actions
+    ,moveCharacter : function() {
+        this.animation.nowLocation = this.nowAction.nowLocation;
+        this.animation.nextLocation = this.nowAction.nextLocation;
+        this.animation.moveDuration = this.nowAction.duration;
+        this.animation.switch('run');
+    }
+    ,characterStand : function() {
+        this.animation.switch('stand');
+        this.actionQueue.clearNow();
+        this.actionQueue.execute();
+    }
+    ,castSkill : function() {
+        this.animation.switch('attack');
+    }
+    ,moveRepel : function() {
+        this.animation.nowLocation = this.nowAction.nowLocation;
+        this.animation.nextLocation = this.nowAction.endLocation;
+        this.animation.moveDuration = this.nowAction.duration;
+        this.animation.switch('repel');
     }
 });
