@@ -42,7 +42,7 @@ var Input = Class.extend({
             ,chargebar : chargebar
         }
         // init my character
-        GI.player = eval('new '+ data.name);
+        GI.player = eval('new '+ data.name); //TODO CHANGE TO ARRAY => CLASS
         GI.player.cID = cID;
         GI.player.setSelf();
         GI.player.make(data);
@@ -137,13 +137,10 @@ var Input = Class.extend({
     ,addActionQueue : function(data, stream){
         var cID = data.cID;
         if(GI.isSelf(cID)) {
-        	GI.player.animation.addShift(stream);
-            GI.player.animation.getQueueAction();
+        	GI.player.actionQueue.add(stream);
             return;
         }
-        //if(!(GI.otherChar && GI.otherChar[cID])) return;
-        GI.otherChar[cID].animation.addShift(stream);
-        GI.otherChar[cID].animation.getQueueAction();
+        GI.otherChar[cID].actionQueue.add(stream);
     }
     ,debuff : function(data, stream) {
         var cID = data.cID;
