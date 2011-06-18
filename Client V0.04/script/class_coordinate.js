@@ -85,7 +85,7 @@ var Coordinate = Class.extend({
         index = index.split(',');
         return {x : parseInt(index[0]), y : parseInt(index[1])};
     }
-    ,getTowardNewGridDirection : function(x, y) {
+    ,getDirection : function(x, y) {
         var deltaX = x - this.x;
         var deltaY = y - this.y;
         var deltaIndex = this.getCoordinateIndex(deltaX, deltaY);
