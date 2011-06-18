@@ -66,17 +66,15 @@ var castSkill = function() {
     var skill = character.getSkill(skillID);   
     //check character has this skill
     if (!skill) return;
-    if (character.castSelfCheck(io, skillID) === 0) return;
+    if (character.castSelfCheck(skillID) === 0) return;
     //getSkillType
     if (skill.target === "single") {
         var targetCID = io.iData.target;
         var target = giUserList.getCharacter(targetCID);
         if (!target) return;
-        if (character.castTargetCheck(io, target, skill) === 0) return;
         character.intSkill[skillID].castSkill(target);
     } else if (skill.target === "location") {
         var location = io.iData.location;
-        if (character.castLocationCheck(io, location, skill) === false) return;
         character.intSkill[skillID].castSkill(location);
     }
 }
@@ -96,7 +94,6 @@ var skillCharge = function() {
         	var targetCID = io.iData.target;
             var target = giUserList.getCharacter(targetCID);
             if (!target) return;
-            if (character.castTargetCheck(io, target, skill) === 0) return;
             character.intSkill[skillID].setChargeLevel();
             character.intSkill[skillID].castSkill(target);
         } else {

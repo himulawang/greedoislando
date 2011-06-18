@@ -29,6 +29,7 @@ skill.prototype.skillHit = function() {
 	var hitted = this.self.hitProc(targetDodgeRate);
 	if (!hitted) {
         this.chargeFactor = 1;
+        this.self.setDoAction(0);
         io.addOutputData(this.cID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : this.skill.skillID});
         io.response();
 	}
@@ -151,4 +152,50 @@ skill.prototype.freeStatusCountDown = function() {
     this.target.setFree();  // 10s later set tango status to free
 }
 // Set to Free END
+
+// CHECK IF CHARACTER CAN CAST SKILL ON TARGET START
+skill.prototype.castTargetCheck = function() {
+	var checked = this.checkTargetAlive() && this.checkRange() && this.checkNV();
+	return checked;
+}
+skill.prototype.checkTargetAlive = function() {
+	return this.target.getStatus();
+}
+skill.prototype.checkRange = function() {
+    var range = giMap.getRange(this.self.getLocation(), this.target.getLocation());
+	
+	if (range > this.skill.range + GI_SKILL_CAST_BLUR_RANGE) {
+		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
+        io.response();
+        return 0;
+	} else {
+		return 1;
+	}
+}
+skill.prototype.checkNV = function() {
+	var nv = this.self.getNV();
+	if (this.skill.costNV > nv) {
+		io.addOutputData(this.cID, 'castSkillOutOfNV', 'self', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
+        io.response();
+        return 0;
+	} else {
+		return 1;
+	}
+}
+// CHECK IF skill CAN CAST SKILL ON TARGET END
+
+// CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION START
+skill.prototype.castLocationCheck = function() {
+    var checkRes = giMap.verifyClientLocationMovePossible() && this.verifyCastLocationRange();
+    return checkRes;
+}
+skill.prototype.verifyCastLocationRange = function() {
+    var locationXY = fc.getCoordinateXY(this.coordinate);
+    var nowXY = fc.getCoordinateXY(this.self.getLocation());
+    var range = Math.max(Math.abs(nowXY.x - locationXY.x), Math.abs(nowXY.y - locationXY.y));
+    var inRange = (range > skill.range) ? 0 : 1;
+    return inRange;
+}
+// CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION END
+
 global.Skill = skill;

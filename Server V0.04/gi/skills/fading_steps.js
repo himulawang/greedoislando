@@ -8,7 +8,8 @@ fadingSteps.prototype.initSkill = function(character) {
 }
 fadingSteps.prototype.castSkill = function(coordinate) {
 	this.coordinate = coordinate;
-	this.doFadingSteps();
+    if(!this.castLocationCheck()) return;    
+    this.doFadingSteps();
 	this.doSpeedUp();
 }
 fadingSteps.prototype.doFadingSteps = function() {

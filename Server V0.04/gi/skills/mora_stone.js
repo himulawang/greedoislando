@@ -8,6 +8,7 @@ moraStone.prototype.initSkill = function(character) {
 }
 moraStone.prototype.castSkill = function(target) {
 	this.target = target;
+    if (!this.castTargetCheck()) return;
 	if (!this.castProc()) return;
 	this.doDamage();
 	this.doRepel();

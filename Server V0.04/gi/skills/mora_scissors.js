@@ -8,6 +8,7 @@ moraScissors.prototype.initSkill = function(character) {
 }
 moraScissors.prototype.castSkill = function(target) {
 	this.target = target;
+    if (!this.castTargetCheck()) return;
     if (!this.castProc()) return;
 	this.doDamage();
 	this.doBleed();

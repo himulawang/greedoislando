@@ -8,6 +8,7 @@ rightStraightPunch.prototype.initSkill = function(character) {
 }
 rightStraightPunch.prototype.castSkill = function(target) {
     this.target = target;
+    if (!this.castTargetCheck()) return;
     if (!this.castProc()) return;
     this.doDamage();
 }

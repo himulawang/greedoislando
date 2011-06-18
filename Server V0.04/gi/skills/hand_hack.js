@@ -8,6 +8,7 @@ handHack.prototype.initSkill = function(character) {
 }
 handHack.prototype.castSkill = function(target) {
     this.target = target;
+    if (!this.castTargetCheck()) return;
     if (!this.castProc()) return;
     this.doDamage();
 }

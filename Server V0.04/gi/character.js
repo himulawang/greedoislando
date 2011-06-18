@@ -274,7 +274,7 @@ character.prototype.setFree = function() {
     this.setFreeTimeout = setTimeout(function(){ 
         if (_this.status === 0) return;
         _this.setStatus(1);
-        io.addOutputData(_this.cID, 'statusChange', 'logged', {cID : this.cID, status : _this.getStatus(), timestamp : fc.getTimestamp()});
+        io.addOutputData(_this.cID, 'statusChange', 'logged', {cID : _this.cID, status : _this.getStatus(), timestamp : fc.getTimestamp()});
         io.response();
     }, this.freeDuration);
 }
@@ -339,52 +339,6 @@ character.prototype.checkSelfDoActionStatus = function() {
     }
 }
 // CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL END
-
-// CHECK IF CHARACTER CAN CAST SKILL ON TARGET START
-character.prototype.castTargetCheck = function(target, skill) {
-	var checked = this.checkTargetAlive(target) && this.checkRange(io, target, skill) && this.checkNV(io, target, skill);
-	return checked;
-}
-character.prototype.checkTargetAlive = function(target) {
-	return target.getStatus();
-}
-character.prototype.checkRange = function(target, skill) {
-	var targetLocation = target.getLocation();
-	var range = giMap.getRange(this.position, targetLocation);
-	
-	if (range > skill.range + GI_SKILL_CAST_BLUR_RANGE) {
-		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, target : target.cID, skillID : skill.skillID});
-        io.response();
-        return 0;
-	} else {
-		return 1;
-	}
-}
-character.prototype.checkNV = function(target, skill) {
-	var nv = this.getNV();
-	if (skill.costNV > nv) {
-		io.addOutputData(this.cID, 'castSkillOutOfNV', 'self', {cID : this.cID, target : target.cID, skillID : skill.skillID});
-        io.response();
-        return 0;
-	} else {
-		return 1;
-	}
-}
-// CHECK IF CHARACTER CAN CAST SKILL ON TARGET END
-
-// CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION START
-character.prototype.castLocationCheck = function(location, skill) {
-    var checkRes = giMap.verifyClientLocationMovePossible(location) && this.verifyCastLocationRange(location, skill);
-    return checkRes;
-}
-character.prototype.verifyCastLocationRange = function(location, skill) {
-    var locationXY = fc.getCoordinateXY(location);
-    var nowXY = fc.getCoordinateXY(this.getLocation());
-    var range = Math.max(Math.abs(nowXY.x - locationXY.x), Math.abs(nowXY.y - locationXY.y));
-    var inRange = (range > skill.range) ? false : true;
-    return inRange;
-}
-// CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION END
 
 character.prototype.selfTimeCounterDestroy = function() {
     fc.destroyTimeInterval(this.setFreeRecInterval);

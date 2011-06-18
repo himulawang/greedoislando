@@ -8,6 +8,7 @@ moraFabric.prototype.initSkill = function(character) {
 }
 moraFabric.prototype.castSkill = function(target) {
 	this.target = target;
+    if (!this.castTargetCheck()) return;
 	if (!this.castProc()) return;
 	this.doDamage();
 	this.doSlow();
