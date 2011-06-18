@@ -1,0 +1,138 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>新建网页 1</title>
+</head>
+
+<body onload="setStart()" bgcolor=#C0C0C0>
+<script language=javascript>
+function ziti(){
+form1.S1.style.fontFamily=form1.choose2.value;
+}
+function zihao(){  //字的颜色，在S1的的文本里
+form1.S1.style.fontSize=form1.choose4.value;
+}
+function zicolor(){  //字的颜色 在S1的的文本里
+
+form1.S1.style.color=form1.choose3.value;
+}
+function xieti(){  //设置斜体字 在S1的的文本里 fontstyle是斜体的属性类
+if(form1.S1.style.fontStyle=="italic")  //斜体的单词是italic
+form1.S1.style.fontStyle="Normal";
+else 
+form1.S1.style.fontStyle="Italic";
+}
+function cuti(){  //设置粗体字 在S1的的文本里 fontweight是粗提的属性类
+if(form1.S1.style.fontWeight=="bold")  //斜体的单词是bold
+form1.S1.style.fontWeight="Normal";
+else 
+form1.S1.style.fontWeight="Bold";
+}
+function xiaxian(){
+//alert(form1.S1.style.textDecoration);
+if(form1.S1.style.textDecoration=="underline")  //斜体的单词是bold
+form1.S1.style.textDecoration="None";
+else 
+form1.S1.style.textDecoration="underline";
+}
+function AddTextArea(){
+var a=document.createElement("textarea");
+a.style.width=400;
+a.style.height=200;
+a.innerText=form1.S1.value
+a.style.fontFamily=form1.choose2.value
+a.style.fontSize=form1.choose4.value
+a.style.color=form1.choose3.value
+f2.appendChild(a);
+for(i=0;i<4;i++){
+var a=document.createElement("br");
+f2.appendChild(a);}
+}
+
+function setStart(){
+form1.S1.style.width=400;
+form1.S1.style.height=200;
+}
+function Beijing(){
+form1.S1.style.backgroundColor=form1.choose1.value;
+}
+
+
+</script>
+<table  bgcolor=#666666 border="1" width="100%" id="table2">
+ <tr>
+  <td><font face="黑体" size="2" color="#800080"><marquee>Vaux论坛</marquee></font></td>
+ </tr>
+</table>
+
+<table border="1" width="100%" id="table3">
+ <tr>
+  <td>日期：</td>
+ </tr>
+</table>
+
+<table border="0" width="100%" id="table1" height="586" cellspacing="0" cellpadding="0" >
+<form name=form1 method =get >
+ <tr>
+  <td height="33"><font face="华文行楷" size="4">【姓名】：</font></td>
+  <td height="33">论题：</td>
+ </tr>
+ <tr>
+  <td><font face="华文行楷" size="4">【ID】：</font></td>
+  <td><input type="text" name="T1" size="65"></td>
+ </tr>
+ <tr>
+  <td rowspan="3" width="29%">
+  <img border="0" src="1.jpg" width="276" height="277"></td>
+  <td height="71" width="71%">
+    <p align=center>
+ 背景<select size="1" name="choose1" onchange=Beijing()>
+ <option selected value="yellow">清风</option>
+ <option value="white">血白</option>
+ <option value="red">火红</option>
+ <option value="green">油绿</option>
+ </select>   字体<select size="1" name="choose2" onchange=ziti()>
+ <option selected value="宋体">宋体</option>
+ <option value="黑体">黑体</option>
+ <option value="隶书">隶书</option>
+ </select>    颜色<select size="1" name="choose3" onchange=zicolor()>
+ <option selected value="black">黑</option>
+ <option value="red">红</option>
+ <option value="yellow">黄</option>
+ <option value="green">绿</option>
+ </select>   字号<select size="1" name="choose4" onchange=zihao();>
+ <option value="10">10</option>
+ <option value="20">20</option>
+ <option value="30">30</option>
+ <option value="40">40</option>
+ </select>
+ <input type="button" value="I" name="b3" onclick="xieti()">
+ <input type="button" value="B" name="b4" onclick="cuti()">
+ <input type="button" value="_" name="b5" onclick="xiaxian()"></p>
+    </td>
+ </tr>
+ <tr>
+  <td height="270" width="71%"><textarea rows="12" name="S1" cols="71" ></textarea></td>
+ </tr>
+ <tr>
+  <td height="26" width="71%">
+   <p align=right>
+   <input type="button" value="提交" name="b1" style="float: right" onclick=AddTextArea()><input type="reset" value="重置" name="b2"></p>
+  
+  </td>
+ </tr>
+</table>
+</form>
+<hr>
+<center>
+<form method="POST" action="_derived/nortbots.htm" name=f2 onSubmit="location.href='_derived/nortbots.htm';return false;" webbot-onSubmit webbot-action="--WEBBOT-SELF--"  >
+ 
+</form>
+</center>
+<hr>
+</body>
+
+</html>
+
