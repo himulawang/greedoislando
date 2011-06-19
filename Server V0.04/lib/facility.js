@@ -45,26 +45,4 @@ global.fc = {
         content = array.join("\n");
         return JSON.parse(content);
     }
-    ,destroyTimeout : function(timeOutCounter) {
-        var type = typeof(timeOutCounter);
-        if (type === 'number') {
-            clearTimeout(timeOutCounter);
-        } else if (type === 'object') {
-            for (var x in timeOutCounter) {
-                clearTimeout(timeOutCounter[x]);
-            }
-        }
-    }
-    ,destroyTimeInterval : function(intervalCounter) {
-        var type = typeof(intervalCounter);
-        if (type === 'number') {
-            clearInterval(intervalCounter);
-        } else if (type === 'object') {
-            for (var x in intervalCounter) {
-                clearInterval(intervalCounter[x]);
-            }
-        }
-    }
 }
-
-

@@ -15,8 +15,8 @@ moraFabric.prototype.castSkill = function(target) {
 }
 moraFabric.prototype.doSlow = function() {
 	var _this = this;
-	this.pushDebuffList();
-	this.dID = this.getDebuffID();
+	this.pushDebuffList(this.target);
+	this.dID = this.getDebuffID(this.target);
 	
 	this.target.speedFactor = 1 - this.skill.adtEffectVal;
 	

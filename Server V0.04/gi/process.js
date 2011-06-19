@@ -34,7 +34,7 @@ var moveCharacter = function () {
     var endPoint = object.endPoint;
     var character = giUserList.getCharacter(cID);
     if (character.getStatus() === 0) return;
-    if (character.doAction === 5) return;
+    if (character.doAction === 5 || character.doAction === 4) return;
     var nowLocation = character.getLocation();
     if (!(endPoint //invalid endPoint
         && giMap.verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
@@ -85,7 +85,7 @@ var skillCharge = function() {
     var skill = character.getSkill(skillID);
     
     if (!skill) return; //check character if has this skill or not
-    if (character.castSelfCheck(io, skillID) === 0) return;
+    if (character.castSelfCheck(skillID) === 0) return;
     
     if (skill.target === 'single') {
     	if (io.iData.status === 1) {
@@ -102,6 +102,17 @@ var skillCharge = function() {
     }    
 }
 
+var debug = function() {
+    var cID = io.iData.cID;
+    try {
+        var requestResource = global[io.iData.object] || eval(io.iData.object);
+        io.addOutputData(cID, 'debug', 'self', {resource : requestResource, resourceID : io.iData.object + "-" + fc.getTimestamp()});
+        io.response();
+    } catch (e) {
+        return; 
+    }    
+}
+
 global.PROCESS = {
     logged : {
         keepSession : keepSession
@@ -110,10 +121,12 @@ global.PROCESS = {
         ,moveCharacter : moveCharacter
         ,castSkill : castSkill
         ,skillCharge :　skillCharge
+        ,debug : debug
     }
     ,unlogged : {
         keepSession : keepSession
         ,selectCharacter: selectCharacter
+        ,debug : debug
     }
 }
 
