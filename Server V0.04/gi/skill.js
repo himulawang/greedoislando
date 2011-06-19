@@ -7,13 +7,18 @@ skill.prototype.init = function(character) {
 	this.chargeFactor = 1;
 	this.dotTimer = 3000;
 }
-//CAST PROC START
+//TARGET CAST PROC START
 skill.prototype.castProc = function() {    
 	io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
-    this.self.setDoAction(2);
+    this.self.stopMoving(2);
 	this.setToCombat();
 	this.castNVConsume();
 	return this.skillHit();
+}
+skill.prototype.posCastProc = function() {
+    io.addOutputData(this.cID, 'castSkill', 'logged', {cID : this.cID, location : this.coordinate, skillID : this.skill.skillID});
+    this.self.stopMoving(2);
+	this.castNVConsume();
 }
 skill.prototype.setToCombat = function() {
 	this.self.setCombat();
@@ -29,13 +34,13 @@ skill.prototype.skillHit = function() {
 	var hitted = this.self.hitProc(targetDodgeRate);
 	if (!hitted) {
         this.chargeFactor = 1;
-        this.self.setDoAction(0);
+        this.self.beginStanding();
         io.addOutputData(this.cID, 'skillMiss', 'logged', {cID : this.cID , target : this.target.cID , skillID : this.skill.skillID});
         io.response();
 	}
 	return hitted;
 }
-//CAST PROC END
+//TARGET CAST PROC END
 
 //CAST SKILL START
 skill.prototype.doDamage = function() {
@@ -54,7 +59,7 @@ skill.prototype.doDamage = function() {
     this.setCommonCD();
     this.freeStatusCountDown();
     io.response();
-    this.self.setDoAction(0);
+    this.self.beginStanding();
     this.chargeFactor = 1;
 }
 skill.prototype.setCharDead = function() {
@@ -64,24 +69,24 @@ skill.prototype.setCharDead = function() {
 skill.prototype.getSkillDamage = function() {
     return this.skill.damage * this.chargeFactor * (1 + this.self.skillRF);
 }
-skill.prototype.getDebuffID = function() {
-    return this.cID + "_" + this.skill.skillID;
+skill.prototype.getDebuffID = function(character) {
+    return character.cID + "_" + this.skill.skillID;
 }
-skill.prototype.pushDebuffList = function() {
-    var dID = this.getDebuffID();
-    if (!this.target.debuffList[dID]) {
+skill.prototype.pushDebuffList = function(character) {
+    var dID = this.getDebuffID(character);
+    if (!character.debuffList[dID]) {
         var debuff = { skillName : this.skill.name, debuff : this.skill.adtEffect, stack : 0 };
-        this.target.debuffList[dID] = debuff;
+        character.debuffList[dID] = debuff;
     }
 }
-skill.prototype.getBuffID = function() {
-    return this.cID + "_" + this.skill.skillID;
+skill.prototype.getBuffID = function(character) {
+    return character.cID + "_" + this.skill.skillID;
 }
-skill.prototype.pushBuffList = function() {
-    var bID = this.getBuffID(cID);
-    if (!this.target.buffList[bID]) {
+skill.prototype.pushBuffList = function(character) {
+    var bID = this.getBuffID(character);
+    if (!character.buffList[bID]) {
         var buff = { skillName : this.skill.name, buff : this.skill.adtEffect, stack : 0 };
-        this.target.buffList[bID] = buff;
+        character.buffList[bID] = buff;
     }
 }
 // CAST SKILL END
@@ -89,12 +94,12 @@ skill.prototype.pushBuffList = function() {
 // CAST DIRECTLY SKILL START
 skill.prototype.doTeleportCoordinateVerify = function() {
 	var direction = giMap.getDirection(this.self.position, this.coordinate);
-	var startXY = fc.getCoordinateXY(this.self.postion);
+	var startXY = fc.getCoordinateXY(this.self.position);
 	var endXY = fc.getCoordinateXY(this.coordinate);
 	var range = Math.max(Math.abs(startXY.x - endXY.x), Math.abs(startXY.y - endXY.y));
 	var validLine = giMap.getLineCoordinateWithoutObstacle(this.self.position, direction, range);
 	var len = validLine.length;
-	var endGridIndex = (len === 0) ? this.target.position : validLine[len - 1];
+	var endGridIndex = (len === 0) ? this.self.position : validLine[len - 1];
 	return endGridIndex;
 }
 // CAST DIRECTLY SKILL END
@@ -118,7 +123,7 @@ skill.prototype.startSkillCDProc = function() {
 skill.prototype.chargeStart = function() {
     io.addOutputData(this.cID, 'characterStand', 'logged', {cID : this.cID, timestamp : fc.getTimestamp(), nowLocation : this.self.position });
     io.response();
-    this.self.setDoAction(5);
+    this.self.stopMoving(5);
     this.self.skillCharge[this.skill.skillID] = fc.getTimestamp();
 }
 skill.prototype.setChargeLevel = function() {
@@ -135,7 +140,7 @@ skill.prototype.setChargeLevel = function() {
     }
     delete this.self.skillCharge[this.skill.skillID]; // equal to this.self.skillCharge = {};
     this.chargeFactor = skillChargeLevel;
-    this.self.setDoAction(0);
+    this.self.beginStanding();
 }
 // SKILL CHARGE END
 

@@ -848,7 +848,7 @@ map.prototype.getRange = function(a, b) {
     var deltaY = Math.abs(aXY.y - bXY.y);
     return Math.round(Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)));
 }
-map.prototype.getDirection = function(startPoint, endPoint) {
+map.prototype.getDirection = function(endPoint, startPoint) {
     var startXY = fc.getCoordinateXY(startPoint);
     var endXY = fc.getCoordinateXY(endPoint);
     if (startXY.x === endXY.x && startXY.y > endXY.y) {

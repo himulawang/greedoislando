@@ -184,9 +184,9 @@ var SKILL =
         ,"adtEffect" : "speedup"
         ,"adtEffectVal" : 0.3
         ,"adtEffectTime" : 5000
-        ,"skillCD" : 5
+        ,"skillCD" : 5000
         ,"lvUPMod" : {
-        	"skillCD" : -1
+        	"skillCD" : -1000
         }
     }
     ,"10102" : {
@@ -205,9 +205,9 @@ var SKILL =
         ,"adtEffect" : "paralysis"
         ,"adtEffectVal" : null
         ,"adtEffectTime" : 6000
-        ,"skillCD" : 8
+        ,"skillCD" : 8000
         ,"lvUPMod" : {
-        	"skillCD" : -1
+        	"skillCD" : -1000
         }
     }
     ,"10103" : {
@@ -226,9 +226,9 @@ var SKILL =
         ,"adtEffect" : null
         ,"adtEffectVal" : null
         ,"adtEffectTime" : null
-        ,"skillCD" : 3
+        ,"skillCD" : 3000
         ,"lvUPMod" : {
         	"rangeFactor" : 0.1
         }
     }
-};
+}
