@@ -3,12 +3,8 @@ var Animation = Coordinate.extend({
      * this.runOffsetX = (this.TILEWIDTH - runWidth) / 2;
      * this.runOffsetY = runHeight - this.HALFTILEHEIGHT - 15;
      * */        
-    init : function(owner){
+    init : function() {
     	this._super();
-        this.owner = owner;
-        this.action = 'stand';
-
-        this.animateList = ANIMATION_MATERIAL.character[this.owner.name].animateList;
         //Canvas Attribute
         this.moving = false; //canvas is moving
         this.actionSwitched = true; // character has change its action
@@ -17,25 +13,7 @@ var Animation = Coordinate.extend({
         //Canvas Moving Attribute
         this.moveStartStamp = 0;
         this.lastRunStamp = 0;
-        this.getFrameDuration();
         this.moveDuration = 0;
-
-        this.directionID = 0;
-
-        this.initImages();
-        this.initCanvas();
-        this.runCanvas();
-        this.put();
-    }
-    ,initImages : function(){
-        this.images = GI.material.images[this.owner.name];
-    }
-    ,initCanvas : function() {
-        var canvas = $("<canvas id='" + this.owner.cID + "' style='position: absolute;'></canvas>");
-        $('body').append(canvas);
-        this.el = $("#" + this.owner.cID);
-        Event.onSelectTarget(this.el);
-        this.canvas = this.el[0].getContext('2d');
     }
     ,switch : function(action) {
         /* run Canvas init start */
@@ -162,32 +140,12 @@ var Animation = Coordinate.extend({
     }
     ,checkRunOnce : function() {
         if (!this.runOnce) return false;
-        this.switch('stand');
+        this.switch(this.defaultAction);
         this.put();
 
         this.owner.actionQueue.clearNow();
         this.owner.actionQueue.execute();
         return true;
-    }
-    ,addTargeted : function() {
-        if (!this.owner.targeted) return;
-        this.canvas.shadowOffsetX = 5;
-        this.canvas.shadowOffsetY = 5;
-        this.canvas.shadowBlur = 25;
-        this.canvas.shadowColor = "white";
-        /*
-        var x = fc.fix(this.animateWidth / 2);
-        var y = fc.fix(this.animateHeight * 0.85);
-        var radius = 20;
-        var startAngle = 0;
-        var endAngle = Math.PI * 2;
-        var clockwise = true;
-        this.canvas.strokeStyle = "orange";
-        this.canvas.lineWidth = 4;
-        this.canvas.beginPath();
-        this.canvas.arc(x, y, radius, startAngle, endAngle, clockwise);
-        this.canvas.stroke();
-        */
     }
     ,put : function() {
         var offsetX = this.animateList[this.action].offsetX;
