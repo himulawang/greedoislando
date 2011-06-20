@@ -20,7 +20,7 @@ var Character = Coordinate.extend({
         if (this.self) {
             GI.ui.myStatus.setName(data.name);
         }
-        this.animation = new Animation(this);
+        this.animation = new Animation_Character(this);
         this.actionQueue = new ActionQueue(this);
     }
     ,getTimeDifference : function(data) {
