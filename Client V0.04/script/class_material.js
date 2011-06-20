@@ -6,6 +6,7 @@ var Material = Class.extend({
     ,initMaterial : function(){
         this.loadCharacterList();
         this.loadMapElement();
+        //this.loadEffectList();
     }
     ,loadCharacterList : function() {
         for (var character in ANIMATION_MATERIAL.character) {
@@ -40,5 +41,19 @@ var Material = Class.extend({
             tmp[objID] = img;
         }
         this.images['map'] = tmp;
+    }
+    ,loadEffectList : function() {
+        for (var effectName in ANIMATION_MATERIAL.effect) {
+            this.images[effectName] = {};
+            this.loadEffect(ANIMATION_MATERIAL.effect[effectName], effectName);
+        }
+    }
+    ,loadEffect : function(effect, effectName) {
+        var tmp = [];
+        for (var i = 0; i < effect.frames; ++i) {
+            tmp.push(new Image);
+            tmp[i].src = 'images/effect/' + effectName.toLowerCase() + '/' + i + '.png';
+        }
+        this.images[effectName] = tmp;
     }
 });

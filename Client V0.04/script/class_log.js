@@ -53,6 +53,16 @@ var Log = Class.extend({
             this.log(target + ' Debuff ' + skillName + ' Disappear from ' + caster);
         }
     }
+    ,buff : function(data) {
+        var caster = this.truncateCID(data.sourceCID);
+        var target = this.truncateCID(data.cID);
+        var skillName = this.getSkillName(data.skillID);
+        if (data.isOn) {
+            this.log(target + ' get buff ' + skillName + ' from ' + caster);
+        } else {
+            this.log(target + ' buff ' + skillName + ' Disappear from ' + caster);
+        }
+    }
     ,castSkillOutOfRange : function(data) {
         var caster = this.truncateCID(data.cID);
         var target = this.truncateCID(data.target);
@@ -68,5 +78,9 @@ var Log = Class.extend({
         var target = this.truncateCID(data.target);
         var skillName = this.getSkillName(data.skillID);
         this.log(caster + ' castSkill ' + skillName + ' -> ' + target + ' Miss');
+    }
+    ,teleport : function(data) {
+        var caster = this.truncateCID(data.cID);
+        this.log(caster + ' teleport ' + data.nowLocation + ' to ' + data.endLocation);
     }
 });

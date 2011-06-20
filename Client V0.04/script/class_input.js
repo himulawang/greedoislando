@@ -18,8 +18,10 @@ var Input = Class.extend({
             ,skillMiss : this.skillMiss
             ,moveRepel : this.addActionQueue
             ,debuff : this.debuff
+            ,buff : this.buff
             ,addActionQueue : this.addActionQueue
             ,skillCDing : this.skillCDing
+            ,teleport : this.teleport
         }
     }
     ,execute : function(stream) {
@@ -52,9 +54,17 @@ var Input = Class.extend({
         GI.skill = {};
         for (var skillID in data.skill) {
             if (skillID < 10000) continue;
-            GI.skill[skillID] = new Skill(data.skill[skillID]);
+            GI.skill[skillID] = eval("new " + SKILL[skillID].className + "(" + skillID + ")");
         }
         GI.ui.skillbar.makeBar();
+        // init keyboard event
+        var keyCode = 49;
+        for (skillID in data.skill) {
+            if (skillID < 10000) continue;
+            GI.keyboard.list[keyCode] = GI.skill[skillID];
+            ++keyCode;
+        }
+
         // init map
         $("#login").fadeOut(100, function(){
             $("#login").remove();
@@ -71,7 +81,6 @@ var Input = Class.extend({
     ,newCharacterLogin : function(data, stream) {
         var cID = data.cID;
         if (GI.otherChar[cID]) return;
-        console.log('newCharacterLogin new ', cID);
         GI.otherChar[cID] = eval('new ' + data.name);
         GI.otherChar[cID].make(data);
     }
@@ -160,13 +169,37 @@ var Input = Class.extend({
         }
         log.debuff(data);
     }
+    ,buff : function(data, stream) {
+        var cID = data.cID;
+        var buff = new Buff(data);
+        if (data.isOn === 1) {
+            if (GI.isSelf(cID)) {
+                GI.player.setBuff(buff);
+            } else {
+                GI.otherChar[cID].setBuff(buff);
+            }
+        } else if (data.isOn === 0) {
+            if (GI.isSelf(cID)) {
+                GI.player.delBuff(buff.getSourceCID(), buff.getSkillID());
+            } else {
+                GI.otherChar[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
+            }
+        }
+        log.buff(data);
+    }
     ,castSkill : function(data, stream) {
-        log.castSkill(data);
+        var cID = data.cID;
         this.addActionQueue(data, stream);
         var skillID = data.skillID;
-        GI.skill[skillID].setCD();
+        if (GI.isSelf(cID)) {
+            GI.skill[skillID].setCD();
+        }
     }
     ,skillCDing : function(data, stream) {
         log.skillCDing(data);
+    }
+    ,teleport: function(data, stream) {
+        this.addActionQueue(data, stream);
+        log.teleport(data);
     }
 });

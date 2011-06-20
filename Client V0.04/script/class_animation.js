@@ -20,9 +20,6 @@ var Animation = Coordinate.extend({
         this.getFrameDuration();
         this.moveDuration = 0;
 
-        this.initPosition = owner.initPos;
-        this.x = this.initPosition.x;
-        this.y = this.initPosition.y;
         this.directionID = 0;
 
         this.initImages();
@@ -41,19 +38,22 @@ var Animation = Coordinate.extend({
         this.canvas = this.el[0].getContext('2d');
     }
     ,switch : function(action) {
+        /* run Canvas init start */
         if (this.action != action) {
             this.actionSwitched = true;
             this.runOnce = this.animateList[action].runOnce;
         }
         this.action = action;
         this.getFrameDuration();
+        /* run Canvas init end */
 
-        //execute
+        /* move Canvas init start */
         if (this.animateList[this.action].moveCanvas) {
             this.moveCanvas();
         } else {
             this.put();
         }
+        /* move Canvas init end */
     }
     ,getFrameDuration : function() {
         this.runDuration = this.animateList[this.action].duration;
@@ -72,11 +72,11 @@ var Animation = Coordinate.extend({
 
         this.moveStartStamp = fc.getNowTimestamp();
         
+        this.directionID = this.getDirection(this.nowLocation, this.nextLocation);
+
+        // calculate displacement
         var serverNowXY = this.getCoordinateXY(this.nowLocation);
         this.serverNextXY = this.getCoordinateXY(this.nextLocation);
-
-        var directionID = this.getDirection(this.serverNextXY.x, this.serverNextXY.y);
-        this.directionID = (directionID === undefined) ? this.directionID : directionID; //TODO For Delete
 
         var offsetX = this.animateList[this.action].offsetX;
         var offsetY = this.animateList[this.action].offsetY;
@@ -106,8 +106,7 @@ var Animation = Coordinate.extend({
     }
     ,stopMove : function() {
         this.moveStartStamp = 0;
-        this.x = this.serverNextXY.x;
-        this.y = this.serverNextXY.y;
+        this.owner.setPosition(this.serverNextXY.x, this.serverNextXY.y);
         this.moving = false;
 
         this.owner.actionQueue.clearNow();
@@ -132,6 +131,13 @@ var Animation = Coordinate.extend({
     }
     ,drawRun : function() {
         var _this = this;
+
+        //check if run once
+        if (this.nowImages && this.nowImagesIndex === this.nowImages.length - 1 && this.checkRunOnce()) {
+            this.runAnimationID = requestAnimationFrame(function() { _this.drawRun(); });
+            return;
+        }
+
         var now = fc.getNowTimestamp();
         var timeDelta = now - this.lastRunStamp;
         if (timeDelta < this.frameDuration) {
@@ -142,10 +148,6 @@ var Animation = Coordinate.extend({
         this.getRunImages();
 
         if (this.nowImagesIndex === this.nowImages.length - 1) {
-            if (this.checkRunOnce()) {
-                this.runAnimationID = requestAnimationFrame(function() { _this.drawRun(); });
-                return;
-            }
             this.nowImagesIndex = 0;
         } else {
             ++this.nowImagesIndex;
@@ -191,8 +193,9 @@ var Animation = Coordinate.extend({
         var offsetX = this.animateList[this.action].offsetX;
         var offsetY = this.animateList[this.action].offsetY;
 
-        var screenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH + offsetX;
-        var screenY = this.transferLogicToScreenY(this.x, this.y) - offsetY;
+        var xy = this.owner;
+        var screenX = this.transferLogicToScreenX(xy.x, xy.y) - this.HALFTILEWIDTH + offsetX;
+        var screenY = this.transferLogicToScreenY(xy.x, xy.y) - offsetY;
 
         this.el.css({left : screenX + 'px', top : screenY + 'px'});
     }

@@ -12,8 +12,8 @@ var Character = Coordinate.extend({
         this.setMaxNV(data.maxNV);
         this.buff = {};
         this.faceTo = data.faceTo;
-        this.initPos = this.getCoordinateXY(data.position); //TODO DELETE
-        this.setPosition(this.initPos.x,this.initPos.y);
+        var xy = this.getCoordinateXY(data.position);
+        this.setPosition(xy.x, xy.y);
 
         this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
 
@@ -92,8 +92,17 @@ var Character = Coordinate.extend({
         return this.name;
     }
     ,setPosition : function(x, y) {
-        this.x = x;
-        this.y = y;
+        if (typeof(x) === 'number' && typeof(y) === 'number') {
+            this.x = x;
+            this.y = y;
+            return;
+        } else if (typeof(x) === 'string') {
+            var xy = this.getCoordinateXY(x);
+            this.x = xy.x;
+            this.y = xy.y;
+            return;
+        }
+        throw "invalid argument for character.setPostiion";
     }
     ,setSelf : function() { //tag that this character is my character
         this.self = true;
@@ -125,5 +134,11 @@ var Character = Coordinate.extend({
         this.animation.nextLocation = this.nowAction.endLocation;
         this.animation.moveDuration = this.nowAction.duration;
         this.animation.switch('repel');
+    }
+    ,teleport : function() {
+        this.setPosition(this.nowAction.endLocation);
+        this.animation.switch('stand');
+        this.actionQueue.clearNow();
+        this.actionQueue.execute();
     }
 });

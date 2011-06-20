@@ -5,6 +5,8 @@ var Cursor = Coordinate.extend({
         this.x = 0;
         this.y = 0;
         this.alpha = .5;
+
+        this.preCastSkill = false;
     }
     ,getCanvas : function(el) {
         this.el = el;
@@ -57,5 +59,11 @@ var Cursor = Coordinate.extend({
         this.x = tmp[0];
         this.y = tmp[1];
         this.put();
+    }
+    ,setPreCastSkill : function(skillID) {
+        this.preCastSkill = skillID;
+    }
+    ,clearPreCastSkill : function() {
+        this.preCastSkill = false;
     }
 });

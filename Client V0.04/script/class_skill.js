@@ -1,6 +1,5 @@
 var Skill = Class.extend({
-    init : function(skill) {
-        var skillID = skill.skillID;
+    init : function(skillID) {
         this.skillID = skillID;
         this.name = SKILL[skillID].name;
         this.abbreviation = SKILL[skillID].abbreviation;
@@ -18,6 +17,7 @@ var Skill = Class.extend({
             ,skillID: this.skillID
         }
         wsocket.sendMessage(obj);
+        this.preCastSkill = false;
     }
     ,setCD : function() {
         this.cd = fc.getNowTimestamp();
@@ -35,5 +35,10 @@ var Skill = Class.extend({
 
         this.resetCD();
         GI.ui.skillbar.skill[this.skillID].resetCD();
+    }
+    ,keydown : function(keyboard, keyCode) {
+    }
+    ,keyup : function(keyboard, keyCode) {
+        this.cast();
     }
 });
