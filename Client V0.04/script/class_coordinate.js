@@ -91,6 +91,7 @@ var Coordinate = Class.extend({
         var deltaX = endXY.x - startXY.x;
         var deltaY = endXY.y - startXY.y;
         var deltaIndex = this.getCoordinateIndex(deltaX, deltaY);
-        return this.DIRECTIONS[deltaIndex];
+        var direction = this.DIRECTIONS[deltaIndex];
+        return direction === undefined ? 0 : direction; //TODO use tringle cos / sin to fix this
     }
 });

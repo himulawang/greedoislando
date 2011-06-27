@@ -7,6 +7,7 @@ var Init = Class.extend({
         this.initInput();
         this.initMaterial();
         this.initCursor();
+        this.initCharacter();
         this.disableContextMenu();
         this.bindKey();
         this.bindMouseOverGrid();
@@ -69,6 +70,9 @@ var Init = Class.extend({
         this.cursor.getCanvas($('#cursor')[0]);
         this.cursor.draw();
         this.cursor.startBreath();
+    }
+    ,initCharacter : function() {
+        this.character = {};
     }
     ,initShowWay : function() {
         this.showWayCursor = new Cursor;

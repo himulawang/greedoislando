@@ -9,18 +9,24 @@ var Timer = Class.extend({
         this.skillCD = setInterval(this.skillCDTimer, 50);
     }
     ,buffTimer : function() {
-        var buffList, index, buff, cID;
-        if (fc.objectLength(GI.player.buff) != 0) {
-            buffList = GI.player.buff;
+        var characters = GI.character;
+        var myCharacter = characters[GI.cID];
+        var buffList = myCharacter.buff;
+        var index = null, buff = null;
+        //self Buff UI
+        if (fc.objectLength(buffList) != 0) {
             for (index in buffList) {
                 buff = buffList[index];
                 GI.ui.myStatus.refreshBuff(buff);
             }
         }
-        if (fc.objectLength(GI.otherChar) === 0) return;
-        
-        for (cID in GI.otherChar) {
-            buffList = GI.otherChar[cID].buff;
+
+        //target Buff UI
+        var targetCID = GI.targetCID;
+        if (!targetCID) return;
+
+        var buffList = characters[targetCID].buff;
+        if (fc.objectLength(buffList) != 0) {
             for (index in buffList) {
                 buff = buffList[index];
                 GI.ui.targetStatus.refreshBuff(buff);
@@ -28,8 +34,8 @@ var Timer = Class.extend({
         }
     }
     ,skillCDTimer : function() {
-        var skillList, index, skill, cID;
-        skillList = GI.skill;
+        var skillList, index, skill;
+        skillList = GI.character[GI.cID].skill;
         for (index in skillList) {
             skill = skillList[index];
             var progress = skill.getCDProgress();
