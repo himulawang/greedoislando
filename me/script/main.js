@@ -1,6 +1,6 @@
-var GI_MAP_WIDTH = 12480;
-var GI_MAP_HEIGHT = 6720;
-var GI_GRID_QUANTITY = 960;
+var GI_MAP_WIDTH = 6240;
+var GI_MAP_HEIGHT = 3360;
+var GI_GRID_QUANTITY = 480;
 var GI_CHARACTER_SPEED = 100;
 
 var GI_TERRAIN_DEFINE = {
@@ -14,7 +14,8 @@ var GI_TERRAIN_DEFINE = {
 };
 
 var GI;
+
 $(function(){
     GI = new Init;
-    window.scrollX = GI_MAP_WIDTH / 2;
+    document.body.scrollLeft = GI_MAP_WIDTH / 3;
 });

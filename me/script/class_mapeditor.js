@@ -798,6 +798,7 @@ var MapEditor = Coordinate.extend({
         }
         this.getCanvas($('#grid')[0]);
         this.draw();
+        this.terrainType = "2000";
     }
     ,getCanvas : function(el) {
         el.width = this.MAPWIDTH;
@@ -809,7 +810,8 @@ var MapEditor = Coordinate.extend({
         var l, w;
         l = $("#l").val();
         w = $("#w").val();
-        var type = $(".terrain:checked").val();
+        //var type = $(".terrain:checked").val();
+        var type = this.terrainType;
         index = this.getCoordinateIndex(x, y);
         if (type === 'del') {
             delete this.map[index];

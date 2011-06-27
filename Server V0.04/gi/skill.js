@@ -93,11 +93,7 @@ skill.prototype.pushBuffList = function(character) {
 
 // CAST DIRECTLY SKILL START
 skill.prototype.doTeleportCoordinateVerify = function() {
-	var direction = giMap.getDirection(this.self.position, this.coordinate);
-	var startXY = fc.getCoordinateXY(this.self.position);
-	var endXY = fc.getCoordinateXY(this.coordinate);
-	var range = Math.max(Math.abs(startXY.x - endXY.x), Math.abs(startXY.y - endXY.y));
-	var validLine = giMap.getLineCoordinateWithoutObstacle(this.self.position, direction, range);
+	var validLine = giMap.getDirectRoute(this.self.position, this.coordinate);
 	var len = validLine.length;
 	var endGridIndex = (len === 0) ? this.self.position : validLine[len - 1];
 	return endGridIndex;
@@ -198,7 +194,7 @@ skill.prototype.verifyCastLocationRange = function() {
     var locationXY = fc.getCoordinateXY(this.coordinate);
     var nowXY = fc.getCoordinateXY(this.self.getLocation());
     var range = Math.max(Math.abs(nowXY.x - locationXY.x), Math.abs(nowXY.y - locationXY.y));
-    var inRange = (range > skill.range) ? 0 : 1;
+    var inRange = (range > this.skill.range) ? 0 : 1;
     return inRange;
 }
 // CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION END
