@@ -939,13 +939,13 @@ map.prototype.getDirectRoute = function(start, end) {
         }
     } else if (startXY.x < endXY.x && startXY.y >= endXY.y) {
         for (var i = 0; i < steps; ++i) {
-            if (nowXY.x > endXY.x) ++nowXY.x;
-            if (nowXY.y < endXY.y) --nowXY.y;
+            if (nowXY.x < endXY.x) ++nowXY.x;
+            if (nowXY.y > endXY.y) --nowXY.y;
             route.push(fc.getCoordinateIndex(nowXY.x, nowXY.y));
         }
     } else if (startXY.x < endXY.x && startXY.y <= endXY.y) {
         for (var i = 0; i < steps; ++i) {
-            if (nowXY.x > endXY.x) ++nowXY.x;
+            if (nowXY.x < endXY.x) ++nowXY.x;
             if (nowXY.y < endXY.y) ++nowXY.y;
             route.push(fc.getCoordinateIndex(nowXY.x, nowXY.y));
         }
@@ -955,10 +955,10 @@ map.prototype.getDirectRoute = function(start, end) {
     var validLine = [];
 
     for (var x in route) {
-        if (obstacleList[line[x]]) {
+        if (obstacleList[route[x]]) {
             return validLine;
         } else {
-            validLine.push(line[x]);
+            validLine.push(route[x]);
         }
     }
     return validLine;

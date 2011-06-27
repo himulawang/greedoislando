@@ -2,9 +2,12 @@
  * Greed Island Common css File
  */
 
-body {
+* {
     padding: 0px;
     margin: 0px;
+}
+
+body {
     font-family: Calibri;
     overflow: hidden;
 }
@@ -50,6 +53,35 @@ body {
     float: right;
 }
 
-#grid {
-    cursor: move;
+li {
+    list-style: none;
 }
+
+#terrain-menu {
+    border: 1px solid #CCCCCC;
+    background: #FFFFFF;
+}
+
+.terrainClass {
+    padding: 5px 10px 5px 10px;
+    width: 80px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.terrainClass:hover {
+    background: #FFA500;
+}
+
+#fixed-pop {
+    position: fixed;
+    left: 2px;
+    top: 2px;
+    background: #336699;
+    color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+    width: 88px;
+    text-align: center;
+}
+
