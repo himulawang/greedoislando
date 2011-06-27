@@ -919,3 +919,47 @@ map.prototype.getLineCoordinateWithoutObstacle = function(startPoint, direction,
     }
     return validLine;
 }
+map.prototype.getDirectRoute = function(start, end) {
+    var startXY = fc.getCoordinateXY(start);
+    var endXY = fc.getCoordinateXY(end);
+    var nowXY = fc.getCoordinateXY(start);
+    var route = [];
+    var steps = Math.abs(startXY.x - endXY.x) > Math.abs(startXY.y - endXY.y) ? Math.abs(startXY.x - endXY.x) : Math.abs(startXY.y - endXY.y);
+    if (startXY.x >= endXY.x && startXY.y > endXY.y) {
+        for (var i = 0; i < steps; ++i) {
+            if (nowXY.x > endXY.x) --nowXY.x;
+            if (nowXY.y > endXY.y) --nowXY.y;
+            route.push(fc.getCoordinateIndex(nowXY.x, nowXY.y));
+        }
+    } else if (startXY.x >= endXY.x && startXY.y < endXY.y) {
+        for (var i = 0; i < steps; ++i) {
+            if (nowXY.x > endXY.x) --nowXY.x;
+            if (nowXY.y < endXY.y) ++nowXY.y;
+            route.push(fc.getCoordinateIndex(nowXY.x, nowXY.y));
+        }
+    } else if (startXY.x < endXY.x && startXY.y >= endXY.y) {
+        for (var i = 0; i < steps; ++i) {
+            if (nowXY.x > endXY.x) ++nowXY.x;
+            if (nowXY.y < endXY.y) --nowXY.y;
+            route.push(fc.getCoordinateIndex(nowXY.x, nowXY.y));
+        }
+    } else if (startXY.x < endXY.x && startXY.y <= endXY.y) {
+        for (var i = 0; i < steps; ++i) {
+            if (nowXY.x > endXY.x) ++nowXY.x;
+            if (nowXY.y < endXY.y) ++nowXY.y;
+            route.push(fc.getCoordinateIndex(nowXY.x, nowXY.y));
+        }
+    }
+
+    var obstacleList = this.getObstableList();
+    var validLine = [];
+
+    for (var x in route) {
+        if (obstacleList[line[x]]) {
+            return validLine;
+        } else {
+            validLine.push(line[x]);
+        }
+    }
+    return validLine;
+}
