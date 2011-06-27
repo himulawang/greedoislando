@@ -2,7 +2,7 @@ var Skill_FadingSteps = Skill.extend({
     init : function(skillID) {
         this._super(skillID);
     }
-    ,cast : function() {
+    ,launch : function() {
         var cursor = GI.cursor;
         if (cursor.preCastSkill === this.skillID) {
             this.send();

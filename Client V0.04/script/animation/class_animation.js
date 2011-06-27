@@ -131,7 +131,6 @@ var Animation = Coordinate.extend({
             ++this.nowImagesIndex;
         }
         this.canvas.clearRect(0, 0, this.animateWidth, this.animateHeight);
-        this.addTargeted();
         this.canvas.drawImage(this.nowImages[this.nowImagesIndex], 0, 0);
 
         this.lastRunStamp = now;

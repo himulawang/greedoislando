@@ -17,11 +17,28 @@ var Character = Coordinate.extend({
 
         this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
 
-        if (this.self) {
-            GI.ui.myStatus.setName(data.name);
+        // init skill
+        this.skill = {};
+        for (var skillID in data.skill) {
+            if (skillID < 10000) continue;
+            this.skill[skillID] = eval("new " + SKILL[skillID].className + "(" + skillID + ")");
+            this.skill[skillID].make(this);
         }
         this.animation = new Animation_Character(this);
         this.actionQueue = new ActionQueue(this);
+
+        if (this.self) {
+            // init ui
+            GI.ui.myStatus.setName(data.name);
+            GI.ui.skillbar.makeBar();
+            // init keyboard event
+            var keyCode = 49;
+            for (skillID in data.skill) {
+                if (skillID < 10000) continue;
+                GI.keyboard.list[keyCode] = this.skill[skillID];
+                ++keyCode;
+            }
+        }
     }
     ,getTimeDifference : function(data) {
         var cNowTimestamp = Date.now();
@@ -126,8 +143,9 @@ var Character = Coordinate.extend({
         this.actionQueue.clearNow();
         this.actionQueue.execute();
     }
-    ,castSkill : function() {
-        this.animation.switch('attack');
+    ,castSkill : function(data) {
+        var skillID = data.skillID;
+        this.skill[skillID].cast(data);
     }
     ,moveRepel : function() {
         this.animation.nowLocation = this.nowAction.nowLocation;
