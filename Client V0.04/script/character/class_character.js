@@ -12,18 +12,19 @@ var Character = Coordinate.extend({
         this.setMaxNV(data.maxNV);
         this.buff = {};
         this.faceTo = data.faceTo;
-        var xy = this.getCoordinateXY(data.position);
-        this.setPosition(xy.x, xy.y);
+        this.setPosition(data.position);
 
         this.timeDifference = this.getTimeDifference(data); // C/S Timestamp Difference
 
         // init skill
         this.skill = {};
+        this.effect = {};
         for (var skillID in data.skill) {
             if (skillID < 10000) continue;
             this.skill[skillID] = eval("new " + SKILL[skillID].className + "(" + skillID + ")");
             this.skill[skillID].make(this);
         }
+
         this.animation = new Animation_Character(this);
         this.actionQueue = new ActionQueue(this);
 
@@ -112,11 +113,13 @@ var Character = Coordinate.extend({
         if (typeof(x) === 'number' && typeof(y) === 'number') {
             this.x = x;
             this.y = y;
+            this.location = this.getCoordinateIndex(x, y);
             return;
         } else if (typeof(x) === 'string') {
             var xy = this.getCoordinateXY(x);
             this.x = xy.x;
             this.y = xy.y;
+            this.location = x;
             return;
         }
         throw "invalid argument for character.setPostiion";

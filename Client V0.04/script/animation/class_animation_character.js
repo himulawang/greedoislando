@@ -5,7 +5,7 @@ var Animation_Character = Animation.extend({
         this.defaultAction = 'stand';
         this.action = this.defaultAction;
 
-        this.animateList = ANIMATION_MATERIAL.character[this.owner.name].animateList;
+        this.animateList = ANIMATION_MATERIAL.character[this.owner.name];
 
         this.directionID = 0;
 

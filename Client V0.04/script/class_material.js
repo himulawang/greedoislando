@@ -15,8 +15,8 @@ var Material = Class.extend({
         }
     }
     ,loadCharacter : function(character, characterName) {
-        for (var action in character.animateList) {
-            var frames = character.animateList[action].frames;
+        for (var action in character) {
+            var frames = character[action].frames;
             var tmp = [];
             for (var i = 0; i < 8; ++i){
                 tmp[i] = [];
@@ -53,9 +53,10 @@ var Material = Class.extend({
         for (var action in effect) {
             var frames = effect[action].frames
             tmp[action] = [];
-            for (var i = 0; i < effect.frames; ++i) {
+            for (var i = 0; i < effect[action].frames; ++i) {
                 tmp[action].push(new Image);
-                tmp[action][i].src = 'images/effect/' + effectName.toLowerCase() + '/' + action + i + '.png';
+                console.log('images/effect/' + effectName.toLowerCase() + '/' + action + i + '.png');
+                tmp[action][i].src = 'images/effect/' + effectName.toLowerCase() + '/' + action + '/' + i + '.png';
             }
         }
         this.images[effectName] = tmp;
