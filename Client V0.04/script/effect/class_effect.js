@@ -4,8 +4,13 @@ var Effect = Coordinate.extend({
         this.owner = owner;
         this.cID = fc.guid();
     }
-    ,make : function(cID) {
-        this.anmiation = new Animation_Effect(this);
+    ,make : function() {
+        this.animation = new Animation_Effect(this);
         this.actionQueue = new ActionQueue(this);
+    }
+    ,destroy : function() {
+        var effectCID = this.cID;
+        $("#" + effectCID).remove();
+        delete this.owner.effect[effectCID];
     }
 });
