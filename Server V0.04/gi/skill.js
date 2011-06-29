@@ -166,7 +166,7 @@ skill.prototype.checkRange = function() {
     var range = giMap.getRange(this.self.getLocation(), this.target.getLocation());
 	
 	if (range > this.skill.range + GI_SKILL_CAST_BLUR_RANGE) {
-		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
+		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, skillID : this.skill.skillID, timestamp : fc.getTimestamp()});
         io.response();
         return 0;
 	} else {
@@ -176,7 +176,7 @@ skill.prototype.checkRange = function() {
 skill.prototype.checkNV = function() {
 	var nv = this.self.getNV();
 	if (this.skill.costNV > nv) {
-		io.addOutputData(this.cID, 'castSkillOutOfNV', 'self', {cID : this.cID, target : this.target.cID, skillID : this.skill.skillID});
+		io.addOutputData(this.cID, 'castSkillOutOfNV', 'self', {cID : this.cID, skillID : this.skill.skillID, timestamp : fc.getTimestamp()});
         io.response();
         return 0;
 	} else {
@@ -187,15 +187,18 @@ skill.prototype.checkNV = function() {
 
 // CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION START
 skill.prototype.castLocationCheck = function() {
-    var checkRes = giMap.verifyClientLocationMovePossible() && this.verifyCastLocationRange();
+    var checkRes = giMap.verifyClientLocationMovePossible() && this.verifyCastLocationRange() && this.checkNV();
     return checkRes;
 }
 skill.prototype.verifyCastLocationRange = function() {
-    var locationXY = fc.getCoordinateXY(this.coordinate);
-    var nowXY = fc.getCoordinateXY(this.self.getLocation());
-    var range = Math.max(Math.abs(nowXY.x - locationXY.x), Math.abs(nowXY.y - locationXY.y));
-    var inRange = (range > this.skill.range) ? 0 : 1;
-    return inRange;
+    var range = giMap.getRange(this.self.getLocation(), this.coordinate);
+    if (range > this.skill.range) {
+		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, skillID : this.skill.skillID, timestamp : fc.getTimestamp()});
+        io.response();
+        return 0;
+	} else {
+		return 1;
+	}
 }
 // CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION END
 
