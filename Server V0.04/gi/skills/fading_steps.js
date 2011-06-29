@@ -15,7 +15,7 @@ fadingSteps.prototype.castSkill = function(coordinate) {
 }
 fadingSteps.prototype.doFadingSteps = function() {
 	var endGridIndex = this.doTeleportCoordinateVerify();
-	io.addOutputData(this.cID, 'teleport', 'logged', { cID : this.cID, nowLocation : this.self.position, endLocation : endGridIndex, timestamp : fc.getTimestamp() });
+	io.addOutputData(this.cID, 'teleport', 'logged', { cID : this.cID, nowLocation : this.self.position, endLocation : endGridIndex, mapArea : this.self.mapArea, timestamp : fc.getTimestamp() });
 	io.response();
     this.self.setLocation(endGridIndex);
     this.setSkillCD();

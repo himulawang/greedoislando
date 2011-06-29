@@ -93,7 +93,7 @@ skill.prototype.pushBuffList = function(character) {
 
 // CAST DIRECTLY SKILL START
 skill.prototype.doTeleportCoordinateVerify = function() {
-	var validLine = giMap.getDirectRoute(this.self.position, this.coordinate);
+	var validLine = calc.getDirectRoute(this.self.position, this.coordinate);
 	var len = validLine.length;
 	var endGridIndex = (len === 0) ? this.self.position : validLine[len - 1];
 	return endGridIndex;
@@ -163,7 +163,7 @@ skill.prototype.checkTargetAlive = function() {
 	return this.target.getStatus();
 }
 skill.prototype.checkRange = function() {
-    var range = giMap.getRange(this.self.getLocation(), this.target.getLocation());
+    var range = calc.getRange(this.self.getLocation(), this.target.getLocation());
 	
 	if (range > this.skill.range + GI_SKILL_CAST_BLUR_RANGE) {
 		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, skillID : this.skill.skillID, timestamp : fc.getTimestamp()});
@@ -187,11 +187,11 @@ skill.prototype.checkNV = function() {
 
 // CHECK IF CHARACTER CAN CAST SKILL ON THE LOCATION START
 skill.prototype.castLocationCheck = function() {
-    var checkRes = giMap.verifyClientLocationMovePossible() && this.verifyCastLocationRange() && this.checkNV();
+    var checkRes = map[this.self.mapArea].verifyClientLocationMovePossible() && this.verifyCastLocationRange() && this.checkNV();
     return checkRes;
 }
 skill.prototype.verifyCastLocationRange = function() {
-    var range = giMap.getRange(this.self.getLocation(), this.coordinate);
+    var range = calc.getRange(this.self.getLocation(), this.coordinate);
     if (range > this.skill.range) {
 		io.addOutputData(this.cID, 'castSkillOutOfRange', 'self', {cID : this.cID, skillID : this.skill.skillID, timestamp : fc.getTimestamp()});
         io.response();
