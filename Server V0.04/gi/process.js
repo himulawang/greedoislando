@@ -36,19 +36,24 @@ var moveCharacter = function () {
     if (character.getStatus() === 0) return;
     if (character.doAction === 5 || character.doAction === 4) return;
     var nowLocation = character.getLocation();
+    // Instantiated Map start
+    if (!map[character.mapArea]) {
+        global.map[character.mapArea] = new MAPMAPPING[MAP[character.mapArea].mapName];
+    }
+    // Instantiated Map end
     if (!(endPoint //invalid endPoint
-        && giMap.verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
+        && map[character.mapArea].verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
         && endPoint != nowLocation) // endPoint is nowLocation
     ) return;
 
     //character is moving
     if (character.characterMoving) {
         character.setNewDestinationTrigger = true;
-        var way = giMap.getWay(character.nextGridIndex, endPoint);
+        var way = map[character.mapArea].getWay(character.nextGridIndex, endPoint);
         character.setWay(way);
         return;
     }
-    var way = giMap.getWay(nowLocation, endPoint);
+    var way = map[character.mapArea].getWay(nowLocation, endPoint);
 
     character.setWay(way);
     character.startWay();

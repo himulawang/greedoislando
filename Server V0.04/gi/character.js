@@ -57,14 +57,12 @@ var character = function(cID, name) {
     this.charAura = {};
     this.intSkill = {};
     this.system = system[this.systemID];
+    this.mapArea = 80000;
     
     // Attribute End
-    do {
-        this.x = 12;
-        this.y = 6;
-        this.position = fc.getCoordinateIndex(this.x, this.y);
-        if (giMap.verifyMovePossible(this.position)) break;
-    } while (1);
+    this.x = 12;
+    this.y = 6;
+    this.position = fc.getCoordinateIndex(this.x, this.y);
     
     this.characterMoving = false;
     this.nextXY = null;

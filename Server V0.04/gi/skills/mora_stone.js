@@ -19,8 +19,8 @@ moraStone.prototype.doRepel = function() {
 	this.dID = this.getDebuffID(this.target);
 	this.target.stopMoving(3);
 	
-	var direction = giMap.getDirection(this.self.position, this.target.position);
-	var validLine = giMap.getLineCoordinateWithoutObstacle(this.target.position, direction, this.skill.adtEffectVal);
+	var direction = calc.getDirection(this.self.position, this.target.position);
+	var validLine = calc.getLineCoordinateWithoutObstacle(this.target.position, direction, this.skill.adtEffectVal);
 	var len = validLine.length;
 	var endGridIndex = (len === 0) ? this.target.position : validLine[len - 1];
 	
