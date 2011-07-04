@@ -3,7 +3,9 @@ var centerPlain = function() {}
 util.inherits(centerPlain, Map);
 
 centerPlain.prototype.initMap = function() {
-    this.GI_GRID_QUANTITY = GI_GRID_QUANTITY;
+    this.startGridXY = "194,194";
+    this.maxGridXY = "290,290";
+    this.init(this.startGridXY, this.maxGridXY);
     this.grid = {
         "0,0":{
             "x":0,

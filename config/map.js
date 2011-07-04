@@ -2,17 +2,23 @@ var MAP =
 {
     "80000" : {
         "mapName" : "Map_CenterPlain"
-        ,"mapGridX" : 96
-        ,"mapGridY" : 96
+        ,"startGridX" : 0
+        ,"startGridY" : 0
+        ,"maxGridX" : 96
+        ,"maxGridY" : 96
     }
     "80001" : {
         "mapName" : "Map_Masadora"
-        ,"mapGridX" : 96
-        ,"mapGridY" : 96
+        ,"startGridX" : 97
+        ,"startGridY" : 97
+        ,"maxGridX" : 193
+        ,"maxGridY" : 193
     }
     "80002" : {
         "mapName" : "Map_RockForest"
-        ,"mapGridX" : 96
-        ,"mapGridY" : 96
+        ,"startGridX" : 194
+        ,"startGridY" : 194
+        ,"maxGridX" : 290
+        ,"maxGridY" : 290
     }
 }

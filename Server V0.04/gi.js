@@ -35,7 +35,7 @@ global.map = {};
 
 require('./gi/process');
 //    ,gm = require('./gi/gm');
-
+    
 //game server
 ws.createServer(function(websocket) {
     websocket.addListener("connect", function() { 

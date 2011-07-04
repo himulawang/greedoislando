@@ -3,7 +3,9 @@ var rockForest = function() {}
 util.inherits(rockForest, Map);
 
 rockForest.prototype.initMap = function() {
-    this.GI_GRID_QUANTITY = GI_GRID_QUANTITY;
+    this.startGridXY = "0,0";
+    this.maxGridXY = "96,96";
+    this.init(this.startGridXY, this.maxGridXY);
     this.grid = {
         "0,0":{
             "x":0,
@@ -765,5 +767,3 @@ rockForest.prototype.initMap = function() {
 }
 
 global.Map_RockForest = rockForest;
-
-

@@ -45,4 +45,7 @@ global.fc = {
         content = array.join("\n");
         return JSON.parse(content);
     }
+    ,whichMap : function() {
+        
+    }
 }

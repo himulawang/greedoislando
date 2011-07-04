@@ -1,6 +1,8 @@
 var findway = require('./map_findway');
 
-var Map = function() {
+var Map = function() {}
+
+Map.prototype.init = function(startGridXY, maxGridXY) {
     this.DEFINE = {
     /* 2000 Plain
      * 2001 Broken Wall
@@ -39,10 +41,9 @@ var Map = function() {
             ,movePossible : 1
         }
     };
-    this.findway = findway.create();
+    this.findway = findway.create(startGridXY, maxGridXY);
     this.setObstacleToFindWay();
 }
-
 Map.prototype.getGrid = function() {
     return this.grid;
 }
@@ -77,7 +78,4 @@ Map.prototype.getWay = function(startPoint, endPoint) {
     this.findway.setStart(startXY.x, startXY.y);
     this.findway.setEnd(endXY.x, endXY.y);
     return this.findway.getWay();
-}
-Map.prototype.crossMap = function() {
-    
 }

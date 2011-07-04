@@ -38,7 +38,7 @@ var moveCharacter = function () {
     var nowLocation = character.getLocation();
     // Instantiated Map start
     if (!map[character.mapArea]) {
-        global.map[character.mapArea] = new MAPMAPPING[MAP[character.mapArea].mapName];
+        map[character.mapArea] = new MAPMAPPING[MAP[character.mapArea].mapName];
     }
     // Instantiated Map end
     if (!(endPoint //invalid endPoint
