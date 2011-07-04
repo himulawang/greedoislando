@@ -1,0 +1,87 @@
+/*
+ * Greed Island Common css File
+ */
+
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+body {
+    font-family: Calibri;
+    overflow: hidden;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    float: clear;
+}
+
+#main {
+    width: 1024px;
+    height: 700px;
+}
+
+#login {
+    width: 1024px;
+    margin: 180px auto;
+    height: 300px;
+}
+
+.pickchar {
+    width: 260px;
+    height: 300px;
+    border: 1px solid #000000;
+    float:left;
+    margin: 0 0 0 160px;
+    text-align:center;
+}
+
+.pickchar:hover {
+    border: 1px solid #FFA500;
+    color: #FFA500;
+}
+
+#console {
+    width: 90%;
+}
+
+#disconnect {
+    float: right;
+}
+
+li {
+    list-style: none;
+}
+
+#terrain-menu {
+    border: 1px solid #CCCCCC;
+    background: #FFFFFF;
+}
+
+.terrainClass {
+    padding: 5px 10px 5px 10px;
+    width: 80px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.terrainClass:hover {
+    background: #FFA500;
+}
+
+#fixed-pop {
+    position: fixed;
+    left: 2px;
+    top: 2px;
+    background: #336699;
+    color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+    width: 88px;
+    text-align: center;
+}
+
