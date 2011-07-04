@@ -24,6 +24,8 @@ var Init = Class.extend({
     ,bindMouseDrag : function() {
         var _this = this;
 
+        console.dir(document.getElementById('fixed-pop'));
+
         document.onmousedown = function(e) {
             _this.startPointX = e.screenX;
             _this.startPointY = e.screenY;
@@ -37,7 +39,7 @@ var Init = Class.extend({
                 document.body.scrollLeft += scrollX;
                 document.body.scrollTop += scrollY;
                 _this.startPointX = e.screenX;
-                _this.startPointY = e.screenY;
+                _this.startPointY = e.screenY;                
             }
         }
 
