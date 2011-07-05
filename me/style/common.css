@@ -10,6 +10,7 @@
 body {
     font-family: Calibri;
     overflow: hidden;
+    cursor: url(http://maps.gstatic.com/intl/zh_cn/mapfiles/openhand_8_8.cur), move;
 }
 
 .right {
