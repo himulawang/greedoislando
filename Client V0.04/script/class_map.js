@@ -61,8 +61,10 @@ var Map = Coordinate.extend({
         }
     }
     ,getCanvas : function(el) {
+    /*
         el.width = this.MAPWIDTH;
         el.height = this.MAPHEIGHT;
+        */
         this.context = el.getContext('2d');
     }
     ,getData : function() {

@@ -5,7 +5,7 @@ var UI_ChargeBar = UI.extend({
         html += "<div id='ui-charge-bar-div'>";
         html += "<div id='ui-charge-bar-progress'></div>";
         html += "</div>";
-        $("body").prepend(html);
+        $("#ui").prepend(html);
         this.el = $("#ui-charge-bar-progress");
     }
     ,setProgress : function(rate) {

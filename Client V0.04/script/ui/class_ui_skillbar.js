@@ -13,7 +13,7 @@ var UI_SkillBar = UI.extend({
         html += "</table>";
         html += "</div>";
         html += "</div>";
-        $("body").prepend(html);
+        $("#ui").prepend(html);
         this.makeSkill();
     }
     ,makeSkill : function() {

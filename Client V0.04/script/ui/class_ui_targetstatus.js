@@ -11,7 +11,7 @@ var UI_TargetStatus = UI_Profile.extend({
         html += "<div class='clear'></div>";
         html += "<div id='ui-target-buff-div'></div>";
         html += "</div>";
-        $("body").prepend(html);
+        $("#ui").prepend(html);
         this.elName = $("#ui-target-avartar");
         this.elHP = $("#ui-target-profile-hp");
         this.elNV = $("#ui-target-profile-nv");
