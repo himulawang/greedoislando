@@ -39,8 +39,8 @@ var moveCharacter = function () {
     var nowLocation = character.getLocation();
     
     if (destination_mapArea != character.mapArea) {
-        if (!map[destination_mapArea]) {
-            global.map[destination_mapArea] = new MAPMAPPING[MAP[destination_mapArea].mapName];
+        if (!maps[destination_mapArea]) {
+            maps[destination_mapArea] = new MAPMAPPING[MAPDATA[destination_mapArea].mapName];
         }
 
         // Create a combine Map of nowLocatedMap & destinationMap
@@ -48,23 +48,23 @@ var moveCharacter = function () {
         
     } else {
         // Instantiated Map start
-        if (!map[character.mapArea]) {
-            global.map[character.mapArea] = new MAPMAPPING[MAP[character.mapArea].mapName];
+        if (!maps[character.mapArea]) {
+            maps[character.mapArea] = new MAPMAPPING[MAPDATA[character.mapArea].mapName];
         }
         // Instantiated Map end
         if (!(endPoint //invalid endPoint
-            && map[character.mapArea].verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
+            && maps[character.mapArea].verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
             && endPoint != nowLocation) // endPoint is nowLocation
         ) return;
 
         //character is moving
         if (character.characterMoving) {
             character.setNewDestinationTrigger = true;
-            var way = map[character.mapArea].getWay(character.nextGridIndex, endPoint);
+            var way = maps[character.mapArea].getWay(character.nextGridIndex, endPoint);
             character.setWay(way);
             return;
         }
-        var way = map[character.mapArea].getWay(nowLocation, endPoint);
+        var way = maps[character.mapArea].getWay(nowLocation, endPoint);
 
         character.setWay(way);
         character.startWay();

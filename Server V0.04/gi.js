@@ -10,14 +10,12 @@ require('./config');
 require('../config/constant');
 require('./gi/io');
 global.SKILL = fc.readFile("../config/skill.js");
-global.MAP = fc.readFile("../config/map.js");
+global.MAPDATA = fc.readFile("../config/map.js");
 /* GI World */
 global.giUserList = require('./gi/userList').create();
 giUserList.initInactiveUserRecycle();
 
-//global.giMap = require('./gi/map').create();
-//giMap.setObstacleToFindWay();
-/* GI Skills */
+/* Skills */
 require('./gi/skills/mora_stone');
 require('./gi/skills/mora_scissors');
 require('./gi/skills/mora_fabric');
@@ -27,11 +25,17 @@ require('./gi/skills/right_straight_punch');
 require('./gi/skills/pathetic_childhood');
 require('./gi/skills/flying_lightening_ball');
 
+/* Maps */
+require('./gi/map');
+require('./gi/map/rock_forest');
+require('./gi/map/masadora');
+require('./gi/map/center_plain');
+
 /* SKILL Class Mapping */
 require('./gi/data/skillmapping');
 /* MAP Class Mapping */
 require('./gi/data/mapmapping');
-global.map = {};
+global.maps = {};
 
 require('./gi/process');
 //    ,gm = require('./gi/gm');

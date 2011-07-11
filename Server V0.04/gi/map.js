@@ -79,3 +79,5 @@ Map.prototype.getWay = function(startPoint, endPoint) {
     this.findway.setEnd(endXY.x, endXY.y);
     return this.findway.getWay();
 }
+
+global.Map = Map;
