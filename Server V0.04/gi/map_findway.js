@@ -1,5 +1,6 @@
-var findway = function() {
-    this.maxGrid = GI_GRID_QUANTITY - 1;
+var findway = function(startGridXY, maxGridXY) {
+    this.startGridXY = fc.getCoordinateXY(startGridXY);
+    this.maxGridXY = fc.getCoordinateXY(maxGridXY);
     this.obstacleList = {};
     this.parentList = {};
     this.openList = {};
@@ -104,7 +105,7 @@ findway.prototype.dealAroundGrid = function() {
     this.dealSingleGrid(x - 1, y - 1);
 }
 findway.prototype.dealSingleGrid = function(x, y) {
-    if (x < 0 || y < 0 || x > this.maxGrid || y > this.maxGrid) return;
+    if (x < this.startGridXY.x || y < this.startGridXY.y || x > this.maxGridXY.x || y > this.maxGridXY.y) return;
     var index = this.getIndex(x, y);
     //if this point has in obstacleList or closeList , do nothing
     var point = this.obstacleList[index] || this.closeList[index];
@@ -194,6 +195,6 @@ findway.prototype.getXY = function(index) {
     return {x : index[0], y : index[1]};
 }
 
-exports.create = function(GI_GRID_QUANTITY) {
-    return new findway(GI_GRID_QUANTITY);
+exports.create = function(startGridXY, maxGridXY) {
+    return new findway(startGridXY, maxGridXY);
 }
