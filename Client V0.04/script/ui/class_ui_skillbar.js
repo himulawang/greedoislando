@@ -17,7 +17,7 @@ var UI_SkillBar = UI.extend({
         this.makeSkill();
     }
     ,makeSkill : function() {
-        var skill = GI.skill;
+        var skill = GI.character[GI.cID].skill;
         for (var skillID in skill) {
             this.skill[skillID] = new UI_Skill(this.cID);
             this.skill[skillID].make(skillID);

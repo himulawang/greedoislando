@@ -47,8 +47,8 @@ var UI_Profile = UI.extend({
     }
     ,refreshBuff : function(buff) {
         var buffEl = this.getBuffEl(buff.getSourceCID(), buff.getSkillID());
+        if (!buffEl) return;
         buffEl.children(".ui-buff-stack").html(buff.getStack() + 'stk');
         buffEl.children(".ui-buff-time").html(fc.getBuffTime(buff.getRemainDuration()));
     }
 });
-

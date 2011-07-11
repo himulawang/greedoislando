@@ -140,7 +140,6 @@ var Map = Coordinate.extend({
     }
     ,verifyMovePossible : function(index) {
         if (!this.grid[index]) return false;
-        //console.log(index);
         var objID = this.grid[index].objID;
 
         return this.DEFINE[objID].movePossible;

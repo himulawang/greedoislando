@@ -1,6 +1,5 @@
 var Skill = Class.extend({
-    init : function(skill) {
-        var skillID = skill.skillID;
+    init : function(skillID) {
         this.skillID = skillID;
         this.name = SKILL[skillID].name;
         this.abbreviation = SKILL[skillID].abbreviation;
@@ -8,19 +7,28 @@ var Skill = Class.extend({
 
         this.resetCD();
     }
+    ,make : function(owner) {
+        this.owner = owner;
+    }
     ,getSkillID : function() {
         return this.skillID;
     }
-    ,cast : function() {
+    ,launch : function() {
         var obj = {
             type : "castSkill"
             ,target : GI.targetCID
             ,skillID: this.skillID
         }
         wsocket.sendMessage(obj);
+        this.preCastSkill = false;
+    }
+    ,cast : function(data) {
+        this.owner.animation.switch('attack');
+        this.setCD();
     }
     ,setCD : function() {
         this.cd = fc.getNowTimestamp();
+        if (!this.owner.self) return;
         GI.ui.skillbar.skill[this.skillID].setCD();
     }
     ,resetCD : function() {
@@ -35,5 +43,10 @@ var Skill = Class.extend({
 
         this.resetCD();
         GI.ui.skillbar.skill[this.skillID].resetCD();
+    }
+    ,keydown : function(keyboard, keyCode) {
+    }
+    ,keyup : function(keyboard, keyCode) {
+        this.launch();
     }
 });

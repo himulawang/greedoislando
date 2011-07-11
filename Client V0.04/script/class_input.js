@@ -18,8 +18,10 @@ var Input = Class.extend({
             ,skillMiss : this.skillMiss
             ,moveRepel : this.addActionQueue
             ,debuff : this.debuff
+            ,buff : this.buff
             ,addActionQueue : this.addActionQueue
             ,skillCDing : this.skillCDing
+            ,teleport : this.teleport
         }
     }
     ,execute : function(stream) {
@@ -29,6 +31,7 @@ var Input = Class.extend({
     /* Process Start */
     ,initMyCharacter : function(data, stream) {
         var cID = data.cID;
+        // init UI
         var myStatus = new UI_MyStatus(cID);
         var targetStatus = new UI_TargetStatus(cID);
         var communication = new UI_Communication(cID);
@@ -41,20 +44,14 @@ var Input = Class.extend({
             ,skillbar : skillbar
             ,chargebar : chargebar
         }
+
         // init my character
-        GI.player = eval('new '+ data.name); //TODO CHANGE TO ARRAY => CLASS
-        GI.player.cID = cID;
-        GI.player.setSelf();
-        GI.player.make(data);
-        // for GI.isSelf
         GI.cID = cID;
-        // init skill
-        GI.skill = {};
-        for (var skillID in data.skill) {
-            if (skillID < 10000) continue;
-            GI.skill[skillID] = new Skill(data.skill[skillID]);
-        }
-        GI.ui.skillbar.makeBar();
+        GI.character[cID] = eval('new '+ data.name); //TODO CHANGE TO ARRAY => CLASS
+        var character = GI.character[cID];
+        character.setSelf();
+        character.make(data);
+
         // init map
         $("#login").fadeOut(100, function(){
             $("#login").remove();
@@ -70,35 +67,28 @@ var Input = Class.extend({
     }
     ,newCharacterLogin : function(data, stream) {
         var cID = data.cID;
-        if (GI.otherChar[cID]) return;
-        console.log('newCharacterLogin new ', cID);
-        GI.otherChar[cID] = eval('new ' + data.name);
-        GI.otherChar[cID].make(data);
+        var character = GI.character[cID];
+        if (character) return;
+
+        GI.character[cID] = eval('new ' + data.name); //TODO CHANGE TO ARRAY => CLASS
+        GI.character[cID].make(data);
     }
     ,getOnlineCharacter : function(data, stream) {
         for (var cID in data) {
-            if (GI.otherChar[cID] || GI.isSelf(cID)) continue;
-            GI.otherChar[cID] = eval('new ' + data[cID].name);
-            GI.otherChar[cID].make(data[cID]);
+            if (GI.character[cID]) continue;
+            GI.character[cID] = eval('new ' + data[cID].name); //TODO CHANGE TO ARRAY => CLASS
+            GI.character[cID].make(data[cID]);
         }
     }
     ,hpChange : function(data, stream) {
         log.hpChange(data);
         var cID = data.cID;
-        if (GI.isSelf(cID)) {
-            GI.player.setHP(data.nowHP);
-            return;
-        }
-        GI.otherChar[cID].setHP(data.nowHP);
+        GI.character[cID].setHP(data.nowHP);
     }
     ,nvChange : function(data, stream) {
         log.nvChange(data);
         var cID = data.cID;
-        if (GI.isSelf(cID)) {
-            GI.ui.myStatus.setNV(data.nowNV);
-            return;
-        }
-        GI.otherChar[cID].setNV(data.nowNV);
+        GI.character[cID].setNV(data.nowNV);
     }
     ,castSkillOutOfRange : function(data, stream) {
     }
@@ -113,20 +103,17 @@ var Input = Class.extend({
     }
     ,freeRecover : function(data, stream) {
         var cID = data.cID;
-        if (GI.isSelf(cID)) {
-            GI.player.setHP(data.hp);
-            GI.player.setNV(data.nv);
-            return;
-        }
-        GI.otherChar[cID].setHP(data.hp);
-        GI.otherChar[cID].setNV(data.nv);
+        var character = GI.character[cID];
+        character.setHP(data.hp);
+        character.setNV(data.nv);
     }
     ,logout : function(data, stream) {
         var cID = data.cID;
-        if (!GI.otherChar[cID]) return;
-        cancelRequestAnimationFrame(GI.otherChar[cID].animation.canvasAnimationID);
-        cancelRequestAnimationFrame(GI.otherChar[cID].animation.moveAnimationID);
-        delete GI.otherChar[cID];
+        var character = GI.character[cID];
+        if (!character) return;
+        cancelRequestAnimationFrame(character.animation.canvasAnimationID);
+        cancelRequestAnimationFrame(character.animation.moveAnimationID);
+        delete GI.character[cID];
         $("#" + cID).remove();
     }
     ,keepSession : function(data, stream) {
@@ -136,37 +123,36 @@ var Input = Class.extend({
     }
     ,addActionQueue : function(data, stream){
         var cID = data.cID;
-        if(GI.isSelf(cID)) {
-        	GI.player.actionQueue.add(stream);
-            return;
-        }
-        GI.otherChar[cID].actionQueue.add(stream);
+        GI.character[cID].actionQueue.add(stream);
     }
     ,debuff : function(data, stream) {
         var cID = data.cID;
         var buff = new Buff(data);
         if (data.isOn === 1) {
-            if (GI.isSelf(cID)) {
-                GI.player.setBuff(buff);
-            } else {
-                GI.otherChar[cID].setBuff(buff);
-            }
+            GI.character[cID].setBuff(buff);
         } else if (data.isOn === 0) {
-            if (GI.isSelf(cID)) {
-                GI.player.delBuff(buff.getSourceCID(), buff.getSkillID());
-            } else {
-                GI.otherChar[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
-            }
+            GI.character[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
         }
         log.debuff(data);
     }
+    ,buff : function(data, stream) {
+        var cID = data.cID;
+        var buff = new Buff(data);
+        if (data.isOn === 1) {
+            GI.character[cID].setBuff(buff);
+        } else if (data.isOn === 0) {
+            GI.character[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
+        }
+        log.buff(data);
+    }
     ,castSkill : function(data, stream) {
-        log.castSkill(data);
-        this.addActionQueue(data, stream);
-        var skillID = data.skillID;
-        GI.skill[skillID].setCD();
+        GI.character[data.cID].castSkill(data);
     }
     ,skillCDing : function(data, stream) {
         log.skillCDing(data);
+    }
+    ,teleport: function(data, stream) {
+        this.addActionQueue(data, stream);
+        log.teleport(data);
     }
 });

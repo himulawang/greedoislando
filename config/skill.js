@@ -8,7 +8,7 @@ var SKILL =
         ,"damage" : 80
         ,"costNV" : 100
         ,"range" : 6
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null
@@ -23,7 +23,7 @@ var SKILL =
     ,"5000" : {
         "skillID" : 5000
         ,"name" : "wrap"
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "aura"
         ,"target" : "self"
         ,"sEffect" : null
@@ -39,7 +39,7 @@ var SKILL =
     ,"5001" : {
         "skillID" : 5001
         ,"name" : "obstruct"
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "aura"
         ,"target" : "self"
         ,"sEffect" : null
@@ -55,7 +55,7 @@ var SKILL =
     ,"5002" : {
         "skillID" : 5002
         ,"name" : "charge"
-        ,"systemBelongs" : 0
+        ,"attribution" : "all"
         ,"triggerType" : "aura"
         ,"target" : "self"
         ,"sEffect" : null
@@ -71,7 +71,7 @@ var SKILL =
     ,"5003" : {
         "skillID" : 5003
         ,"name" : "launch"
-        ,"systemBelongs" : 0
+        ,"attribution" : "all"
         ,"triggerType" : "aura"
         ,"target" : "self"
         ,"sEffect" : null
@@ -92,7 +92,7 @@ var SKILL =
         ,"damage" : 200
         ,"costNV" : 200
         ,"range" : 6
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null
@@ -117,7 +117,7 @@ var SKILL =
         ,"damage" : 0
         ,"costNV" : 50
         ,"range" : 18
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null
@@ -137,7 +137,7 @@ var SKILL =
         ,"damage" : 30
         ,"costNV" : 100
         ,"range" : 24
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null
@@ -157,7 +157,7 @@ var SKILL =
         ,"damage" : 80
         ,"costNV" : 100
         ,"range" : 6
-        ,"systemBelongs" : 100 
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "single"
         ,"sEffect" : null
@@ -177,7 +177,7 @@ var SKILL =
     	,"damage" : 0
         ,"costNV" : 50
         ,"range" : 24
-        ,"systemBelongs" : 100
+        ,"attribution" : "physics"
         ,"triggerType" : "positive"
         ,"target" : "location"
         ,"sEffect" : null
@@ -197,7 +197,7 @@ var SKILL =
     	,"damage" : 120
         ,"costNV" : 130
         ,"range" : 6
-        ,"systemBelongs" : 101 
+        ,"attribution" : "attribution"
         ,"attributionType" : "lightening"
         ,"triggerType" : "positive"
         ,"target" : "single"
@@ -218,7 +218,7 @@ var SKILL =
     	,"damage" : 250
         ,"costNV" : 130
         ,"range" : 24
-        ,"systemBelongs" : 101
+        ,"attribution" : "attribution"
         ,"attributionType" : "lightening"
         ,"triggerType" : "positive"
         ,"target" : "single"
@@ -230,5 +230,6 @@ var SKILL =
         ,"lvUPMod" : {
         	"rangeFactor" : 0.1
         }
+        ,"animationEffect" : "lightingball"
     }
 }
