@@ -85,10 +85,13 @@ var Coordinate = Class.extend({
         index = index.split(',');
         return {x : parseInt(index[0]), y : parseInt(index[1])};
     }
-    ,getDirection : function(x, y) {
-        var deltaX = x - this.x;
-        var deltaY = y - this.y;
+    ,getDirection : function(start, end) {
+        var startXY = this.getCoordinateXY(start);
+        var endXY = this.getCoordinateXY(end);
+        var deltaX = endXY.x - startXY.x;
+        var deltaY = endXY.y - startXY.y;
         var deltaIndex = this.getCoordinateIndex(deltaX, deltaY);
-        return this.DIRECTIONS[deltaIndex];
+        var direction = this.DIRECTIONS[deltaIndex];
+        return direction === undefined ? 0 : direction; //TODO use tringle cos / sin to fix this
     }
 });

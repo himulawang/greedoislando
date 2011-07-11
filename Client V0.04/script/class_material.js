@@ -6,6 +6,7 @@ var Material = Class.extend({
     ,initMaterial : function(){
         this.loadCharacterList();
         this.loadMapElement();
+        this.loadEffectList();
     }
     ,loadCharacterList : function() {
         for (var character in ANIMATION_MATERIAL.character) {
@@ -14,8 +15,8 @@ var Material = Class.extend({
         }
     }
     ,loadCharacter : function(character, characterName) {
-        for (var action in character.animateList) {
-            var frames = character.animateList[action].frames;
+        for (var action in character) {
+            var frames = character[action].frames;
             var tmp = [];
             for (var i = 0; i < 8; ++i){
                 tmp[i] = [];
@@ -40,5 +41,24 @@ var Material = Class.extend({
             tmp[objID] = img;
         }
         this.images['map'] = tmp;
+    }
+    ,loadEffectList : function() {
+        for (var effectName in ANIMATION_MATERIAL.effect) {
+            this.images[effectName] = {};
+            this.loadEffect(ANIMATION_MATERIAL.effect[effectName], effectName);
+        }
+    }
+    ,loadEffect : function(effect, effectName) {
+        var tmp = {};
+        for (var action in effect) {
+            var frames = effect[action].frames
+            tmp[action] = [];
+            for (var i = 0; i < effect[action].frames; ++i) {
+                tmp[action].push(new Image);
+                console.log('images/effect/' + effectName.toLowerCase() + '/' + action + i + '.png');
+                tmp[action][i].src = 'images/effect/' + effectName.toLowerCase() + '/' + action + '/' + i + '.png';
+            }
+        }
+        this.images[effectName] = tmp;
     }
 });

@@ -3,23 +3,25 @@ var Event = {
         $(el)[0].onmouseup = function(e) {
             if (e.which != 1) return;
 
+            var selfCID = GI.cID;
             var targetCID = $(el).attr('id');
-            if (targetCID === GI.player.cID) return;
+            if (targetCID === selfCID) return;
+            var characters = GI.character;
+            //cancel other targets
+            for (var cID in characters) {
+                GI.character[cID].cancelTarget();
+            }
 
             GI.targetCID = targetCID;
-            //cancel other targets
-            var otherChar = GI.otherChar;
-            for (var cID in otherChar) {
-                otherChar[cID].cancelTarget();
-            }
             //set this targetCID
-            GI.otherChar[targetCID].setTarget();
+            var target = characters[targetCID];
+            target.setTarget();
 
             //display target status
-            var target = GI.otherChar[targetCID];
-            GI.ui.targetStatus.setName(target.name);
-            GI.ui.targetStatus.setHP(target.hp);
-            GI.ui.targetStatus.setNV(target.nv);
+            var uiTargetStatus = GI.ui.targetStatus;
+            uiTargetStatus.setName(target.name);
+            uiTargetStatus.setHP(target.hp);
+            uiTargetStatus.setNV(target.nv);
         }
     }
 };
