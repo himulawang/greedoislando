@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="index.css" id="style" />
+<meta charset="utf-8">
+<title>Greedo Islando CSS3 Playground</title>
+
+<script src="..\jquery-1.4.2.min.js"></script>
+<script src="class.js"></script>
+<script src="main.js"></script>
+<style id="animation"></style>
+</head>
+<body>
+<div id="console"></div>
+<div id="ctrl">
+    <input type="range" max=1000 min=-1000 value=1 onchange="change_translateX(this);"/><span id="translateX">translateX</span>
+    <input type="range" max=1000 min=-1000 value=1 onchange="change_translateY(this);"/><span id="translateY">translateY</span>
+    <input type="range" max=1000 min=-1000 value=1 onchange="change_translateZ(this);"/><span id="translateZ">translateZ</span>
+    <br/>
+    <input type="range" max=380 min=-360 value=1 onchange="change_rotateX(this);"/><span id="rotateX">rotateX</span>
+    <input type="range" max=380 min=-360 value=1 onchange="change_rotateY(this);"/><span id="rotateY">rotateY</span>
+    <input type="range" max=380 min=-360 value=1 onchange="change_rotateZ(this);"/><span id="rotateZ">rotateZ</span>
+    <input type="range" max=3.0 min=0.2 value=1.0 onchange="change_scale3d(this);"/><span id="scale3d">scale3d</span>
+    <input type="button" value="deliver cardo" onclick="deliver();"></input>
+    <input type="button" value="use all" onclick="use_all();"></input>
+    <input type="button" value="default pos" onclick="default_pos();"></input>
+</div>
+<div id="main">
+    <div id="background"></div>
+    <div id="battlefield">
+        <div id="public">
+            <div id="deliver">
+            </div>
+        </div>
+    </div>
+    <div id="enemy"></div>
+    <div id="me"></div>
+
+</div>
+
+</body>
+</html>
