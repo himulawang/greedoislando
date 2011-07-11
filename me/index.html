@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+    <title>Greed Island</title>
+    <link rel="stylesheet" type="text/css" href="style/common.css" />
+    <link rel="stylesheet" type="text/css" href="style/ui.css" />
+    <script src='script/jquery-1.5.1.min.js'></script>
+    <script src='script/class.js'></script>
+    <script src='script/class_coordinate.js'></script>
+    <script src='script/class_cursor.js'></script>
+    <script src='script/class_init.js'></script>
+    <script src='script/class_mapeditor.js'></script>
+    <script src='script/map_data.js'></script>
+    <script src='script/main.js'></script>
+</head>
+<body>
+    <div id='main'>
+        <canvas id='MapEditor' style='position: absolute;'></canvas>
+        <canvas id='cursor' style='position: absolute;'></canvas>
+        <canvas id='grid' style='position: absolute;'></canvas>
+        <!-- <div style="background-image: url('images/plain.png'); width: 1248px; height: 672px;"> -->
+    </div>
+    <div id='output'></div>
+    <div id='mouseevent'></div>
+    <div>
+        <input class='terrain' name='terrain' type='radio' value='2000' checked>Plain
+        <input class='terrain' name='terrain' type='radio' value='2001'>Broken Wall
+        <input class='terrain' name='terrain' type='radio' value='2002'>Tree
+        <input class='terrain' name='terrain' type='radio' value='2003'>Door
+        <input class='terrain' name='terrain' type='radio' value='2004'>River
+        <input class='terrain' name='terrain' type='radio' value='2005'>Runis
+        <input class='terrain' name='terrain' type='radio' value='2006'>Bridge
+        <input class='terrain' name='terrain' type='radio' value='del'>Del
+    </div>
+    <div>
+        L:<input id='l' value='6'>
+        W:<input id='w' value='6'>
+    </div>
+    <textarea id='console'></textarea>
+</body>
+</html>

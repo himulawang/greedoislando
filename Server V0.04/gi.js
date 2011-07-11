@@ -3,18 +3,20 @@ var sys = require('sys')
     ,ws = require('./lib/websocket')
     ,util = require('util');
 require('./lib/facility');
+require('./lib/calc');
 global.util = util;
 /* Configuration */
 require('./config');
 require('../config/constant');
 require('./gi/io');
 global.SKILL = fc.readFile("../config/skill.js");
+global.MAP = fc.readFile("../config/map.js");
 /* GI World */
 global.giUserList = require('./gi/userList').create();
 giUserList.initInactiveUserRecycle();
 
-global.giMap = require('./gi/map').create();
-giMap.setObstacleToFindWay();
+//global.giMap = require('./gi/map').create();
+//giMap.setObstacleToFindWay();
 /* GI Skills */
 require('./gi/skills/mora_stone');
 require('./gi/skills/mora_scissors');
@@ -27,10 +29,13 @@ require('./gi/skills/flying_lightening_ball');
 
 /* SKILL Class Mapping */
 require('./gi/data/skillmapping');
+/* MAP Class Mapping */
+require('./gi/data/mapmapping');
+global.map = {};
 
 require('./gi/process');
 //    ,gm = require('./gi/gm');
-
+    
 //game server
 ws.createServer(function(websocket) {
     websocket.addListener("connect", function() { 

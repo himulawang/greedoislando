@@ -50,21 +50,19 @@ var character = function(cID, name) {
     this.skillCDList = {};    
     this.inCharge = 1; // Charge Status , 0 = inCharging , 1 = not inCharge
     this.skillCharge = {};
-    this.charSkillID = { 10000 : 1 , 10001 : 1, 10002 : 1, 10003 : 1 };
+    this.charSkillID = {};
     this.charAuraID = { 5000 : 1, 5001 : 1, 5002 : 1, 5003 : 1 }
     this.systemID = 100;
     this.charSkill = {};
     this.charAura = {};
     this.intSkill = {};
     this.system = system[this.systemID];
+    this.mapArea = 80000;
     
     // Attribute End
-    do {
-        this.x = 12;
-        this.y = 6;
-        this.position = fc.getCoordinateIndex(this.x, this.y);
-        if (giMap.verifyMovePossible(this.position)) break;
-    } while (1);
+    this.x = 12;
+    this.y = 6;
+    this.position = fc.getCoordinateIndex(this.x, this.y);
     
     this.characterMoving = false;
     this.nextXY = null;
@@ -85,6 +83,7 @@ var character = function(cID, name) {
     this.doParalysisTimeout = {};
     // Time Counter END
 
+    this.selectChar();
     this.avbSkill();
     this.systemBehv = systemBehv.get(this); // ENHANCE SKILL BY SYSTEM
     this.auraBehv = auraBehv.get(this); // ENHANCE CHAR BY AURA
@@ -111,6 +110,13 @@ character.prototype.getInfo = function() {
         ,y : this.y
         ,timestamp : fc.getTimestamp()
     };
+}
+character.prototype.selectChar = function() {
+    if (this.name === 'Gon') {
+        this.charSkillID = { 10000 : 1 , 10001 : 1, 10002 : 1, 10003 : 1 };
+    } else if (this.name === 'Killua') {
+        this.charSkillID = { 10100 : 1 , 10101 : 1, 10102 : 1, 10103 : 1 };
+    }
 }
 // Init Gon's Skill list
 character.prototype.avbSkill = function() {
@@ -146,11 +152,10 @@ character.prototype.getWay = function(getWay) {
 }
 character.prototype.startWay = function() {
     this.wayIndex = 0;
-    this.setDoAction(1);
     this.moveWay();
 }
 character.prototype.moveWay = function() {
-	if (this.doAction === 2 || this.doAction === 3 || this.doAction === 4) {
+    if (this.doAction === 2 || this.doAction === 3 || this.doAction === 4) {
         this.characterMoving = false;
         this.nextXY = null;
         this.way = null;
@@ -171,6 +176,7 @@ character.prototype.moveWay = function() {
     }
     var _this = this;
     this.characterMoving = true;
+    this.setDoAction(1);
 
     //get move one grid start coordinate and end coordinate
     this.nextGridIndex = this.way[this.wayIndex];
@@ -291,7 +297,7 @@ character.prototype.freeRecover = function() {
         var nvInc = fc.fix(_this.nvRecVal * ( 1 + _this.recRF ));
         _this.hp = (_this.hp + hpInc) < _this.maxHP ? fc.fix(_this.hp + hpInc) : _this.maxHP;
         _this.nv = (_this.nv + nvInc) < _this.maxNV ? fc.fix(_this.nv + nvInc) : _this.maxNV;
-        io.addOutputData(this.cID, 'freeRecover', 'logged', {cID : this.cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
+        io.addOutputData(_this.cID, 'freeRecover', 'logged', {cID : _this.cID, hp : _this.hp , hpRec : hpInc , nv : _this.nv , nvRec : nvInc });
         io.response();
     }, this.recDuration);
 }
@@ -341,16 +347,16 @@ character.prototype.checkSelfDoActionStatus = function() {
 // CHECK IF CHARACTER IS AVAILABLE TO CAST SKILL END
 
 character.prototype.selfTimeCounterDestroy = function() {
-    fc.destroyTimeInterval(this.setFreeRecInterval);
-    fc.destroyTimeout(this.moveTimeout);
-    fc.destroyTimeout(this.commonCDTimeout);
-    fc.destroyTimeout(this.setFreeTimeout);
-    fc.destroyTimeout(this.skillCDTimeout);
-    fc.destroyTimeout(this.doSpeedUpTimeout);
-    fc.destroyTimeout(this.doSlowTimeout);
-    fc.destroyTimeout(this.doBleedTimeout);
-    fc.destroyTimeout(this.doRepelTimeout);
-    fc.destroyTimeout(this.doParalysisTimeout);
+    clearInterval(this.setFreeRecInterval);
+    clearTimeout(this.moveTimeout);
+    clearTimeout(this.commonCDTimeout);
+    clearTimeout(this.setFreeTimeout);
+    clearTimeout(this.skillCDTimeout);
+    clearTimeout(this.doSpeedUpTimeout);
+    clearTimeout(this.doSlowTimeout);
+    clearTimeout(this.doBleedTimeout);
+    clearTimeout(this.doRepelTimeout);
+    clearTimeout(this.doParalysisTimeout);
 }
 
 // REQUEST CHAR PROFILE START
@@ -367,6 +373,20 @@ character.prototype.getCharacterProfile = function(requesterCID) {
 }
 // REQUEST CHAR PROFILE END
 
+character.prototype.stopMoving = function(value) {
+    this.setDoAction(value);  // Trigger Event for Stop Moving 
+    clearTimeout(this.moveTimeout);
+}
+
+character.prototype.beginStanding = function() {
+    this.setDoAction(0);
+    this.characterMoving = false;
+    this.nextXY = null;
+    this.way = null;
+    this.nextGridIndex = null;
+}
+
 exports.create = function(cID, name) {
     return new character(cID, name);
 }
+

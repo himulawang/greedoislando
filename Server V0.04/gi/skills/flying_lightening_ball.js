@@ -16,7 +16,8 @@ flyingLighteningBall.prototype.doDamage = function() {
     this.startGridXY = fc.getCoordinateXY(this.self.getLocation());
     this.endGridXY = fc.getCoordinateXY(this.target.getLocation());
     var range = Math.max(Math.abs(this.startGridXY.x - this.endGridXY.x), Math.abs(this.startGridXY.y - this.endGridXY.y));
-    var damageFactor = range / this.skill.range;
+    // Distance Formulation
+    var damageFactor = 5 / range;
     var damage = this.getSkillDamage();
     var preHP = this.target.getHP();
 	var hp = (damage * (1 + this.self.atkRF) - damage * this.target.defRF) * damageFactor;   // Damage reduction formulation    
@@ -28,9 +29,12 @@ flyingLighteningBall.prototype.doDamage = function() {
         this.setCharDead();
     }
     this.setSkillCD();
+    this.startSkillCDProc();
     this.setCommonCD();
     this.freeStatusCountDown();
     io.response();
+    this.self.beginStanding();
+    this.chargeFactor = 1;
 }
 
 global.Skill_FlyingLighteningBall = flyingLighteningBall;

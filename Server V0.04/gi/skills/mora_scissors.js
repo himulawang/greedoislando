@@ -14,8 +14,8 @@ moraScissors.prototype.castSkill = function(target) {
 	this.doBleed();
 }
 moraScissors.prototype.doBleed = function() {
-	this.pushDebuffList();
-	this.dID = this.getDebuffID();
+	this.pushDebuffList(this.target);
+	this.dID = this.getDebuffID(this.target);
 	if (this.target.debuffList[this.dID].stack < 5) {
 		++this.target.debuffList[this.dID].stack;
 	}	

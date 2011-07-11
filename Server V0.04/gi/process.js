@@ -30,28 +30,45 @@ var logout = function () {
 }
 var moveCharacter = function () {
     var cID = io.iData.cID;
-
+    var destination_mapArea = io.iData.mapArea;
+    
     var endPoint = object.endPoint;
     var character = giUserList.getCharacter(cID);
     if (character.getStatus() === 0) return;
-    if (character.doAction === 5) return;
+    if (character.doAction === 5 || character.doAction === 4) return;
     var nowLocation = character.getLocation();
-    if (!(endPoint //invalid endPoint
-        && giMap.verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
-        && endPoint != nowLocation) // endPoint is nowLocation
-    ) return;
+    
+    if (destination_mapArea != character.mapArea) {
+        if (!map[destination_mapArea]) {
+            global.map[destination_mapArea] = new MAPMAPPING[MAP[destination_mapArea].mapName];
+        }
 
-    //character is moving
-    if (character.characterMoving) {
-        character.setNewDestinationTrigger = true;
-        var way = giMap.getWay(character.nextGridIndex, endPoint);
+        // Create a combine Map of nowLocatedMap & destinationMap
+        // Run the setWay in combine Map
+        
+    } else {
+        // Instantiated Map start
+        if (!map[character.mapArea]) {
+            global.map[character.mapArea] = new MAPMAPPING[MAP[character.mapArea].mapName];
+        }
+        // Instantiated Map end
+        if (!(endPoint //invalid endPoint
+            && map[character.mapArea].verifyClientLocationMovePossible(endPoint) //verify endPoint movePossible
+            && endPoint != nowLocation) // endPoint is nowLocation
+        ) return;
+
+        //character is moving
+        if (character.characterMoving) {
+            character.setNewDestinationTrigger = true;
+            var way = map[character.mapArea].getWay(character.nextGridIndex, endPoint);
+            character.setWay(way);
+            return;
+        }
+        var way = map[character.mapArea].getWay(nowLocation, endPoint);
+
         character.setWay(way);
-        return;
+        character.startWay();
     }
-    var way = giMap.getWay(nowLocation, endPoint);
-
-    character.setWay(way);
-    character.startWay();
 }
 var keepSession = function() {
     var cID = io.iData.cID;
@@ -85,7 +102,7 @@ var skillCharge = function() {
     var skill = character.getSkill(skillID);
     
     if (!skill) return; //check character if has this skill or not
-    if (character.castSelfCheck(io, skillID) === 0) return;
+    if (character.castSelfCheck(skillID) === 0) return;
     
     if (skill.target === 'single') {
     	if (io.iData.status === 1) {
@@ -102,6 +119,17 @@ var skillCharge = function() {
     }    
 }
 
+var debug = function() {
+    var cID = io.iData.cID;
+    try {
+        var requestResource = global[io.iData.object] || eval(io.iData.object);
+        io.addOutputData(cID, 'debug', 'self', {resource : requestResource, resourceID : io.iData.object + "-" + fc.getTimestamp()});
+        io.response();
+    } catch (e) {
+        return; 
+    }    
+}
+
 global.PROCESS = {
     logged : {
         keepSession : keepSession
@@ -110,10 +138,12 @@ global.PROCESS = {
         ,moveCharacter : moveCharacter
         ,castSkill : castSkill
         ,skillCharge :　skillCharge
+        ,debug : debug
     }
     ,unlogged : {
         keepSession : keepSession
         ,selectCharacter: selectCharacter
+        ,debug : debug
     }
 }
 
