@@ -34,14 +34,14 @@ var Coordinate = Class.extend({
     ,transferScreenToLogicY : function(x, y) {
         return parseInt((this.MAPWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
     }
-    ,put : function() {
-        var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
-        var ScreenY = this.transferLogicToScreenY(this.x, this.y);
+    ,put : function(screenX, screenY) {
+        //var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
+        //var ScreenY = this.transferLogicToScreenY(this.x, this.y);
                 
         //var ScreenX = (this.TILEWIDTH - this.transferLogicToScreenX(this.x, this.y))/2 + x;
         //var ScreenY = this.transferLogicToScreenY(this.x, this.y) + this.HALFTILEHEIGHT;
         
-        $(this.el).css({left : ScreenX + 'px', top : ScreenY + 'px'});
+        $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
     }
     ,move : function(e) {
         var xPX = e.layerX;

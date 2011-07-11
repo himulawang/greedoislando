@@ -10,8 +10,8 @@ var Cursor = Coordinate.extend({
     }
     ,getCanvas : function(el) {
         this.el = el;
-        el.width = this.TILEWIDTH;
-        el.height = this.TILEHEIGHT;
+        el.width = GI_CURSOR_WIDTH;
+        el.height = GI_CURSOR_HEIGHT;
         this.context = el.getContext('2d');
     }
     ,draw : function() { // Draw Cursor Side
@@ -43,16 +43,9 @@ var Cursor = Coordinate.extend({
         }, 100);
     }
     ,move : function(e) {
-        var xPX = e.layerX;
-        var yPX = e.layerY;
-        var x = this.transferScreenToLogicX(xPX, yPX);
-        var y = this.transferScreenToLogicY(xPX, yPX);
-
-        if (this.checkMoveOut(x, y)) {
-            this.x = x;
-            this.y = y;
-            this.put();
-        }
+        console.log(e);
+        //console.log(e.offsetX +',' +e.offsetY);
+        this.put(e.offsetX, e.offsetY);
     }
     ,showWay : function(index) {
         var tmp = index.split(",");

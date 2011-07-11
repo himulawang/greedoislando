@@ -6,7 +6,7 @@ var UI_Communication = UI.extend({
         html += "<div id='ui-chat-history'></div>";
         html += "<input style='width: 356px; height: 12px; margin-left: auto; margin-right: auto;'>";
         html += "</div>";
-        $("body").prepend(html);
+        $("#ui").prepend(html);
     }
 });
 

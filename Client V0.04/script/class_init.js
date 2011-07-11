@@ -25,12 +25,33 @@ var Init = Class.extend({
     }
     ,bindMouseOverGrid : function() {
         var _this = this;
-        $("#grid")[0].onmousemove = function(e) {
-            _this.cursor.move(e);
-            $('#mouseevent').html("ScreenX:" + e.layerX + " ScreenY:" + e.layerY);
-            $('#output').html("LogicX:" + _this.cursor.x + " LogicY:" + _this.cursor.y);
+        $("#ui")[0].onmousemove = function(e) {
+            // pass mousemove event to grid layout
+            var event = document.createEvent('MouseEvents');
+            event.initMouseEvent("mousemove"
+                ,false //canBubble
+                ,true //cancelable
+                ,window //view
+                ,0 //detail mouse click count
+                ,e.screenX //screenX
+                ,e.screenY //screenY
+                ,e.clientX //clientX
+                ,e.clientY //clientY
+                ,false //ctrl
+                ,false //alt
+                ,false //shift
+                ,false //metaKey
+                ,0 //button
+                ,null
+            );
+            $("#grid")[0].dispatchEvent(event);
             return false;
         };
+        $("#grid")[0].onmousemove = function(e) {
+            _this.cursor.move(e);
+            $('#mouseevent').html("ScreenX:" + e.screenX + " ScreenY:" + e.screenY);
+            $('#output').html("LogicX:" + _this.cursor.x + " LogicY:" + _this.cursor.y);
+        }
     }
     ,bindMouseClick : function() {
         var _this = this;
@@ -60,7 +81,7 @@ var Init = Class.extend({
     }
     ,initMap : function() {
         this.map = new Map;
-        this.map.getCanvas($('#grid')[0]);
+        this.map.getCanvas($('#map-terrain')[0]);
         this.map.getData();
         this.map.draw();
         this.map.initObstacle();
@@ -73,12 +94,6 @@ var Init = Class.extend({
     }
     ,initCharacter : function() {
         this.character = {};
-    }
-    ,initShowWay : function() {
-        this.showWayCursor = new Cursor;
-        this.showWayCursor.getCanvas($('#show-way-cursor')[0]);
-        this.showWayCursor.draw();
-        this.showWayCursor.startBreath();
     }
     ,initLog : function() {
         log = new Log;

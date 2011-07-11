@@ -19,6 +19,19 @@ div {
     clear: both;
 }
 
+#main {
+    width: 760px;
+    height: 600px;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.layout {
+    width: 760px;
+    height: 600px;
+    position: absolute;
+}
 
 .hpslot {
     border : 1px solid #3c3c3c;

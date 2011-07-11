@@ -1,7 +1,9 @@
-var GI_MAP_WIDTH = 1248;
-var GI_MAP_HEIGHT = 672;
+var GI_MAP_WIDTH = 760;
+var GI_MAP_HEIGHT = 600;
 var GI_GRID_QUANTITY = 96;
 var GI_CHARACTER_SPEED = 120;
+var GI_CURSOR_WIDTH = 13;
+var GI_CURSOR_HEIGHT = 7;
 var wsocket;
 
 var requestAnimationFrame = webkitRequestAnimationFrame;
