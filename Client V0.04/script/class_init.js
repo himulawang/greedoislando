@@ -80,11 +80,16 @@ var Init = Class.extend({
         this.material = new Material;
     }
     ,initMap : function() {
-        this.map = new Map;
-        this.map.getCanvas($('#map-terrain')[0]);
-        this.map.getData();
-        this.map.draw();
-        this.map.initObstacle();
+        this.mapList = new MapList;
+        this.mapList.load("b002_002");
+        this.mapList.load("b003_002");
+        this.mapList.load("b004_002");
+        this.mapList.load("b002_003");
+        this.mapList.load("b003_003");
+        this.mapList.load("b004_003");
+        this.mapList.load("b002_004");
+        this.mapList.load("b003_004");
+        this.mapList.load("b004_004");
     }
     ,initCursor : function() {
         this.cursor = new Cursor;
