@@ -43,9 +43,7 @@ var Cursor = Coordinate.extend({
         }, 100);
     }
     ,move : function(e) {
-        console.log(e);
-        //console.log(e.offsetX +',' +e.offsetY);
-        this.put(e.offsetX, e.offsetY);
+        this.put(e.clientX, e.clientY);
     }
     ,showWay : function(index) {
         var tmp = index.split(",");

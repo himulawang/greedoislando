@@ -186,7 +186,7 @@ var SKILL =
         ,"adtEffectTime" : 5000
         ,"skillCD" : 5000
         ,"lvUPMod" : {
-        	"skillCD" : -1000
+        	"skillCD" : -1
         }
     }
     ,"10102" : {
@@ -207,7 +207,7 @@ var SKILL =
         ,"adtEffectTime" : 6000
         ,"skillCD" : 8000
         ,"lvUPMod" : {
-        	"skillCD" : -1000
+        	"skillCD" : -1
         }
     }
     ,"10103" : {
@@ -232,4 +232,4 @@ var SKILL =
         }
         ,"animationEffect" : "lightingball"
     }
-}
+};
