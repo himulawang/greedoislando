@@ -81,15 +81,17 @@ var Init = Class.extend({
     }
     ,initMap : function() {
         this.mapList = new MapList;
-        this.mapList.load("b002_002");
-        this.mapList.load("b003_002");
-        this.mapList.load("b004_002");
-        this.mapList.load("b002_003");
-        this.mapList.load("b003_003");
-        this.mapList.load("b004_003");
-        this.mapList.load("b002_004");
-        this.mapList.load("b003_004");
-        this.mapList.load("b004_004");
+        var xy = this.mapList.getPlayerAbsoluteXY();
+        console.log(xy);
+        var mapBlockList = this.mapList.getMapBlockIDsByAbsolutePosition(xy.x, xy.y);
+
+        console.log(mapBlockList);
+        var mapBlockXY, mapBlockID;
+        for (var id in mapBlockList) {
+            mapBlockXY = mapBlockList[id];
+            mapBlockID = this.mapList.transferMapBlockXYToIndex(mapBlockXY.x, mapBlockXY.y);
+            this.mapList.load(mapBlockID);
+        }
     }
     ,initCursor : function() {
         this.cursor = new Cursor;
