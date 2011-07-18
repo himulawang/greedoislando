@@ -3,8 +3,14 @@ var MapList = Coordinate.extend({
         this._super();
         this.list = {};
     }
-    ,load : function(id) {
-        if (this.list[id]) return;
-        this.list[id] = new MapBlock(id);
+    ,load : function(directionID, mapBlockID) {
+        this.list[directionID] = new MapBlock(mapBlockID);
+    }
+    ,setPosition : function() {
+        for (var directionID in this.list) {
+            var positions = this.getMapBlockPosition(directionID);
+            console.log(positions);
+            this.list[directionID].setPosition(positions.left, positions.top);
+        }
     }
 });
