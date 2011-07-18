@@ -28,7 +28,9 @@ div {
 }
 
 #map {
-    /* overflow: hidden;*/
+    /*
+    overflow: hidden;
+    */
 }
 
 .mapblock {

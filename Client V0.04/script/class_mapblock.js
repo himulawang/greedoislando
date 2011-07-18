@@ -14,6 +14,9 @@ var MapBlock = Coordinate.extend({
         this.canvas = this.el[0].getContext('2d');
         this.draw();
     }
+    ,setPosition : function(left, top) {
+        this.el.css({left : left + 'px', top : top + 'px'});
+    }
     ,draw : function() {
         var x, y;
         this.canvas.beginPath();
@@ -50,5 +53,8 @@ var MapBlock = Coordinate.extend({
         var objID = this.grid[index].objID;
         
         return TERRAIN[objID].name;
+    }
+    ,getID : function() {
+        return this.id;
     }
 });

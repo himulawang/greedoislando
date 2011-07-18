@@ -3,6 +3,8 @@ var Coordinate = Class.extend({
         this.MAPWIDTH = GI_MAP_WIDTH;
         this.MAPHEIGHT = GI_MAP_HEIGHT;
         this.GRIDQUANTITY = GI_GRID_QUANTITY;
+        this.SCREEN_WIDTH = GI_SCREEN_WIDTH;
+        this.SCREEN_HEIGHT = GI_SCREEN_HEIGHT;
 
         this.SQUARESIDE = Math.sqrt(Math.pow(this.MAPWIDTH, 2) + Math.pow(this.MAPHEIGHT, 2));
 
@@ -21,6 +23,17 @@ var Coordinate = Class.extend({
             ,'-1,1' : 5
             ,'-1,0' : 6
             ,'-1,-1' : 7
+        };
+        this.VECTOR = {
+            '-1' : { x : 0, y : 0 }
+            ,'0' : { x : 0, y :-1 }
+            ,'1' : { x : 1, y :-1 }
+            ,'2' : { x : 1, y : 0 }
+            ,'3' : { x : 1, y : 1 }
+            ,'4' : { x : 0, y : 1 }
+            ,'5' : { x :-1, y : 1 }
+            ,'6' : { x :-1, y : 0 }
+            ,'7' : { x :-1, y :-1 }
         };
     }
     ,transferLogicToScreenX : function(x, y) {
@@ -99,7 +112,7 @@ var Coordinate = Class.extend({
         return xy = GI.character[GI.cID].getPosition();
     }
     ,transferMapBlockXYToIndex : function(x, y) {
-        return 'b' + fc.fill0(3, x) + '_' + fc.fill0(3, x); 
+        return 'b' + fc.fill0(3, x) + '_' + fc.fill0(3, y); 
     }
     ,getMapBlockIDsByAbsolutePosition : function(absoluteX, absoluteY) {
         // get center mapblock xy
@@ -139,5 +152,13 @@ var Coordinate = Class.extend({
         }
 
         return mapBlockIDs;
+    }
+    ,getMapBlockPosition : function(directionID) {
+        var xy = this.VECTOR[directionID];
+        var x = xy.x;
+        var y = xy.y;
+        var left = (this.SCREEN_WIDTH - this.MAPWIDTH) / 2 + (x - y) * this.MAPWIDTH / 2;
+        var top = (this.SCREEN_HEIGHT - this.MAPHEIGHT) / 2 + (x + y) * this.MAPHEIGHT / 2;
+        return { left : left, top: top };
     }
 });
