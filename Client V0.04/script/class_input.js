@@ -51,6 +51,9 @@ var Input = Class.extend({
         var character = GI.character[cID];
         character.setSelf();
         character.make(data);
+        
+        //TODO For hacking character position
+        character.setPosition(240, 240);
 
         // init map
         $("#login").fadeOut(100, function(){

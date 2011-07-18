@@ -27,6 +27,14 @@ div {
     margin-right: auto;
 }
 
+#map {
+    /* overflow: hidden;*/
+}
+
+.mapblock {
+    position: absolute;
+}
+
 .layout {
     width: 760px;
     height: 600px;

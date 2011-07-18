@@ -5,9 +5,12 @@ var MapBlock = Coordinate.extend({
         this.grid = eval(id);
 
         //create canvas
-        var canvas = $("<canvas id='" + this.id + "'></canvas>");
+        var canvas = $("<canvas class='mapblock' id='" + this.id + "'></canvas>");
         $('#map').append(canvas);
         this.el = $("#" + this.id);
+        this.el[0].width = GI_MAP_WIDTH;
+        this.el[0].height = GI_MAP_HEIGHT;
+
         this.canvas = this.el[0].getContext('2d');
         this.draw();
     }

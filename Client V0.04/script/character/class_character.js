@@ -109,6 +109,12 @@ var Character = Coordinate.extend({
     ,getName : function() {
         return this.name;
     }
+    ,getPosition : function() {
+        return { x : this.x, y : this.y };
+    }
+    ,getPositionIndex : function() {
+        return this.location;
+    }
     ,setPosition : function(x, y) {
         if (typeof(x) === 'number' && typeof(y) === 'number') {
             this.x = x;

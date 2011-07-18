@@ -25,4 +25,13 @@ var fc = {
         } 
         return guid; 
     }
+    ,fill0 : function(length, origin) {
+        var originLength = ('' + origin).length;
+        var fillTime = length - originLength;
+        var string = origin;
+        for (var i = 0; i < fillTime; ++i) {
+            string = '0' + string;
+        }
+        return string;
+    }
 }
