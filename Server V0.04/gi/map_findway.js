@@ -1,6 +1,6 @@
-var findway = function(startGridXY, maxGridXY) {
-    this.startGridXY = fc.getCoordinateXY(startGridXY);
-    this.maxGridXY = fc.getCoordinateXY(maxGridXY);
+var findway = function() {
+    this.minGridXY = {};
+    this.maxGridXY = {};
     this.obstacleList = {};
     this.parentList = {};
     this.openList = {};
@@ -11,6 +11,10 @@ findway.prototype.reset = function() {
     this.parentList = {};
     this.openList = {};
     this.closeList = {};
+}
+findway.prototype.setScope = function(min, max) {
+    this.minGridXY = min;
+    this.maxGridXY = max;
 }
 findway.prototype.setObstacle = function(x, y) {
     this.obstacleList[this.getIndex(x, y)] = {x : parseInt(x), y : parseInt(y)};
@@ -105,7 +109,7 @@ findway.prototype.dealAroundGrid = function() {
     this.dealSingleGrid(x - 1, y - 1);
 }
 findway.prototype.dealSingleGrid = function(x, y) {
-    if (x < this.startGridXY.x || y < this.startGridXY.y || x > this.maxGridXY.x || y > this.maxGridXY.y) return;
+    if (x < this.minGridXY.x || y < this.minGridXY.y || x > this.maxGridXY.x || y > this.maxGridXY.y) return;
     var index = this.getIndex(x, y);
     //if this point has in obstacleList or closeList , do nothing
     var point = this.obstacleList[index] || this.closeList[index];
@@ -195,6 +199,6 @@ findway.prototype.getXY = function(index) {
     return {x : index[0], y : index[1]};
 }
 
-exports.create = function(startGridXY, maxGridXY) {
-    return new findway(startGridXY, maxGridXY);
+exports.create = function() {
+    return new findway();
 }
