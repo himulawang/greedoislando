@@ -82,14 +82,7 @@ var Init = Class.extend({
     ,initMap : function() {
         this.mapList = new MapList;
         var xy = this.mapList.getPlayerAbsoluteXY();
-        var mapBlockList = this.mapList.getMapBlockIDsByAbsolutePosition(xy.x, xy.y);
-
-        var mapBlockXY, mapBlockID;
-        for (var directionID in mapBlockList) {
-            mapBlockXY = mapBlockList[directionID];
-            mapBlockID = this.mapList.transferMapBlockXYToIndex(mapBlockXY.x, mapBlockXY.y);
-            this.mapList.load(directionID, mapBlockID);
-        }
+        this.mapList.make(xy.x, xy.y);
         this.mapList.setPosition();
     }
     ,initCursor : function() {
