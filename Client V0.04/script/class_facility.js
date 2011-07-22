@@ -34,4 +34,10 @@ var fc = {
         }
         return string;
     }
+    ,inObject : function(value, array) {
+        for (var i in array) {
+            if (array[i] === value) return i;
+        }
+        return undefined;
+    }
 }
