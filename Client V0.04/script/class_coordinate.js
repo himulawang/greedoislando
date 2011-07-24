@@ -1,7 +1,13 @@
 var Coordinate = Class.extend({
     init : function() {
+        //World
+        this.WORLDWIDTH = GI_MAP_WIDTH * GI_MAPBLOCK_X;
+        this.WORLDHEIGHT = GI_MAP_HEIGHT * GI_MAPBLOCK_Y;
+        //Map Block
         this.MAPWIDTH = GI_MAP_WIDTH;
         this.MAPHEIGHT = GI_MAP_HEIGHT;
+        this.HALFMAPWIDTH = GI_MAP_WIDTH / 2;
+        this.HALFMAPHEIGHT = GI_MAP_HEIGHT / 2;
         this.GRIDQUANTITY = GI_GRID_QUANTITY;
         this.SCREEN_WIDTH = GI_SCREEN_WIDTH;
         this.SCREEN_HEIGHT = GI_SCREEN_HEIGHT;
@@ -110,5 +116,18 @@ var Coordinate = Class.extend({
     }
     ,getPlayerAbsoluteXY : function() {
         return xy = GI.character[GI.cID].getPosition();
+    }
+    ,transferMapBlockXYToIndex : function(x, y) {
+        return 'b' + fc.fill0(3, x) + '_' + fc.fill0(3, y); 
+    }
+    ,transferMapBlockIndexToXY : function(index) {
+        var xy = /^b(\d{3})_(\d{3})$/.exec(index);
+        return { x : parseInt(xy[1]), y : parseInt(xy[2]) };
+    }
+    ,transferMapBlockLogicToScreenX : function(x, y) {
+        return this.WORLDWIDTH / 2 + (x - y) * this.HALFMAPWIDTH;
+    }
+    ,transferMapBlockLogicToScreenY : function(x, y) {
+        return (x + y) * this.HALFMAPHEIGHT;
     }
 });

@@ -2,6 +2,7 @@ var MapList = Coordinate.extend({
     init : function() {
         this._super();
         this.list = {};
+        this.el = $("#map");
     }
     ,getBlock : function(directionID) {
         return this.list[directionID];
@@ -10,11 +11,20 @@ var MapList = Coordinate.extend({
         return this.list;
     }
     ,getBlockIDs : function(list) {
-        if (list === undefined) var list = this.getList();
-
-        for (var directionID in list) {
-            list[directionID] = list[directionID].getID();
+        if (list === undefined) { //no list inputed
+            var list = this.getList();
+            for (var directionID in list) {
+                list[directionID] = list[directionID].getID();
+            }
+            return list;
         }
+        
+        var xy;
+        for (var directionID in list) { //list inputed
+            xy = list[directionID];
+            list[directionID] = this.transferMapBlockXYToIndex(xy.x, xy.y);
+        }
+
         return list;
     }
     /* unuse mark for del TODO
@@ -22,29 +32,31 @@ var MapList = Coordinate.extend({
         this.list[directionID] = new MapBlock(mapBlockID);
     }
     */
+    /*
     ,setPosition : function() {
         for (var directionID in this.list) {
-            var positions = this.getMapBlockPosition(directionID);
+            var xy = this.transferMapBlockIndexToXY(this.list[directionID]);
+            //var positions = this.getMapBlockPosition(directionID);
             this.list[directionID].setPosition(positions.left, positions.top);
         }
     }
+    */
     ,getDirectionID : function(mapBlockID) {
         for (var directionID in this.list) {
             if (this.list[directionID].getID === mapBlockID) return mapBlockID;
         }
         return false;
     }
-    ,transferMapBlockXYToIndex : function(x, y) {
-        return 'b' + fc.fill0(3, x) + '_' + fc.fill0(3, y); 
-    }
-    ,getMapBlockIDsByAbsolutePosition : function(absoluteX, absoluteY) {
+    ,getMapBlockXYList : function(absoluteX, absoluteY) {
         // get center mapblock xy
-        var mapX = Math.floor(absoluteX / GI_GRID_QUANTITY) + 1;
-        var mapY = Math.floor(absoluteY / GI_GRID_QUANTITY) + 1;
+        var centerXY = this.getMapBlockXY(absoluteX, absoluteY);
 
-        /*  7  0  1
-         *  6  -1 2
-         *  5  4  3
+        var mapX = centerXY.x;
+        var mapY = centerXY.y;
+
+        /*  7  0   1
+         *  6  -1  2
+         *  5  4   3
          * */
         var mapBlockIDs = {};
         mapBlockIDs[-1] = { x : mapX, y : mapY };
@@ -76,6 +88,17 @@ var MapList = Coordinate.extend({
 
         return mapBlockIDs;
     }
+    ,getMapBlockXY : function(absoluteX, absoluteY) {
+        var mapX = Math.floor(absoluteX / GI_GRID_QUANTITY) + 1;
+        var mapY = Math.floor(absoluteY / GI_GRID_QUANTITY) + 1;
+        return { x : mapX, y : mapY };
+    }
+    ,getRelativePositionXY : function(absoluteX, absoluteY) {
+        var posX = absoluteX % GI_GRID_QUANTITY;
+        var posY = absoluteY % GI_GRID_QUANTITY;
+        return { x : posX, y : posY };
+    }
+    /*
     ,getMapBlockPosition : function(directionID) {
         var xy = this.VECTOR[directionID];
         var x = xy.x;
@@ -84,8 +107,9 @@ var MapList = Coordinate.extend({
         var top = (this.SCREEN_HEIGHT - this.MAPHEIGHT) / 2 + (x + y) * this.MAPHEIGHT / 2;
         return { left: left, top: top };
     }
+    */
     ,make : function(x, y) {
-        var newMapBlockList = this.getMapBlockIDsByAbsolutePosition(x, y);
+        var newMapBlockList = this.getMapBlockXYList(x, y);
 
         var preMapBlockIDs = this.getBlockIDs();
         var newMapBlockIDs = this.getBlockIDs(newMapBlockList);
@@ -94,15 +118,21 @@ var MapList = Coordinate.extend({
         var reuseBlockIDs = {};
         var newMapList = {};
         for (var newDirectionID in newMapBlockIDs) {
-            newMapBlockID = this.transferMapBlockXYToIndex(newMapBlockList[newDirectionID]);
+            newMapBlockID = newMapBlockList[newDirectionID];
             preDirectionID = fc.inObject(newMapBlockIDs[newDirectionID], preMapBlockIDs); //get blocks can reuse
             if (preDirectionID === undefined) {
-                newMapList[newDirectionID] = new MapBlock(newDirectionID, newMapBlockID);
+                newMapList[newDirectionID] = new MapBlock(newMapBlockID);
                 continue;
             }
 
             newMapList[newDirectionID] = this.getBlock(preDirectionID);
         }
         this.list = newMapList;
+    }
+    ,put : function(x, y) {
+        this.el.css({ left : x + 'px', top : y + 'px' });
+    }
+    ,getMapOffset : function() {
+        var positionXY = GI.character[GI.cID].getPosition();
     }
 });

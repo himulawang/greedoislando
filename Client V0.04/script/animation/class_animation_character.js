@@ -20,7 +20,7 @@ var Animation_Character = Animation.extend({
     }
     ,initCanvas : function() {
         var canvas = $("<canvas id='" + this.owner.cID + "' style='position: absolute;'></canvas>");
-        $('body').append(canvas);
+        $('#character-animation').append(canvas);
         this.el = $("#" + this.owner.cID);
         Event.onSelectTarget(this.el);
         this.canvas = this.el[0].getContext('2d');

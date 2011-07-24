@@ -3,6 +3,9 @@ var MapBlock = Coordinate.extend({
         this._super();
         this.id = id;
         this.grid = eval(id);
+        var xy = this.transferMapBlockIndexToXY(id);
+        this.x = xy.x;
+        this.y = xy.y;
 
         //create canvas
         var canvas = $("<canvas class='mapblock' id='" + this.id + "'></canvas>");
@@ -13,8 +16,14 @@ var MapBlock = Coordinate.extend({
 
         this.canvas = this.el[0].getContext('2d');
         this.draw();
+        this.setPosition();
     }
-    ,setPosition : function(left, top) {
+    ,setPosition : function() {
+        var x = this.x - 1;
+        var y = this.y - 1;
+
+        var left = this.transferMapBlockLogicToScreenX(x, y);
+        var top = this.transferMapBlockLogicToScreenY(x, y);
         this.el.css({left : left + 'px', top : top + 'px'});
     }
     ,draw : function() {
