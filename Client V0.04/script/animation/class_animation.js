@@ -154,6 +154,7 @@ var Animation = Coordinate.extend({
         var screenX = this.transferLogicToScreenX(xy.x, xy.y) - this.HALFTILEWIDTH + offsetX;
         var screenY = this.transferLogicToScreenY(xy.x, xy.y) - offsetY;
 
+        console.log(screenX, ',', screenY);
         this.el.css({left : screenX + 'px', top : screenY + 'px'});
     }
 });
