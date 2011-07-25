@@ -22,8 +22,8 @@ var MapBlock = Coordinate.extend({
         var x = this.x - 1;
         var y = this.y - 1;
 
-        var left = this.transferMapBlockLogicToScreenX(x, y);
-        var top = this.transferMapBlockLogicToScreenY(x, y);
+        var left = this.transferMapBlockLogicToLayoutX(x, y);
+        var top = this.transferMapBlockLogicToLayoutY(x, y);
         this.el.css({left : left + 'px', top : top + 'px'});
     }
     ,draw : function() {
