@@ -53,7 +53,7 @@ var Input = Class.extend({
         character.make(data);
         
         //TODO For hacking character position
-        character.setPosition(24, 24);
+        character.setPosition(479, 479);
 
         // init map
         $("#login").fadeOut(100, function(){

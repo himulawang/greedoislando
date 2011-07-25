@@ -3,21 +3,27 @@ var Coordinate = Class.extend({
         //World
         this.WORLDWIDTH = GI_MAP_WIDTH * GI_MAPBLOCK_X;
         this.WORLDHEIGHT = GI_MAP_HEIGHT * GI_MAPBLOCK_Y;
+        this.HALFWORLDWIDTH = this.WORLDWIDTH / 2;
+        this.HALFWORLDHEIGHT = this.WORLDHEIGHT / 2;
         //Map Block
         this.MAPWIDTH = GI_MAP_WIDTH;
         this.MAPHEIGHT = GI_MAP_HEIGHT;
-        this.HALFMAPWIDTH = GI_MAP_WIDTH / 2;
-        this.HALFMAPHEIGHT = GI_MAP_HEIGHT / 2;
+        this.HALFMAPWIDTH = this.MAPWIDTH / 2;
+        this.HALFMAPHEIGHT = this.MAPHEIGHT / 2;
+        //Screen
+        this.SCREENWIDTH = GI_SCREEN_WIDTH;
+        this.SCREENHEIGHT = GI_SCREEN_HEIGHT;
+        this.HALFSCREENWIDTH = this.SCREENWIDTH / 2;
+        this.HALFSCREENHEIGHT = this.SCREENHEIGHT / 2;
         this.GRIDQUANTITY = GI_GRID_QUANTITY;
-        this.SCREEN_WIDTH = GI_SCREEN_WIDTH;
-        this.SCREEN_HEIGHT = GI_SCREEN_HEIGHT;
-
-        this.SQUARESIDE = Math.sqrt(Math.pow(this.MAPWIDTH, 2) + Math.pow(this.MAPHEIGHT, 2));
-
+        //Title
         this.TILEWIDTH = this.MAPWIDTH / this.GRIDQUANTITY;
         this.TILEHEIGHT = this.MAPHEIGHT / this.GRIDQUANTITY;
         this.HALFTILEWIDTH = this.TILEWIDTH / 2;
         this.HALFTILEHEIGHT = this.TILEHEIGHT / 2;
+
+        this.SQUARESIDE = Math.sqrt(Math.pow(this.MAPWIDTH, 2) + Math.pow(this.MAPHEIGHT, 2));
+
         this.DIRECTIONS = {
             //deltaX,deltaY
             '0,0' : -1
@@ -46,7 +52,7 @@ var Coordinate = Class.extend({
         return this.MAPWIDTH / 2 + (x - y) * this.HALFTILEWIDTH;
     }
     ,transferLogicToScreenY : function(x, y) {
-        return (parseInt(y) + parseInt(x)) * this.HALFTILEHEIGHT;
+        return (x + y) * this.HALFTILEHEIGHT;
     }
     ,transferScreenToLogicX : function(x, y) {
         return parseInt((x - this.MAPWIDTH / 2) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
@@ -117,6 +123,7 @@ var Coordinate = Class.extend({
     ,getPlayerAbsoluteXY : function() {
         return xy = GI.character[GI.cID].getPosition();
     }
+    //mapBlock
     ,transferMapBlockXYToIndex : function(x, y) {
         return 'b' + fc.fill0(3, x) + '_' + fc.fill0(3, y); 
     }
@@ -124,10 +131,17 @@ var Coordinate = Class.extend({
         var xy = /^b(\d{3})_(\d{3})$/.exec(index);
         return { x : parseInt(xy[1]), y : parseInt(xy[2]) };
     }
-    ,transferMapBlockLogicToScreenX : function(x, y) {
-        return this.WORLDWIDTH / 2 + (x - y) * this.HALFMAPWIDTH;
+    ,transferMapBlockLogicToLayoutX : function(x, y) {
+        return (x - y) * this.HALFMAPWIDTH;
     }
-    ,transferMapBlockLogicToScreenY : function(x, y) {
+    ,transferMapBlockLogicToLayoutY : function(x, y) {
         return (x + y) * this.HALFMAPHEIGHT;
+    }
+    //absolutePosition
+    ,transferAbsolutePositionToOffsetLeft : function(x, y) {
+        return (x - y) * this.HALFTILEWIDTH - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
+    }
+    ,transferAbsolutePositionToOffsetTop : function(x, y) {
+        return - (x + y) * this.HALFTILEHEIGHT + this.HALFSCREENHEIGHT;
     }
 });

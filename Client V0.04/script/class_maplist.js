@@ -27,20 +27,6 @@ var MapList = Coordinate.extend({
 
         return list;
     }
-    /* unuse mark for del TODO
-    ,load : function(directionID, mapBlockID) {
-        this.list[directionID] = new MapBlock(mapBlockID);
-    }
-    */
-    /*
-    ,setPosition : function() {
-        for (var directionID in this.list) {
-            var xy = this.transferMapBlockIndexToXY(this.list[directionID]);
-            //var positions = this.getMapBlockPosition(directionID);
-            this.list[directionID].setPosition(positions.left, positions.top);
-        }
-    }
-    */
     ,getDirectionID : function(mapBlockID) {
         for (var directionID in this.list) {
             if (this.list[directionID].getID === mapBlockID) return mapBlockID;
@@ -98,16 +84,6 @@ var MapList = Coordinate.extend({
         var posY = absoluteY % GI_GRID_QUANTITY;
         return { x : posX, y : posY };
     }
-    /*
-    ,getMapBlockPosition : function(directionID) {
-        var xy = this.VECTOR[directionID];
-        var x = xy.x;
-        var y = xy.y;
-        var left = (this.SCREEN_WIDTH - this.MAPWIDTH) / 2 + (x - y) * this.MAPWIDTH / 2;
-        var top = (this.SCREEN_HEIGHT - this.MAPHEIGHT) / 2 + (x + y) * this.MAPHEIGHT / 2;
-        return { left: left, top: top };
-    }
-    */
     ,make : function(x, y) {
         var newMapBlockList = this.getMapBlockXYList(x, y);
 
@@ -128,11 +104,30 @@ var MapList = Coordinate.extend({
             newMapList[newDirectionID] = this.getBlock(preDirectionID);
         }
         this.list = newMapList;
+        //set layout offset
+        var offsets = this.getMapOffset();
+        this.put(offsets.left, offsets.top);
     }
-    ,put : function(x, y) {
-        this.el.css({ left : x + 'px', top : y + 'px' });
+    ,put : function(left, top) {
+        this.el.css({ left : left + 'px', top : top + 'px' });
     }
     ,getMapOffset : function() {
         var positionXY = GI.character[GI.cID].getPosition();
+        var x = positionXY.x;
+        var y = positionXY.y;
+        /*
+        var mapBlockXY = this.getMapBlockXY(positionXY.x, positionXY.y);
+        var x = mapBlockXY.x;
+        var y = mapBlockXY.y;
+        //mapBlock offset
+        var left = (x - y) * this.HALFMAPWIDTH;
+        var top = - (x + y) * this.HALFMAPHEIGHT + this.HALFSCREENHEIGHT;
+        //position offset
+        var relativeXY = this.getRelativePositionXY(positionXY.x, positionXY.y);
+        */
+        var left = this.transferAbsolutePositionToOffsetLeft(x, y);
+        var top = this.transferAbsolutePositionToOffsetTop(x, y);
+
+        return { left : left, top : top };
     }
 });

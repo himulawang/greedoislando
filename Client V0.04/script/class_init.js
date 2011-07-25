@@ -83,7 +83,6 @@ var Init = Class.extend({
         this.mapList = new MapList;
         var xy = this.mapList.getPlayerAbsoluteXY();
         this.mapList.make(xy.x, xy.y);
-        //this.mapList.setPosition();
     }
     ,initCursor : function() {
         this.cursor = new Cursor;
