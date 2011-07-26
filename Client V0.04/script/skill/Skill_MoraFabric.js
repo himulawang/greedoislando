@@ -1,5 +1,4 @@
-var Skill_MoraFabric = Skill.extend({
-    init : function(skillID) {
-        this._super(skillID);
-    }
-});
+var Skill_MoraFabric = function() {};
+
+util.inherits(Skill_MoraFabric, Skill);
+//TODO this._super(skillID);

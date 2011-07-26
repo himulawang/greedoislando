@@ -5,16 +5,6 @@ var fc = {
     ,getBuffTime : function(duration) {
         return this.fix(duration / 1000) + 'S';
     }
-    ,fix : function(float) {
-        return typeof(float) === 'number' ? parseInt(float.toFixed()) : float;
-    }
-    ,objectLength : function(object) {
-        var c = 0;
-        for (var i in object) {
-            if (object.hasOwnProperty(i)) ++c;
-        }
-        return c;
-    }
     ,guid : function() {
         var guid = ""; 
         for (var i = 1; i <= 32; i++){ 
@@ -33,11 +23,5 @@ var fc = {
             string = '0' + string;
         }
         return string;
-    }
-    ,inObject : function(value, array) {
-        for (var i in array) {
-            if (array[i] === value) return i;
-        }
-        return undefined;
     }
 }

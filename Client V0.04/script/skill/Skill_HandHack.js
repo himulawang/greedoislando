@@ -1,5 +1,5 @@
-var Skill_HandHack = Skill.extend({
-    init : function(skillID) {
-        this._super(skillID);
-    }
-});
+var Skill_HandHack = function() {};
+
+util.inherits(Skill_HandHack, Skill);
+//TODO this._super(skillID);
+
