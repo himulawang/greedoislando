@@ -1,5 +1,4 @@
-var Skill_RightStraightPunch = Skill.extend({
-    init : function(skillID) {
-        this._super(skillID);
-    }
-});
+var Skill_RightStraightPunch = function() {};
+
+util.inherits(Skill_RightStraightPunch, Skill);
+//TODO this._super(skillID);
