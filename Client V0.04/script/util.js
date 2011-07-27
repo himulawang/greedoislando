@@ -20,4 +20,14 @@ var util = {
         }
         return undefined;
     }
-}
+};
+var $ = function(selector, context) {
+    var result;
+    context = context || document;
+    if (selector[0] === "#") {
+        result = context.querySelector(selector);
+    } else {
+        result = context.querySelectorAll(selector);
+    }
+    return result;
+};

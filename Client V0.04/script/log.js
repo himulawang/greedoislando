@@ -1,5 +1,6 @@
 var Log = function() {
     this.el = $("#ui-chat-history");
+    this.sysEl = $('#console');
     this.status = { //TODO
         0 : "Dead"
         ,1 : "Free"
@@ -7,6 +8,9 @@ var Log = function() {
         ,3 : "Criminal"
     }
 };
+Log.prototype.syslog = function(text){
+    this.sysEl.innerHTML = this.sysEl.innerHTML + "<div>" + text + "</div>";
+}
 Log.prototype.log = function(info) {
     this.el.prepend('<div>' + info + '</div>');
 };

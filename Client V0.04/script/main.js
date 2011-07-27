@@ -1,4 +1,4 @@
-
+//TODO
 var GI_TERRAIN_DEFINE = {
     2000 : 'Plain'
     ,2001 : 'BrokenWall'
@@ -9,11 +9,6 @@ var GI_TERRAIN_DEFINE = {
     ,2006 : 'Bridge'
 };
 
-var GI;
-var log;
-$(function(){
-    GI = new Init;
-    wsocket = new WsConnect;
-});
-
-
+document.addEventListener("DOMContentLoaded", function() {
+    GI = new World();
+}, false);
