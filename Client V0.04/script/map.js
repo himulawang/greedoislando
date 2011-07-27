@@ -1,20 +1,21 @@
-var Coordinate = function() {
+var Map = function() {
+    var g = global;
     //World
-    this.WORLDWIDTH = GI_MAP_WIDTH * GI_MAPBLOCK_X;
-    this.WORLDHEIGHT = GI_MAP_HEIGHT * GI_MAPBLOCK_Y;
+    this.WORLDWIDTH = g.GI_MAP_WIDTH * g.GI_MAPBLOCK_X;
+    this.WORLDHEIGHT = g.GI_MAP_HEIGHT * g.GI_MAPBLOCK_Y;
     this.HALFWORLDWIDTH = this.WORLDWIDTH / 2;
     this.HALFWORLDHEIGHT = this.WORLDHEIGHT / 2;
     //Map Block
-    this.MAPWIDTH = GI_MAP_WIDTH;
-    this.MAPHEIGHT = GI_MAP_HEIGHT;
+    this.MAPWIDTH = g.GI_MAP_WIDTH;
+    this.MAPHEIGHT = g.GI_MAP_HEIGHT;
     this.HALFMAPWIDTH = this.MAPWIDTH / 2;
     this.HALFMAPHEIGHT = this.MAPHEIGHT / 2;
     //Screen
-    this.SCREENWIDTH = GI_SCREEN_WIDTH;
-    this.SCREENHEIGHT = GI_SCREEN_HEIGHT;
+    this.SCREENWIDTH = g.GI_SCREEN_WIDTH;
+    this.SCREENHEIGHT = g.GI_SCREEN_HEIGHT;
     this.HALFSCREENWIDTH = this.SCREENWIDTH / 2;
     this.HALFSCREENHEIGHT = this.SCREENHEIGHT / 2;
-    this.GRIDQUANTITY = GI_GRID_QUANTITY;
+    this.GRIDQUANTITY = g.GI_GRID_QUANTITY;
     //Title
     this.TILEWIDTH = this.MAPWIDTH / this.GRIDQUANTITY;
     this.TILEHEIGHT = this.MAPHEIGHT / this.GRIDQUANTITY;
@@ -48,10 +49,10 @@ var Coordinate = function() {
     };
 };
 
-Coordinate.prototype.transferLogicToScreenX = function(x, y) {
+Map.prototype.transferLogicToScreenX = function(x, y) {
     return this.MAPWIDTH / 2 + (x - y) * this.HALFTILEWIDTH;
 };
-Coordinate.prototype.transferLogicToScreenY = function(x, y) {
+Map.prototype.transferLogicToScreenY = function(x, y) {
     return (x + y) * this.HALFTILEHEIGHT;
 };
 /*
@@ -62,7 +63,7 @@ Coordinate.prototype.transferScreenToLogicY = function(x, y) {
     return parseInt((this.MAPWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
 };
 */
-Coordinate.prototype.put = function(screenX, screenY) {
+Map.prototype.put = function(screenX, screenY) {
     //var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
     //var ScreenY = this.transferLogicToScreenY(this.x, this.y);
             
@@ -72,21 +73,21 @@ Coordinate.prototype.put = function(screenX, screenY) {
     $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
 };
 
-Coordinate.prototype.checkMoveOut = function(x, y) {
+Map.prototype.checkMoveOut = function(x, y) {
     if (x >= 0
         && x < this.GRIDQUANTITY
         && y >= 0
         && y < this.GRIDQUANTITY
     ) return true;
 };
-Coordinate.prototype.getCoordinateIndex = function(x, y) {
+Map.prototype.getCoordinateIndex = function(x, y) {
     return x + ',' + y;
 };
-Coordinate.prototype.getCoordinateXY = function(index) {
+Map.prototype.getCoordinateXY = function(index) {
     index = index.split(',');
     return {x : parseInt(index[0]), y : parseInt(index[1])};
 };
-Coordinate.prototype.getDirection = function(start, end) {
+Map.prototype.getDirection = function(start, end) {
     var startXY = this.getCoordinateXY(start);
     var endXY = this.getCoordinateXY(end);
     var deltaX = endXY.x - startXY.x;
@@ -95,27 +96,27 @@ Coordinate.prototype.getDirection = function(start, end) {
     var direction = this.DIRECTIONS[deltaIndex];
     return direction === undefined ? 0 : direction; //TODO use tringle cos / sin to fix this
 };
-Coordinate.prototype.getPlayerAbsoluteXY = function() {
-    return xy = GI.character[GI.cID].getPosition();
+Map.prototype.getPlayerAbsoluteXY = function() {
+    return xy = GI.characterList.getSelf().getPosition();
 };
 //mapBlock
-Coordinate.prototype.transferMapBlockXYToIndex = function(x, y) {
+Map.prototype.transferMapBlockXYToIndex = function(x, y) {
     return 'b' + fc.fill0(3, x) + '_' + fc.fill0(3, y); 
 };
-Coordinate.prototype.transferMapBlockIndexToXY = function(index) {
+Map.prototype.transferMapBlockIndexToXY = function(index) {
     var xy = /^b(\d{3})_(\d{3})$/.exec(index);
     return { x : parseInt(xy[1]), y : parseInt(xy[2]) };
 };
-Coordinate.prototype.transferMapBlockLogicToLayoutX = function(x, y) {
+Map.prototype.transferMapBlockLogicToLayoutX = function(x, y) {
     return (x - y) * this.HALFMAPWIDTH;
 };
-Coordinate.prototype.transferMapBlockLogicToLayoutY = function(x, y) {
+Map.prototype.transferMapBlockLogicToLayoutY = function(x, y) {
     return (x + y) * this.HALFMAPHEIGHT;
 };
 //absolutePosition
-Coordinate.prototype.transferAbsolutePositionToOffsetLeft = function(x, y) {
+Map.prototype.transferAbsolutePositionToOffsetLeft = function(x, y) {
     return (x - y) * this.HALFTILEWIDTH - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
 };
-Coordinate.prototype.transferAbsolutePositionToOffsetTop = function(x, y) {
+Map.prototype.transferAbsolutePositionToOffsetTop = function(x, y) {
     return - (x + y) * this.HALFTILEHEIGHT + this.HALFSCREENHEIGHT;
 };

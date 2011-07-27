@@ -5,3 +5,7 @@ var cancelRequestAnimationFrame = webkitCancelRequestAnimationFrame;
 
 var ws;
 var GI;
+
+document.addEventListener("DOMContentLoaded", function() {
+    GI = new World();
+}, false);
