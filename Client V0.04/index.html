@@ -13,6 +13,9 @@
     <script src='../config/system.js'></script>
     <script src='../config/animation_material.js'></script>
     <!-- Constant End -->
+    <!-- Mapping Start -->
+    <script src='script/mapping/character_mapping.js'></script>
+    <!-- Mapping End -->
     <!-- Map Data Start -->
     <script src='../config/map/a001_001/b001_001.js'></script>
     <script src='../config/map/a001_001/b001_002.js'></script>
@@ -46,12 +49,16 @@
     <!-- Map Data End -->
     <script src='script/util.js'></script>
     <script src='script/fc.js'></script>
-    <script src='script/keyboard.js'></script>
-    <script src='script/class_event.js'></script>
     <script src='script/log.js'></script>
     <script src='script/timer.js'></script>
+
+    <!-- Event Start -->
+    <script src='script/event/mouse.js'></script>
+    <script src='script/event/keyboard.js'></script>
+    <script src='script/event/event.js'></script>
+    <!-- Event End -->
     <!-- Skill Start -->
-    <script src='script/skill/class_skill.js'></script>
+    <script src='script/skill/skill.js'></script>
     <script src='script/skill/skill_fadingsteps.js'></script>
     <script src='script/skill/skill_flyinglighteningBall.js'></script>
     <script src='script/skill/skill_handhack.js'></script>
@@ -66,7 +73,7 @@
     <script src='script/map/map_list.js'></script>
     <script src='script/map/map_block.js'></script>
     <!-- Map End -->
-    <script src='script/class_cursor.js'></script>
+    <script src='script/cursor.js'></script>
     <script src='script/actionqueue.js'></script>
     <script src='script/buff.js'></script>
     <script src='script/material.js'></script>
@@ -83,6 +90,7 @@
     <!-- Effect End -->
 
     <!-- Character Start -->
+    <script src='script/character/character_list.js'></script>
     <script src='script/character/character.js'></script>
     <script src='script/character/character_gon.js'></script>
     <script src='script/character/character_killua.js'></script>
@@ -102,13 +110,12 @@
     <!-- UI End -->
     <script src='script/connect.js'></script>
     <script src='script/input.js'></script>
-    <script src='script/main.js'></script>
 
 </head>
 <body>
     <div id='login'>
-        <div id='char-one' class='pickchar'>Gon</div>
-        <div id='char-two' class='pickchar'>Killua</div>
+        <div id='Gon' class='choose-character'>Gon</div>
+        <div id='Killua' class='choose-character'>Killua</div>
     </div>
     <div id='main'>
         <div id='map'></div>

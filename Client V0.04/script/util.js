@@ -20,6 +20,9 @@ var util = {
         }
         return undefined;
     }
+    ,remove : function(el) {
+        el.parentNode.removeChild(el);
+    }
 };
 var $ = function(selector, context) {
     var result;

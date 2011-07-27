@@ -28,7 +28,7 @@ body {
     height: 300px;
 }
 
-.pickchar {
+.choose-character {
     width: 260px;
     height: 300px;
     border: 1px solid #000000;
@@ -37,7 +37,7 @@ body {
     text-align:center;
 }
 
-.pickchar:hover {
+.choose-character:hover {
     border: 1px solid #FFA500;
     color: #FFA500;
 }
@@ -51,20 +51,20 @@ body {
     float: right;
 }
 
-#char-one {
+#Gon {
     background : url("../images/avatar/gon-2.png") no-repeat center; 
     cursor: pointer;
 }
 
-#char-one:hover {
+#Gon:hover {
     background : url("../images/avatar/gon-1.png") no-repeat center;
 }
 
-#char-two {
+#Killua {
     background : url("../images/avatar/killua-2.png") no-repeat center;
     cursor: pointer;
 }
 
-#char-two:hover {
+#Killua:hover {
     background : url("../images/avatar/killua-1.png") no-repeat center;
 }

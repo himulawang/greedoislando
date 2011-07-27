@@ -46,22 +46,21 @@ Input.prototype.initMyCharacter = function(data, stream) {
     };
 
     // init my character
-    GI.cID = cID;
-    GI.character[cID] = eval('new '+ data.name); //TODO CHANGE TO ARRAY => CLASS
-    var character = GI.character[cID];
-    character.setSelf();
-    character.make(data);
+    var character = GI.characterList.setMyPlayer(data);
     
     //TODO For hacking character position
     character.setPosition(479, 479);
 
     // init map
+    /*
     $("#login").fadeOut(100, function(){
         $("#login").remove();
         $("#main").fadeIn(100, function(){
             $(".hiddenChar").show();
         });
     });
+    */
+    util.remove($('#login'));
     GI.initMap();
     // init log
     GI.initLog();
@@ -69,29 +68,21 @@ Input.prototype.initMyCharacter = function(data, stream) {
     GI.initTimer();
 };
 Input.prototype.newCharacterLogin = function(data, stream) {
-    var cID = data.cID;
-    var character = GI.character[cID];
-    if (character) return;
-
-    GI.character[cID] = eval('new ' + data.name); //TODO CHANGE TO ARRAY => CLASS
-    GI.character[cID].make(data);
+    GI.characterList.setPlayer(data);
 };
 Input.prototype.getOnlineCharacter = function(data, stream) {
     for (var cID in data) {
-        if (GI.character[cID]) continue;
-        GI.character[cID] = eval('new ' + data[cID].name); //TODO CHANGE TO ARRAY => CLASS
-        GI.character[cID].make(data[cID]);
+        if (GI.characterList.getPlayer(cID)) continue;
+        GI.characterList.setPlayer(data);
     }
 };
 Input.prototype.hpChange = function(data, stream) {
     GI.log.hpChange(data);
-    var cID = data.cID;
-    GI.character[cID].setHP(data.nowHP);
+    GI.characterList.getPlayer(data.cID).setHP(data.nowHP);
 };
 Input.prototype.nvChange = function(data, stream) {
     GI.log.nvChange(data);
-    var cID = data.cID;
-    GI.character[cID].setNV(data.nowNV);
+    GI.characterList.getPlayer(data.cID).setNV(data.nowNV);
 };
 Input.prototype.castSkillOutOfRange = function(data, stream) {
 };
@@ -105,36 +96,30 @@ Input.prototype.statusChange = function(data, stream) {
     GI.log.statusChange(data);
 };
 Input.prototype.freeRecover = function(data, stream) {
-    var cID = data.cID;
-    var character = GI.character[cID];
+    var character = GI.characterList.getPlayer(data.cID);
     character.setHP(data.hp);
     character.setNV(data.nv);
 };
 Input.prototype.logout = function(data, stream) {
     var cID = data.cID;
-    var character = GI.character[cID];
-    if (!character) return;
-    cancelRequestAnimationFrame(character.animation.canvasAnimationID);
-    cancelRequestAnimationFrame(character.animation.moveAnimationID);
-    delete GI.character[cID];
-    $("#" + cID).remove();
+    GI.characterList.delPlayer(cID);
+    util.remove($("#" + cID));
 };
 Input.prototype.keepSession = function(data, stream) {
     var lag = Date.now() - data.timestamp;
     GI.lag = lag;
-    $("#lag").html(lag + 'ms');
+    $("#lag").innerHTML = lag + 'ms';
 };
 Input.prototype.addActionQueue = function(data, stream){
-    var cID = data.cID;
-    GI.character[cID].actionQueue.add(stream);
+    GI.characterList.getPlayer(data.cID).actionQueue.add(stream);
 };
 Input.prototype.debuff = function(data, stream) {
     var cID = data.cID;
     var buff = new Buff(data);
     if (data.isOn === 1) {
-        GI.character[cID].setBuff(buff);
+        GI.characterList.getPlayer(cID).setBuff(buff);
     } else if (data.isOn === 0) {
-        GI.character[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
+        GI.characterList.getPlayer(cID).delBuff(buff.getSourceCID(), buff.getSkillID());
     }
     GI.log.debuff(data);
 };
@@ -142,14 +127,14 @@ Input.prototype.buff = function(data, stream) {
     var cID = data.cID;
     var buff = new Buff(data);
     if (data.isOn === 1) {
-        GI.character[cID].setBuff(buff);
+        GI.characterList.getPlayer(cID).setBuff(buff);
     } else if (data.isOn === 0) {
-        GI.character[cID].delBuff(buff.getSourceCID(), buff.getSkillID());
+        GI.characterList.getPlayer(cID).delBuff(buff.getSourceCID(), buff.getSkillID());
     }
     GI.log.buff(data);
 };
 Input.prototype.castSkill = function(data, stream) {
-    GI.character[data.cID].castSkill(data);
+    GI.characterList.getPlayer(data.cID).castSkill(data);
 };
 Input.prototype.skillCDing = function(data, stream) {
     GI.log.skillCDing(data);
