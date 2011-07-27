@@ -1,7 +1,18 @@
 var Timer = function() {
+    this.sessionKeeper = null;
     this.buff = null;
     this.skillCD = null;
     this.makeBuffTimer();
+    this.makeSessionKeeper();
+};
+Timer.prototype.makeSessionKeeper = function() {
+    this.sessionKeeper = setInterval(function() {
+        var obj = {
+            type : "keepSession"
+            ,timestamp : fc.getNowTimestamp()
+        }
+        ws.sendMessage(obj);
+    }, 5000);
 };
 Timer.prototype.makeBuffTimer = function() {
     this.buff = setInterval(this.buffTimer, 100);
