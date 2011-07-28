@@ -6,26 +6,26 @@ var Buff = function(data) {
     this.createStamp = fc.getNowTimestamp();
 };
 
-Buff.prototype.getSourceCID : function() {
+Buff.prototype.getSourceCID = function() {
     return this.sourceCID;
 };
-Buff.prototype.getSkillID : function() {
+Buff.prototype.getSkillID = function() {
     return this.skillID;
 };
-Buff.prototype.getDuration : function() {
+Buff.prototype.getDuration = function() {
     return this.duration;
 };
-Buff.prototype.getStack : function() {
+Buff.prototype.getStack = function() {
     return this.stack;
 };
-Buff.prototype.getCreateStamp : function() {
+Buff.prototype.getCreateStamp = function() {
     return this.createStamp;
 };
-Buff.prototype.getRemainDuration : function() {
+Buff.prototype.getRemainDuration = function() {
     var remainDuration = this.getDuration() - (fc.getNowTimestamp() - this.getCreateStamp());
     if (remainDuration < 0) remainDuration = 0;
     return fc.fix(remainDuration);
 };
-Buff.prototype.getStringTime : function() {
+Buff.prototype.getStringTime = function() {
     return fc.fix(this.getRemainDuration / 1000) + 'S';
-}
+};

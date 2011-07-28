@@ -1,15 +1,17 @@
 var World = function() {
     this.lag = null;
     this.target = null;
+};
+
+World.prototype.initLogin = function() {
+    this.initLog();
     this.initMaterial();
     this.initInput();
     this.initCursor();
     this.initCharacterList();
-
     this.initConnection();
     this.initEvent();
 };
-
 World.prototype.initEvent = function() {
     new Event();
 };

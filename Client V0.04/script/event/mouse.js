@@ -7,13 +7,7 @@ var Mouse = function() {
 Mouse.prototype.initLogin = function() {
     var el = $('.choose-character');
     for (var i in el) {
-        el[i].onmouseup = function() {
-            var obj = {
-                type : "selectCharacter"
-                ,character : el[i].id
-            }
-            ws.send(obj);
-        };
+        el[i].onmouseup = function() { ws.send({ type : "selectCharacter", character : this.id }); };
     }
 };
 Mouse.prototype.initMouseOverGrid = function() {

@@ -8,4 +8,5 @@ var GI;
 
 document.addEventListener("DOMContentLoaded", function() {
     GI = new World();
+    GI.initLogin();
 }, false);
