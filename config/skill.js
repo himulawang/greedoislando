@@ -1,4 +1,4 @@
-var SKILL = 
+global.SKILL = 
 {
     "10000" : {
         "skillID" : 10000

@@ -1,20 +1,20 @@
 var Map = function() {
     //World
-    this.WORLDWIDTH = GI_MAP_WIDTH * GI_MAPBLOCK_X;
-    this.WORLDHEIGHT = GI_MAP_HEIGHT * GI_MAPBLOCK_Y;
+    this.WORLDWIDTH = global.GI_MAP_WIDTH * global.GI_MAPBLOCK_X;
+    this.WORLDHEIGHT = global.GI_MAP_HEIGHT * global.GI_MAPBLOCK_Y;
     this.HALFWORLDWIDTH = this.WORLDWIDTH / 2;
     this.HALFWORLDHEIGHT = this.WORLDHEIGHT / 2;
     //Map Block
-    this.MAPWIDTH = GI_MAP_WIDTH;
-    this.MAPHEIGHT = GI_MAP_HEIGHT;
+    this.MAPWIDTH = global.GI_MAP_WIDTH;
+    this.MAPHEIGHT = global.GI_MAP_HEIGHT;
     this.HALFMAPWIDTH = this.MAPWIDTH / 2;
     this.HALFMAPHEIGHT = this.MAPHEIGHT / 2;
     //Screen
-    this.SCREENWIDTH = GI_SCREEN_WIDTH;
-    this.SCREENHEIGHT = GI_SCREEN_HEIGHT;
+    this.SCREENWIDTH = global.GI_SCREEN_WIDTH;
+    this.SCREENHEIGHT = global.GI_SCREEN_HEIGHT;
     this.HALFSCREENWIDTH = this.SCREENWIDTH / 2;
     this.HALFSCREENHEIGHT = this.SCREENHEIGHT / 2;
-    this.GRIDQUANTITY = GI_GRID_QUANTITY;
+    this.GRIDQUANTITY = global.GI_GRID_QUANTITY;
     //Title
     this.TILEWIDTH = this.MAPWIDTH / this.GRIDQUANTITY;
     this.TILEHEIGHT = this.MAPHEIGHT / this.GRIDQUANTITY;
@@ -23,29 +23,8 @@ var Map = function() {
 
     this.SQUARESIDE = Math.sqrt(Math.pow(this.MAPWIDTH, 2) + Math.pow(this.MAPHEIGHT, 2));
 
-    this.DIRECTIONS = {
-        //deltaX,deltaY
-        '0,0' : -1
-        ,'0,-1' : 0
-        ,'1,-1' : 1
-        ,'1,0' : 2
-        ,'1,1' : 3
-        ,'0,1' : 4
-        ,'-1,1' : 5
-        ,'-1,0' : 6
-        ,'-1,-1' : 7
-    };
-    this.VECTOR = {
-        '-1' : { x : 0, y : 0 }
-        ,'0' : { x : 0, y :-1 }
-        ,'1' : { x : 1, y :-1 }
-        ,'2' : { x : 1, y : 0 }
-        ,'3' : { x : 1, y : 1 }
-        ,'4' : { x : 0, y : 1 }
-        ,'5' : { x :-1, y : 1 }
-        ,'6' : { x :-1, y : 0 }
-        ,'7' : { x :-1, y :-1 }
-    };
+    this.DIRECTIONS = global.DIRECTION;
+    this.VECTOR = global.VECTOR;
 };
 
 Map.prototype.transferLogicToScreenX = function(x, y) {

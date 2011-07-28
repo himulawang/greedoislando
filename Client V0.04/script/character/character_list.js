@@ -1,4 +1,5 @@
 var Character_List = function() {
+    this.CHARACTER_MAPPING = global.CHARACTER_MAPPING;
     this.selfCID = null;
     this.playerList = {};
     this.npcList = {};
@@ -22,7 +23,8 @@ Character_List.prototype.getPlayerList = function(cID) {
 };
 Character_List.prototype.setPlayer = function(data) {
     var cID = data.cID;
-    var character = new global.CHARACTER_MAPPING[data.name]();
+    console.log(data);
+    var character = new this.CHARACTER_MAPPING[data.name](data.name);
     character.make(data);
     this.playerList[cID] = character;
     return character;

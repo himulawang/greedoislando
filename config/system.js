@@ -1,4 +1,4 @@
-var NIENSYSTEM = 
+global.NIENSYSTEM = 
 {
     "100" : {
         "systemID" : 100

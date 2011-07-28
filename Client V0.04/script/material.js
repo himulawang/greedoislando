@@ -1,15 +1,15 @@
 var Material = function() {
+    this.ANIMATION_MATERIAL = global.ANIMATION_MATERIAL;
     this.images = {};
-    this.initMaterial();
     this.loadCharacterList();
     this.loadMapElement();
     this.loadEffectList();
 };
 
 Material.prototype.loadCharacterList = function() {
-    for (var character in ANIMATION_MATERIAL.character) {
+    for (var character in this.ANIMATION_MATERIAL.character) {
         this.images[character] = {};
-        this.loadCharacter(ANIMATION_MATERIAL.character[character], character);
+        this.loadCharacter(this.ANIMATION_MATERIAL.character[character], character);
     }
 };
 Material.prototype.loadCharacter = function(character, characterName) {
@@ -27,24 +27,20 @@ Material.prototype.loadCharacter = function(character, characterName) {
     }
 };
 Material.prototype.loadMapElement = function() {
-    //TODO
-    var terrains = {
-        2001 : 'rock'
-        ,2002 : 'tree'
-        ,2004 : 'pillar'
-    };
+    var TERRAIN = global.TERRAIN;
     var tmp = {}
-    for (var objID in terrains) {
+    for (var objID in TERRAIN) {
+        if (!TERRAIN[objID].render) continue;
         var img = new Image();
-        img.src = 'images/terrain/' + terrains[objID] + '-1-s.png';
+        img.src = 'images/terrain/' + TERRAIN[objID].name + '-1-s.png';
         tmp[objID] = img;
     }
     this.images['map'] = tmp;
 };
 Material.prototype.loadEffectList = function() {
-    for (var effectName in ANIMATION_MATERIAL.effect) {
+    for (var effectName in this.ANIMATION_MATERIAL.effect) {
         this.images[effectName] = {};
-        this.loadEffect(ANIMATION_MATERIAL.effect[effectName], effectName);
+        this.loadEffect(this.ANIMATION_MATERIAL.effect[effectName], effectName);
     }
 };
 Material.prototype.loadEffect = function(effect, effectName) {
@@ -54,7 +50,6 @@ Material.prototype.loadEffect = function(effect, effectName) {
         tmp[action] = [];
         for (var i = 0; i < effect[action].frames; ++i) {
             tmp[action].push(new Image);
-            console.log('images/effect/' + effectName.toLowerCase() + '/' + action + i + '.png');
             tmp[action][i].src = 'images/effect/' + effectName.toLowerCase() + '/' + action + '/' + i + '.png';
         }
     }

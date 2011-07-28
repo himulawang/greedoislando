@@ -1,5 +1,6 @@
-var Character = function() {
-    this.constructor.super_.apply(this, arguments);
+var Character = function(name) {
+    console.dir(this);
+    this.super_(arguments);
     this.self = false;
     this.targeted = false;
 };

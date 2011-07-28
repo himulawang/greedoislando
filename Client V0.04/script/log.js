@@ -1,12 +1,9 @@
 var Log = function() {
     this.el = $("#ui-chat-history");
     this.sysEl = $('#console');
-    this.status = { //TODO
-        0 : "Dead"
-        ,1 : "Free"
-        ,2 : "Combat"
-        ,3 : "Criminal"
-    }
+    this.socialStatus = global.SOCIAL_STATUS;
+    this.characterStatus = global.CHARACTER_STATUS;
+
 };
 Log.prototype.syslog = function(text){
     $.append(this.sysEl, '<div>' + text + '</div>');
@@ -21,7 +18,7 @@ Log.prototype.getSkillName = function(skillID) {
     return SKILL[skillID].name;
 };
 Log.prototype.getStatusName = function(statusID) {
-    return this.status[statusID];
+    return this.socialStatus[statusID]; //TODO seprate 2 statuses
 };
 Log.prototype.castSkill = function(data) {
     var caster = this.truncateCID(data.cID);

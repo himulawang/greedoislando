@@ -6,10 +6,10 @@ var Cursor = function() {
 
     this.preCastSkill = false;
     this.el = $('#cursor');
-    this.canvas = el.getContext('2d');
+    this.canvas = this.el.getContext('2d');
 
-    el.width = global.GI_CURSOR_WIDTH;
-    el.height = global.GI_CURSOR_HEIGHT;
+    this.el.width = global.GI_CURSOR_WIDTH;
+    this.el.height = global.GI_CURSOR_HEIGHT;
 
     this.draw();
     this.startBreath();

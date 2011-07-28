@@ -1,4 +1,4 @@
-var ANIMATION_MATERIAL = 
+global.ANIMATION_MATERIAL = 
 {
     "character" : {
         "gon" : {
