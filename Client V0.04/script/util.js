@@ -20,17 +20,24 @@ var util = {
         }
         return undefined;
     }
-    ,remove : function(el) {
-        el.parentNode.removeChild(el);
-    }
 };
 var $ = function(selector, context) {
-    var result;
     context = context || document;
-    if (selector[0] === "#") {
-        result = context.querySelector(selector);
-    } else {
-        result = context.querySelectorAll(selector);
-    }
-    return result;
+    if (selector[0] === "#") return context.querySelector(selector);
+    return context.querySelectorAll(selector);
 };
+$.remove = function(el) {
+    el.parentNode.removeChild(el);
+};
+$.prepend = function(el, html) {
+    el.innerHTML = html + el.innerHTML;
+};
+$.append = function(el, html) {
+    el.innerHTML = el.innerHTML + html;
+};
+$.left = function(el, value) {
+    el.style.left = value;
+}
+$.top = function(el, value) {
+    el.style.top = value;
+}

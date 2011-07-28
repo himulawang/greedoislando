@@ -1,13 +1,11 @@
 var Material = function() {
     this.images = {};
     this.initMaterial();
-};
-
-Material.prototype.initMaterial = function(){
     this.loadCharacterList();
     this.loadMapElement();
     this.loadEffectList();
 };
+
 Material.prototype.loadCharacterList = function() {
     for (var character in ANIMATION_MATERIAL.character) {
         this.images[character] = {};

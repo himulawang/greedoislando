@@ -2,9 +2,6 @@ var fc = {
     getNowTimestamp : function() {
         return Date.now();
     }
-    ,getBuffTime : function(duration) { // TODO move to other place
-        return this.fix(duration / 1000) + 'S';
-    }
     ,guid : function() {
         var guid = ""; 
         for (var i = 1; i <= 32; i++){ 

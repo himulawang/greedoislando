@@ -7,7 +7,7 @@ var Character_List = function() {
 
 Character_List.prototype.getSelf = function() {
     return this.playerList[this.selfCID];
-}
+};
 Character_List.prototype.getPlayer = function(cID) {
     return this.playerList[cID];
 };
@@ -16,6 +16,9 @@ Character_List.prototype.getNPC = function(cID) {
 };
 Character_List.prototype.getMonster = function(cID) {
     return this.monsterList[cID];
+};
+Character_List.prototype.getPlayerList = function(cID) {
+    return this.playerList;
 };
 Character_List.prototype.setPlayer = function(data) {
     var cID = data.cID;

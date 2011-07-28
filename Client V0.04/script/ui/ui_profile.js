@@ -5,13 +5,13 @@ var UI_Profile = function(cID) {
 util.inherits(UI_Profile, UI);
 
 UI_Profile.prototype.setName = function(name) {
-    this.elName.html(name);
+    this.elName.innerHTML = name;
 };
 UI_Profile.prototype.setHP = function(hp) {
-    this.elHP.html(hp);
+    this.elHP.innerHTML = hp;
 };
 UI_Profile.prototype.setNV = function(nv) {
-    this.elNV.html(nv);
+    this.elNV.innerHTML = nv;
 };
 UI_Profile.prototype.setBuff = function(buff) {
     var buffEl = this.getBuffEl(buff.getSourceCID(), buff.getSkillID());
@@ -24,7 +24,7 @@ UI_Profile.prototype.setBuff = function(buff) {
 UI_Profile.prototype.getBuffEl = function(cID, skillID) {
     var buffID = this.getBuffID(cID, skillID);
     var buffEl = $("#" + buffID);
-    if (buffEl.length === 0) return false;
+    if (buffEl === null) return false;
     return buffEl;
 };
 UI_Profile.prototype.getBuffID = function(cID, skillID) {
@@ -32,7 +32,7 @@ UI_Profile.prototype.getBuffID = function(cID, skillID) {
 };
 UI_Profile.prototype.delBuff = function(cID, skillID) {
     var buffID = this.getBuffID(cID, skillID);
-    $("#" + buffID).remove();
+    $.remove($("#" + buffID));
 };
 UI_Profile.prototype.createBuff = function(buff) {
     var html = '';
@@ -46,11 +46,12 @@ UI_Profile.prototype.createBuff = function(buff) {
     html += "<div class='ui-buff-stack'>" + stack + "stk</div>";
     html += "<div class='ui-buff-time'>" + duration + "</div>";
     html += "</div>";
-    this.elBuff.prepend(html);
+    $.prepend(this.elBuff, html);
 };
 UI_Profile.prototype.refreshBuff = function(buff) {
     var buffEl = this.getBuffEl(buff.getSourceCID(), buff.getSkillID());
     if (!buffEl) return;
+    //TODO
     buffEl.children(".ui-buff-stack").html(buff.getStack() + 'stk');
-    buffEl.children(".ui-buff-time").html(fc.getBuffTime(buff.getRemainDuration()));
+    buffEl.children(".ui-buff-time").html(buff.getStringTime());
 };
