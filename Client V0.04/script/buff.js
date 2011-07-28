@@ -26,3 +26,6 @@ Buff.prototype.getRemainDuration : function() {
     if (remainDuration < 0) remainDuration = 0;
     return fc.fix(remainDuration);
 };
+Buff.prototype.getStringTime : function() {
+    return fc.fix(this.getRemainDuration / 1000) + 'S';
+}

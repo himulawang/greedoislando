@@ -9,10 +9,10 @@ var Log = function() {
     }
 };
 Log.prototype.syslog = function(text){
-    this.sysEl.innerHTML = this.sysEl.innerHTML + "<div>" + text + "</div>";
+    $.append(this.sysEl, '<div>' + text + '</div>');
 }
-Log.prototype.log = function(info) {
-    this.el.prepend('<div>' + info + '</div>');
+Log.prototype.log = function(text) {
+    $.prepend(this.el, '<div>' + text + '</div>');
 };
 Log.prototype.truncateCID = function(cID) {
     return '[' + cID.substr(0, 4) + ']';

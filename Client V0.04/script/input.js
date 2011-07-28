@@ -31,21 +31,7 @@ Input.prototype.execute = function(stream) {
 /* Process Start */
 Input.prototype.initMyCharacter = function(data, stream) {
     var cID = data.cID;
-    // init UI
-    var myStatus = new UI_MyStatus(cID);
-    var targetStatus = new UI_TargetStatus(cID);
-    var communication = new UI_Communication(cID);
-    var skillbar = new UI_SkillBar(cID);
-    var chargebar = new UI_ChargeBar(cID);
-    GI.ui = {
-        myStatus : myStatus
-        ,targetStatus : targetStatus
-        ,communication : communication
-        ,skillbar : skillbar
-        ,chargebar : chargebar
-    };
 
-    // init my character
     var character = GI.characterList.setMyPlayer(data);
     
     //TODO For hacking character position
@@ -60,12 +46,11 @@ Input.prototype.initMyCharacter = function(data, stream) {
         });
     });
     */
-    util.remove($('#login'));
-    GI.initMap();
-    // init log
+    $.remove($('#login'));
+    GI.initMapList();
     GI.initLog();
-    // init timers
     GI.initTimer();
+    GI.initUI();
 };
 Input.prototype.newCharacterLogin = function(data, stream) {
     GI.characterList.setPlayer(data);
@@ -103,7 +88,7 @@ Input.prototype.freeRecover = function(data, stream) {
 Input.prototype.logout = function(data, stream) {
     var cID = data.cID;
     GI.characterList.delPlayer(cID);
-    util.remove($("#" + cID));
+    $.remove($("#" + cID));
 };
 Input.prototype.keepSession = function(data, stream) {
     var lag = Date.now() - data.timestamp;

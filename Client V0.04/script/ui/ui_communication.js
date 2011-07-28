@@ -5,7 +5,7 @@ var UI_Communication = function(cID) {
     html += "<div id='ui-chat-history'></div>";
     html += "<input style='width: 356px; height: 12px; margin-left: auto; margin-right: auto;'>";
     html += "</div>";
-    $("#ui").prepend(html); //TODO
+    $.prepend($("#ui"), html);
 };
 
 util.inherits(UI_Communication, UI);

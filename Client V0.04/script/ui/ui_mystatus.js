@@ -10,7 +10,7 @@ var UI_MyStatus = function() {
     html += "<div class='clear'></div>";
     html += "<div id='ui-my-buff-div'></div>";
     html += "</div>";
-    $("#ui").prepend(html); //TODO
+    $.prepend($("#ui"), html);
     this.elName = $("#ui-my-avartar");
     this.elHP = $("#ui-my-profile-hp");
     this.elNV = $("#ui-my-profile-nv");

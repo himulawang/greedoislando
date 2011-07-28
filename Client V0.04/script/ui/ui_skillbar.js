@@ -15,7 +15,7 @@ UI_SkillBar.prototype.makeBar = function() { //skill list
     html += "</table>";
     html += "</div>";
     html += "</div>";
-    $("#ui").prepend(html);// TODO
+    $.prepend($("#ui"), html);
     this.makeSkill();
 };
 UI_SkillBar.prototype.makeSkill = function() {
