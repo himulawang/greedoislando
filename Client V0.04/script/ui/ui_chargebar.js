@@ -1,5 +1,5 @@
 var UI_ChargeBar = function(cID) {
-    this.constructor.super_.apply(this, arguments);
+    UI_ChargeBar.super_.apply(this, arguments);
     var html = '';
     html += "<div id='ui-charge-bar-div'>";
     html += "<div id='ui-charge-bar-progress'></div>";

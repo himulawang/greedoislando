@@ -1,7 +1,8 @@
-var Skill_MoraStone = function() {};
+var Skill_MoraStone = function(skillID) {
+    Skill_MoraStone.super_.apply(this, arguments);
+};
 
 util.inherits(Skill_MoraStone, Skill);
-//TODO this._super(skillID);
 
 Skill_MoraStone.prototype.keydown = function(keyboard, keyCode) {
     if (!keyboard.setKeyDownStamp(keyCode)) {

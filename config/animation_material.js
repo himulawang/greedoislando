@@ -1,7 +1,7 @@
 global.ANIMATION_MATERIAL = 
 {
     "character" : {
-        "gon" : {
+        "Gon" : {
             "stand" : {
                 "frames" : 2
                 ,"duration" : 800
@@ -35,7 +35,7 @@ global.ANIMATION_MATERIAL =
                 ,"offsetY" : 81.5
             }
         }
-        ,"killua" : {
+        ,"Killua" : {
             "stand" : {
                 "frames" : 2
                 ,"duration" : 800

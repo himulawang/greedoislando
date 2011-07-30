@@ -1,5 +1,5 @@
 var UI_Skill = function(cID) {
-    this.constructor.super_.apply(this, arguments);
+    UI_Skill.super_.apply(this, arguments);
 };
 
 util.inherits(UI_Skill, UI);

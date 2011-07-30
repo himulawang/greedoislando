@@ -1,6 +1,5 @@
 var Character_Gon = function(name) {
-    console.log(this);
-    this.super_(arguments);
+    Character_Gon.super_.apply(this, arguments);
     this.name = name;
     this.type = 'Gon';
 };

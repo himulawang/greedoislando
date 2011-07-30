@@ -1,4 +1,4 @@
-var ActionQueue = function() {
+var ActionQueue = function(owner) {
     this.owner = owner;
     this.queue = [];
 };

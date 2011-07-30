@@ -35,22 +35,15 @@ Input.prototype.initMyCharacter = function(data, stream) {
     var character = GI.characterList.setMyPlayer(data);
     
     //TODO For hacking character position
-    character.setPosition(479, 479);
+    character.setPosition(22, 20);
 
-    // init map
-    /*
-    $("#login").fadeOut(100, function(){
-        $("#login").remove();
-        $("#main").fadeIn(100, function(){
-            $(".hiddenChar").show();
-        });
-    });
-    */
-    $.remove($('#login'));
     GI.initMapList();
     GI.initLog();
     GI.initTimer();
     GI.initUI();
+
+    $.remove($('#login'));
+    $.show($('#main'));
 };
 Input.prototype.newCharacterLogin = function(data, stream) {
     GI.characterList.setPlayer(data);

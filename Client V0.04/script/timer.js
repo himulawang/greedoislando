@@ -14,7 +14,7 @@ Timer.prototype.startSkillCD = function() {
     this.list['skillCD'] = setInterval(this.skillCD, 50);
 };
 Timer.prototype.session = function() {
-    ws.sendMessage({ type : "keepSession", timestamp : fc.getNowTimestamp() });
+    ws.send({ type : "keepSession", timestamp : fc.getNowTimestamp() });
 };
 Timer.prototype.buff = function() {
     var characterList = GI.characterList.getPlayerList();
@@ -22,7 +22,7 @@ Timer.prototype.buff = function() {
     var buffList = myCharacter.buff;
     var index = null, buff = null;
     //self Buff UI
-    if (fc.objectLength(buffList) != 0) {
+    if (util.objectLength(buffList) != 0) {
         for (index in buffList) {
             buff = buffList[index];
             GI.ui.myStatus.refreshBuff(buff);
@@ -34,7 +34,7 @@ Timer.prototype.buff = function() {
     if (!targetCID) return;
 
     var buffList = characterList.getPlayer(targetCID).buff;
-    if (fc.objectLength(buffList) != 0) {
+    if (util.objectLength(buffList) != 0) {
         for (index in buffList) {
             buff = buffList[index];
             GI.ui.targetStatus.refreshBuff(buff);

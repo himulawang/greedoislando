@@ -1,7 +1,8 @@
-var Skill_FlyingLighteningBall = function() {};
+var Skill_FlyingLighteningBall = function(skillID) {
+    Skill_FlyingLighteningBall.super_.apply(this, arguments);
+}
 
 util.inherits(Skill_FlyingLighteningBall, Skill);
-//TODO this._super(skillID);
 
 Skill_FlyingLighteningBall.prototype.cast = function(data) {
     var effect = new Effect_LightingBall(this.owner);

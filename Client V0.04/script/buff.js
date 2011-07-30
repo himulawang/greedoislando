@@ -24,8 +24,8 @@ Buff.prototype.getCreateStamp = function() {
 Buff.prototype.getRemainDuration = function() {
     var remainDuration = this.getDuration() - (fc.getNowTimestamp() - this.getCreateStamp());
     if (remainDuration < 0) remainDuration = 0;
-    return fc.fix(remainDuration);
+    return util.fix(remainDuration);
 };
 Buff.prototype.getStringTime = function() {
-    return fc.fix(this.getRemainDuration / 1000) + 'S';
+    return util.fix(this.getRemainDuration / 1000) + 'S';
 };

@@ -113,6 +113,7 @@
     <script src='script/input.js'></script>
 
     <!-- Mapping Start -->
+    <script src='script/mapping/skill_mapping.js'></script>
     <script src='script/mapping/character_mapping.js'></script>
     <!-- Mapping End -->
 </head>
@@ -123,10 +124,8 @@
     </div>
     <div id='main'>
         <div id='map'></div>
-        <canvas class='layout' id='map-element'></canvas>
-        <canvas id='cursor' style='position: absolute;'></canvas>
         <div class='layout' id='character-animation'></div>
-        <canvas class='layout' id='grid'></canvas>
+        <div class='layout' id='grid'><canvas id='cursor' style='position: absolute;'></canvas></div>
         <div class='layout' id='ui'></div>
     </div>
     <div id='lag'></div>

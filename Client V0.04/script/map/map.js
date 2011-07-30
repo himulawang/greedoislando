@@ -1,7 +1,9 @@
 var Map = function() {
     //World
-    this.WORLDWIDTH = global.GI_MAP_WIDTH * global.GI_MAPBLOCK_X;
-    this.WORLDHEIGHT = global.GI_MAP_HEIGHT * global.GI_MAPBLOCK_Y;
+    this.MAPBLOCKX = global.GI_MAPBLOCK_X;
+    this.MAPBLOCKY = global.GI_MAPBLOCK_Y;
+    this.WORLDWIDTH = global.GI_MAP_WIDTH * this.MAPBLOCKX;
+    this.WORLDHEIGHT = global.GI_MAP_HEIGHT * this.MAPBLOCKY;
     this.HALFWORLDWIDTH = this.WORLDWIDTH / 2;
     this.HALFWORLDHEIGHT = this.WORLDHEIGHT / 2;
     //Map Block
@@ -41,14 +43,15 @@ Map.prototype.transferScreenToLogicY = function(x, y) {
     return parseInt((this.MAPWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
 };
 */
-Map.prototype.put = function(screenX, screenY) {
+Map.prototype.put = function(left, top) {
     //var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
     //var ScreenY = this.transferLogicToScreenY(this.x, this.y);
             
     //var ScreenX = (this.TILEWIDTH - this.transferLogicToScreenX(this.x, this.y))/2 + x;
     //var ScreenY = this.transferLogicToScreenY(this.x, this.y) + this.HALFTILEHEIGHT;
     
-    $(this.el).css({left : screenX + 'px', top : screenY + 'px'});
+    $.left(this.el, left);
+    $.top(this.el, top);
 };
 
 Map.prototype.checkMoveOut = function(x, y) {
@@ -58,19 +61,19 @@ Map.prototype.checkMoveOut = function(x, y) {
         && y < this.GRIDQUANTITY
     ) return true;
 };
-Map.prototype.getMapIndex = function(x, y) {
+Map.prototype.getCoordinateIndex = function(x, y) {
     return x + ',' + y;
 };
-Map.prototype.getMapXY = function(index) {
+Map.prototype.getCoordinateXY = function(index) {
     index = index.split(',');
     return {x : parseInt(index[0]), y : parseInt(index[1])};
 };
 Map.prototype.getDirection = function(start, end) {
-    var startXY = this.getMapXY(start);
-    var endXY = this.getMapXY(end);
+    var startXY = this.getCoordinateXY(start);
+    var endXY = this.getCoordinateXY(end);
     var deltaX = endXY.x - startXY.x;
     var deltaY = endXY.y - startXY.y;
-    var deltaIndex = this.getMapIndex(deltaX, deltaY);
+    var deltaIndex = this.getCoordinateIndex(deltaX, deltaY);
     var direction = this.DIRECTIONS[deltaIndex];
     return direction === undefined ? 0 : direction; //TODO use tringle cos / sin to fix this
 };

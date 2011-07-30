@@ -1,5 +1,5 @@
 var UI_SkillBar = function() {
-    this.constructor.super_.apply(this, arguments);
+    UI_SkillBar.super_.apply(this, arguments);
     this.skill = {};
 };
 

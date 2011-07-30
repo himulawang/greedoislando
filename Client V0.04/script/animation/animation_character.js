@@ -1,10 +1,10 @@
 var Animation_Character = function(owner) {
-    this.constructor.super_.apply(this, arguments);
+    Animation_Character.super_.apply(this, arguments);
     this.owner = owner;
     this.defaultAction = 'stand';
     this.action = this.defaultAction;
 
-    this.animateList = ANIMATION_MATERIAL.character[this.owner.name];
+    this.animateList = global.ANIMATION_MATERIAL.character[this.owner.name];
 
     this.directionID = 0;
 
@@ -22,10 +22,10 @@ Animation_Character.prototype.initImages = function(){
 };
 Animation_Character.prototype.initCanvas = function() {
     //TODO
-    var canvas = $("<canvas id='" + this.owner.cID + "' style='position: absolute;'></canvas>");
-    $('#character-animation').append(canvas);
+    var canvas = "<canvas id='" + this.owner.cID + "' style='position: absolute;'></canvas>";
+    $.append($('#character-animation'), canvas);
     this.el = $("#" + this.owner.cID);
-    Event.onSelectTarget(this.el);
+    //Event.onSelectTarget(this.el);
     this.canvas = this.el.getContext('2d');
 };
 Animation_Character.prototype.getMoveDisplacement = function() {
@@ -90,8 +90,8 @@ Animation_Character.prototype.addTargeted = function() {
     this.canvas.shadowBlur = 25;
     this.canvas.shadowColor = "white";
     /*
-    var x = fc.fix(this.animateWidth / 2);
-    var y = fc.fix(this.animateHeight * 0.85);
+    var x = util.fix(this.animateWidth / 2);
+    var y = util.fix(this.animateHeight * 0.85);
     var radius = 20;
     var startAngle = 0;
     var endAngle = Math.PI * 2;
