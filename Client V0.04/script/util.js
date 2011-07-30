@@ -23,7 +23,7 @@ var util = {
 };
 var $ = function(selector, context) {
     context = context || document;
-    if (selector[0] === "#") return context.querySelector(selector);
+    if (selector[0] === "#") return document.getElementById(selector.substr(1));
     return context.querySelectorAll(selector);
 };
 $.remove = function(el) {
@@ -36,8 +36,14 @@ $.append = function(el, html) {
     el.innerHTML = el.innerHTML + html;
 };
 $.left = function(el, value) {
-    el.style.left = value;
-}
+    el.style.left = value + 'px';
+};
 $.top = function(el, value) {
-    el.style.top = value;
-}
+    el.style.top = value + 'px';
+};
+$.show = function(el) {
+    el.style.display = 'block';
+};
+$.hide = function(el) {
+    el.style.display = 'none';
+};

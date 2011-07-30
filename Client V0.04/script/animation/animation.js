@@ -1,5 +1,5 @@
 var Animation = function() {
-    this.constructor.super_.apply(this, arguments);
+    Animation.super_.apply(this, arguments);
     /* animation offset formula
      * this.runOffsetX = (this.TILEWIDTH - runWidth) / 2;
      * this.runOffsetY = runHeight - this.HALFTILEHEIGHT - 15;
@@ -37,7 +37,7 @@ Animation.prototype.switch = function(action) {
 };
 Animation.prototype.getFrameDuration = function() {
     this.runDuration = this.animateList[this.action].duration;
-    this.frameDuration = fc.fix(this.runDuration / this.animateList[this.action].frames);
+    this.frameDuration = util.fix(this.runDuration / this.animateList[this.action].frames);
 };
 // move Canvas
 Animation.prototype.moveCanvas = function(){
@@ -77,8 +77,8 @@ Animation.prototype.drawMove = function() {
         return;
     }
 
-    var nowDisplacementX = fc.fix(this.nowScreenX + deltaTime / this.moveDuration * this.displacementX);
-    var nowDisplacementY = fc.fix(this.nowScreenY + deltaTime / this.moveDuration * this.displacementY);
+    var nowDisplacementX = util.fix(this.nowScreenX + deltaTime / this.moveDuration * this.displacementX);
+    var nowDisplacementY = util.fix(this.nowScreenY + deltaTime / this.moveDuration * this.displacementY);
     this.el.css({ left : nowDisplacementX + 'px' , top : nowDisplacementY + 'px' });
 
     var _this = this;
@@ -102,8 +102,8 @@ Animation.prototype.getRunImages = function() {
     if (!this.actionSwitched) return;
     this.animateWidth = this.nowImages[0].width;
     this.animateHeight = this.nowImages[0].height;
-    this.el[0].width = this.animateWidth;
-    this.el[0].height = this.animateHeight;
+    this.el.width = this.animateWidth;
+    this.el.height = this.animateHeight;
 
     this.nowImagesIndex = -1;
     
@@ -156,5 +156,6 @@ Animation.prototype.put = function() {
     var screenX = this.transferLogicToScreenX(xy.x, xy.y) - this.HALFTILEWIDTH + offsetX;
     var screenY = this.transferLogicToScreenY(xy.x, xy.y) - offsetY;
 
-    this.el.css({left : screenX + 'px', top : screenY + 'px'});
+    $.left(this.el, screenX);
+    $.top(this.el, screenY);
 };

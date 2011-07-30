@@ -1,5 +1,5 @@
 var Animation_Effect = function() {
-    this.constructor.super_.apply(this, arguments);
+    Animation_Effect.super_.apply(this, arguments);
     this.owner = owner;
     this.defaultAction = 'move';
     this.action = this.defaultAction;

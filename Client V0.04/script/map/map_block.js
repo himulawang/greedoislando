@@ -1,23 +1,22 @@
-var Map_Block = function() {
-    this.constructor.super_.apply(this, arguments);
+var Map_Block = function(id) {
+    Map_Block.super_.apply(this, arguments);
+    this.TERRAIN = global.TERRAIN;
     this.id = id;
-    this.grid = eval(id);
+    this.grid = window[id];
     var xy = this.transferMapBlockIndexToXY(id);
     this.x = xy.x;
     this.y = xy.y;
 
-    //create canvas
-    //TODO
-    var canvas = $("<canvas class='mapblock' id='" + this.id + "'></canvas>");
-    $('#map').append(canvas);
+    var canvas = "<canvas class='mapblock' id='" + this.id + "'></canvas>";
+    $.prepend($('#map'), canvas);
     this.el = $("#" + this.id);
-    this.el.width = GI_MAP_WIDTH;
-    this.el.height = GI_MAP_HEIGHT;
+    this.el.width = this.MAPWIDTH;
+    this.el.height = this.MAPHEIGHT;
 
     this.canvas = this.el.getContext('2d');
     this.draw();
     this.setPosition();
-}
+};
 
 util.inherits(Map_Block, Map);
 
@@ -27,8 +26,8 @@ Map_Block.prototype.setPosition = function() {
 
     var left = this.transferMapBlockLogicToLayoutX(x, y);
     var top = this.transferMapBlockLogicToLayoutY(x, y);
-    //TODO
-    this.el.css({left : left + 'px', top : top + 'px'});
+    $.left(this.el, left);
+    $.top(this.el, top);
 };
 Map_Block.prototype.draw = function() {
     var x, y;
@@ -40,24 +39,19 @@ Map_Block.prototype.draw = function() {
     this.canvas.closePath();
     this.canvas.stroke();
 
-    var terrainType, coordinate, xy, tmpXY;
+    var xy, tmpXY, img;
     for (var index in this.grid) {
         tmpXY = this.getCoordinateXY(index);
         x = tmpXY.x;
         y = tmpXY.y;
-        index = this.getCoordinateIndex(x, y);
 
-        terrainType = this.getTerrainType(index);
-        coordinate = index;
-        
-        //Init Terrain
         var objID = this.grid[index].objID;
-        var offsetX = TERRAIN[objID].offsetX;
-        var offsetY = TERRAIN[objID].offsetY;
+        var offsetX = this.TERRAIN[objID].offsetX;
+        var offsetY = this.TERRAIN[objID].offsetY;
         var lib = GI.material.images.map;
         if (objID == 2001  || objID == 2002 || objID == 2004) {
-            var img = lib[objID];
-            this.canvas.drawImage(img, this.transferLogicToScreenX(x, y) - offsetX,this.transferLogicToScreenY(x, y) - offsetY);
+            img = lib[objID];
+            this.canvas.drawImage(img, this.transferLogicToScreenX(x, y) - offsetX, this.transferLogicToScreenY(x, y) - offsetY);
         }
     }
 };
@@ -65,7 +59,7 @@ Map_Block.prototype.getTerrainType = function(index) {
     if (!this.grid[index]) return false;
     var objID = this.grid[index].objID;
     
-    return TERRAIN[objID].name;
+    return this.TERRAIN[objID].name;
 };
 Map_Block.prototype.getID = function() {
     return this.id;

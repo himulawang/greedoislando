@@ -1,4 +1,5 @@
-var Skill_PatheticChildhood = function() {};
+var Skill_PatheticChildhood = function(skillID) {
+    Skill_PatheticChildhood.super_.apply(this, arguments);
+};
 
 util.inherits(Skill_PatheticChildhood, Skill);
-//TODO this._super(skillID);

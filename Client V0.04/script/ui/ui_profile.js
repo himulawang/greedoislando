@@ -1,5 +1,5 @@
 var UI_Profile = function(cID) {
-    this.constructor.super_.apply(this, arguments);
+    UI_Profile.super_.apply(this, arguments);
 };
 
 util.inherits(UI_Profile, UI);

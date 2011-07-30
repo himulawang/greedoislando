@@ -1,5 +1,5 @@
 var Effect = function(owner) {
-    this.constructor.super_.apply(this, arguments);
+    Effect.super_.apply(this, arguments);
     this.owner = owner;
     this.cID = fc.guid();
 };

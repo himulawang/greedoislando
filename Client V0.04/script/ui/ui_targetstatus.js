@@ -1,5 +1,5 @@
 var UI_TargetStatus = function() {
-    this.constructor.super_.apply(this, arguments);
+    UI_TargetStatus.super_.apply(this, arguments);
     var html = '';
     html += "<div id='ui-target-profile'>";
     html += "<div id='ui-target-avartar'></div>";

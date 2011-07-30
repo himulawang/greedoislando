@@ -1,5 +1,5 @@
 var Map_List = function() {
-    this.constructor.super_.apply(this, arguments);
+    Map_List.super_.apply(this, arguments);
     this.list = {};
     this.el = $("#map");
 };
@@ -31,7 +31,7 @@ Map_List.prototype.getBlockIDs = function(list) {
 };
 Map_List.prototype.getDirectionID = function(mapBlockID) {
     for (var directionID in this.list) {
-        if (this.list[directionID].getID === mapBlockID) return mapBlockID;
+        if (this.getBlock(directionID).getID() === mapBlockID) return mapBlockID;
     }
     return false;
 };
@@ -52,19 +52,19 @@ Map_List.prototype.getMapBlockXYList = function(absoluteX, absoluteY) {
     if (mapY - 1 > 0) {  // directionID 0
         mapBlockIDs[0] = { x : mapX, y : mapY - 1 };
     }
-    if (mapX + 1 <= GI_MAPBLOCK_X && mapY - 1 > 0) {  // directionID 1
+    if (mapX + 1 <= this.MAPBLOCKX && mapY - 1 > 0) {  // directionID 1
         mapBlockIDs[1] = { x : mapX + 1, y : mapY - 1 };
     }
-    if (mapX + 1 <= GI_MAPBLOCK_X) {//directionID 2
+    if (mapX + 1 <= this.MAPBLOCKX) {//directionID 2
         mapBlockIDs[2] = { x : mapX + 1, y : mapY };
     }
-    if (mapX + 1 <= GI_MAPBLOCK_X && mapY + 1 <= GI_MAPBLOCK_Y) {  // directionID 3
+    if (mapX + 1 <= this.MAPBLOCKX && mapY + 1 <= this.MAPBLOCKY) {  // directionID 3
         mapBlockIDs[3] = { x : mapX + 1, y : mapY + 1 };
     }
-    if (mapY + 1 <= GI_MAPBLOCK_Y) {  // directionID 4
+    if (mapY + 1 <= this.MAPBLOCKY) {  // directionID 4
         mapBlockIDs[4] = { x : mapX, y : mapY + 1 };
     }
-    if (mapX - 1 > 0 && mapY + 1 <= GI_MAPBLOCK_Y) { // directionID 5
+    if (mapX - 1 > 0 && mapY + 1 <= this.MAPBLOCKY) { // directionID 5
         mapBlockIDs[5] = { x : mapX - 1, y : mapY + 1 };
     }
     if (mapX - 1 > 0) {  // directionID 6
@@ -77,13 +77,13 @@ Map_List.prototype.getMapBlockXYList = function(absoluteX, absoluteY) {
     return mapBlockIDs;
 };
 Map_List.prototype.getMapBlockXY = function(absoluteX, absoluteY) {
-    var mapX = Math.floor(absoluteX / GI_GRID_QUANTITY) + 1;
-    var mapY = Math.floor(absoluteY / GI_GRID_QUANTITY) + 1;
+    var mapX = Math.floor(absoluteX / this.GRIDQUANTITY) + 1;
+    var mapY = Math.floor(absoluteY / this.GRIDQUANTITY) + 1;
     return { x : mapX, y : mapY };
 };
 Map_List.prototype.getRelativePositionXY = function(absoluteX, absoluteY) {
-    var posX = absoluteX % GI_GRID_QUANTITY;
-    var posY = absoluteY % GI_GRID_QUANTITY;
+    var posX = absoluteX % this.GRIDQUANTITY;
+    var posY = absoluteY % this.GRIDQUANTITY;
     return { x : posX, y : posY };
 };
 Map_List.prototype.make = function(x, y) {
@@ -97,9 +97,9 @@ Map_List.prototype.make = function(x, y) {
     var newMapList = {};
     for (var newDirectionID in newMapBlockIDs) {
         newMapBlockID = newMapBlockList[newDirectionID];
-        preDirectionID = fc.inObject(newMapBlockIDs[newDirectionID], preMapBlockIDs); //get blocks can reuse
+        preDirectionID = util.inObject(newMapBlockIDs[newDirectionID], preMapBlockIDs); //get blocks can reuse
         if (preDirectionID === undefined) {
-            newMapList[newDirectionID] = new MapBlock(newMapBlockID);
+            newMapList[newDirectionID] = new Map_Block(newMapBlockID);
             continue;
         }
 
@@ -110,12 +110,8 @@ Map_List.prototype.make = function(x, y) {
     var offsets = this.getMapOffset();
     this.put(offsets.left, offsets.top);
 };
-Map_List.prototype.put = function(left, top) {
-    //TODO
-    this.el.css({ left : left + 'px', top : top + 'px' });
-};
 Map_List.prototype.getMapOffset = function() {
-    var positionXY = GI.character[GI.cID].getPosition();
+    var positionXY = GI.characterList.getSelf().getPosition();
     var x = positionXY.x;
     var y = positionXY.y;
 

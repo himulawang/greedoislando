@@ -1,5 +1,6 @@
 var Skill = function(skillID) {
-    this.skillID = skillID;
+    var SKILL = global.SKILL;
+    this.skillID = skillID; //TODO change skillID to id
     this.name = SKILL[skillID].name;
     this.abbreviation = SKILL[skillID].abbreviation;
     this.skillCD = SKILL[skillID].skillCD;

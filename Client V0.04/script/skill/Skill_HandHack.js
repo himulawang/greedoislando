@@ -1,5 +1,5 @@
-var Skill_HandHack = function() {};
+var Skill_HandHack = function(skillID) {
+    Skill_HandHack.super_.apply(this, arguments);
+}
 
 util.inherits(Skill_HandHack, Skill);
-//TODO this._super(skillID);
-

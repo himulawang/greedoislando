@@ -23,7 +23,6 @@ Character_List.prototype.getPlayerList = function(cID) {
 };
 Character_List.prototype.setPlayer = function(data) {
     var cID = data.cID;
-    console.log(data);
     var character = new this.CHARACTER_MAPPING[data.name](data.name);
     character.make(data);
     this.playerList[cID] = character;

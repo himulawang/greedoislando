@@ -22,7 +22,7 @@ World.prototype.initMaterial = function() {
     this.material = new Material();
 };
 World.prototype.initMapList = function() {
-    this.mapList = new MapList();
+    this.mapList = new Map_List();
     var xy = this.characterList.getSelf().getPosition();
     this.mapList.make(xy.x, xy.y);
 }

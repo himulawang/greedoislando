@@ -1,5 +1,5 @@
 var Cursor = function() {
-    this.constructor.super_.apply(this, arguments);
+    Cursor.super_.apply(this, arguments);
     this.x = 0;
     this.y = 0;
     this.alpha = .5;

@@ -1,7 +1,8 @@
-var Skill_FadingSteps = function() {};
+var Skill_FadingSteps = function(skillID) {
+    Skill_FadingSteps.super_.apply(this, arguments);
+};
 
 util.inherits(Skill_FadingSteps, Skill);
-//TODO this._super(skillID);
 
 Skill_FadingSteps.prototype.launch = function() {
     var cursor = GI.cursor;

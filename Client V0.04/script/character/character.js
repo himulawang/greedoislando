@@ -1,6 +1,5 @@
 var Character = function(name) {
-    console.dir(this);
-    this.super_(arguments);
+    Character.super_.apply(this, arguments);
     this.self = false;
     this.targeted = false;
 };
@@ -22,9 +21,10 @@ Character.prototype.make = function(data) {
     // init skill
     this.skill = {};
     this.effect = {};
+    var SKILL_MAPPING = global.SKILL_MAPPING;
     for (var skillID in data.skill) {
         if (skillID < 10000) continue;
-        this.skill[skillID] = eval("new " + SKILL[skillID].className + "(" + skillID + ")");
+        this.skill[skillID] = new SKILL_MAPPING[skillID](skillID);
         this.skill[skillID].make(this);
     }
 

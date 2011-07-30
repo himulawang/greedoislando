@@ -1,4 +1,5 @@
-var Skill_MoraScissors = function() {};
+var Skill_MoraScissors = function(skillID) {
+    Skill_MoraScissors.super_.apply(this, arguments);
+};
 
 util.inherits(Skill_MoraScissors, Skill);
-//TODO this._super(skillID);

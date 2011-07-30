@@ -1,5 +1,5 @@
 var Effect_LightingBall = function() {
-    this.constructor.super_.apply(this, arguments);
+    Effect_LightingBall.super_.apply(this, arguments);
     this.name = 'lightingball';
 };
 
