@@ -17,9 +17,9 @@ Animation_Effect.prototype.initImages = function(){
     this.images = GI.material.images[this.owner.name];
 };
 Animation_Effect.prototype.initCanvas = function() {
-    var canvas = $("<canvas id='" + this.owner.cID +"' style='position: absolute;'></canvas>");
-    $('body').append(canvas);
-    this.el = $("#" + this.owner.cID);
+    var canvasEl = util.createCanvas(this.owner.cID, 'effect');
+    $('#map').appendChild(canvasEl);
+    this.el = canvasEl;
     this.canvas = this.el.getContext('2d');
 };
 Animation_Effect.prototype.getRunImages = function() {

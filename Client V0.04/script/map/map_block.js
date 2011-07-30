@@ -7,9 +7,9 @@ var Map_Block = function(id) {
     this.x = xy.x;
     this.y = xy.y;
 
-    var canvas = "<canvas class='mapblock' id='" + this.id + "'></canvas>";
-    $.prepend($('#map'), canvas);
-    this.el = $("#" + this.id);
+    var canvasEl = util.createCanvas(this.id, 'mapblock');
+    $('#map').appendChild(canvasEl);
+    this.el = canvasEl;
     this.el.width = this.MAPWIDTH;
     this.el.height = this.MAPHEIGHT;
 
@@ -63,4 +63,9 @@ Map_Block.prototype.getTerrainType = function(index) {
 };
 Map_Block.prototype.getID = function() {
     return this.id;
+};
+Map_Block.prototype.drawTest = function() {
+    var img = new Image();
+    img.src = 'images/plain.png';
+    this.canvas.drawImage(img, 0, 0);
 };
