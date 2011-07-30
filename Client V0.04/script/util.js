@@ -20,6 +20,12 @@ var util = {
         }
         return undefined;
     }
+    ,createCanvas : function(id, class) {
+        var el = document.createElement('canvas');
+        if (id != undefined) el.id = id;
+        if (class != undefined) el.className = class;
+        return el;
+    }
 };
 var $ = function(selector, context) {
     context = context || document;

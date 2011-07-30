@@ -21,10 +21,9 @@ Animation_Character.prototype.initImages = function(){
     this.images = GI.material.images[this.owner.name];
 };
 Animation_Character.prototype.initCanvas = function() {
-    //TODO
-    var canvas = "<canvas id='" + this.owner.cID + "' style='position: absolute;'></canvas>";
-    $.append($('#character-animation'), canvas);
-    this.el = $("#" + this.owner.cID);
+    var canvasEl = util.createCanvas(this.owner.cID, 'character');
+    $('#character-animation').appendChild(canvasEl);
+    this.el = canvasEl;
     //Event.onSelectTarget(this.el);
     this.canvas = this.el.getContext('2d');
 };
