@@ -9,6 +9,11 @@ util.inherits(Map_List, Map);
 Map_List.prototype.getBlock = function(directionID) {
     return this.list[directionID];
 };
+Map_List.prototype.delBlock = function(directionID) {
+    var id = this.getBlock(directionID).getID();
+    $.remove($('#' + id));
+    delete this.list[directionID];
+};
 Map_List.prototype.getList = function() {
     return this.list;
 };
@@ -22,15 +27,17 @@ Map_List.prototype.getBlockIDs = function(list) {
     }
     
     var xy;
+    var newList = {};
     for (var directionID in list) { //list inputed
         xy = list[directionID];
-        list[directionID] = this.transferMapBlockXYToIndex(xy.x, xy.y);
+        newList[directionID] = this.transferMapBlockXYToIndex(xy.x, xy.y);
     }
 
-    return list;
+    return newList;
 };
 Map_List.prototype.getDirectionID = function(mapBlockID) {
-    for (var directionID in this.list) {
+    var list = this.getList();
+    for (var directionID in list) {
         if (this.getBlock(directionID).getID() === mapBlockID) return mapBlockID;
     }
     return false;
@@ -96,15 +103,21 @@ Map_List.prototype.make = function(x, y) {
     var reuseBlockIDs = {};
     var newMapList = {};
     for (var newDirectionID in newMapBlockIDs) {
-        newMapBlockID = newMapBlockList[newDirectionID];
-        preDirectionID = util.inObject(newMapBlockIDs[newDirectionID], preMapBlockIDs); //get blocks can reuse
+        newMapBlockID = newMapBlockIDs[newDirectionID];
+        preDirectionID = util.inObject(newMapBlockID, preMapBlockIDs); //get blocks can reuse
         if (preDirectionID === undefined) {
             newMapList[newDirectionID] = new Map_Block(newMapBlockID);
             continue;
         }
 
         newMapList[newDirectionID] = this.getBlock(preDirectionID);
+        delete preMapBlockIDs[preDirectionID];
     }
+    // recycle no use mapBlock
+    for (var noUseDirectionID in preMapBlockIDs) {
+        this.delBlock(noUseDirectionID);
+    }
+    
     this.list = newMapList;
     //set layout offset
     var offsets = this.getMapOffset();
