@@ -35,14 +35,6 @@ Map.prototype.transferLogicToScreenX = function(x, y) {
 Map.prototype.transferLogicToScreenY = function(x, y) {
     return (x + y) * this.HALFTILEHEIGHT;
 };
-/*
-Map.prototype.transferScreenToLogicX = function(x, y) {
-    return parseInt((x - this.MAPWIDTH / 2) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
-};
-Map.prototype.transferScreenToLogicY = function(x, y) {
-    return parseInt((this.MAPWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
-};
-*/
 Map.prototype.put = function(left, top) {
     //var ScreenX = this.transferLogicToScreenX(this.x, this.y) - this.HALFTILEWIDTH;
     //var ScreenY = this.transferLogicToScreenY(this.x, this.y);
@@ -100,4 +92,14 @@ Map.prototype.transferAbsolutePositionToOffsetLeft = function(x, y) {
 };
 Map.prototype.transferAbsolutePositionToOffsetTop = function(x, y) {
     return - (x + y) * this.HALFTILEHEIGHT + this.HALFSCREENHEIGHT;
+};
+Map.prototype.transferAbsolutePositionToLogicX = function(x, y) {
+    x = x - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
+    y = y + this.HALFSCREENHEIGHT;
+    return parseInt((x - this.WORLDWIDTH / 2) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
+};
+Map.prototype.transferAbsolutePositionToLogicY = function(x, y) {
+    x = x - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
+    y = y + this.HALFSCREENHEIGHT;
+    return parseInt((this.WORLDWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
 };

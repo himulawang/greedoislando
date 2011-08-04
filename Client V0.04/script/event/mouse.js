@@ -1,4 +1,9 @@
 var Mouse = function() {
+    this.uiEl = $('#ui');
+    this.gridEl = $('#grid');
+    this.mapEl = $('#map');
+    this.mouseEventEl = $('#mouseevent');
+    this.outputEl = $('#output');
     this.initLogin();
     this.initMouseOverGrid();
     this.initMouseClick();
@@ -11,7 +16,8 @@ Mouse.prototype.initLogin = function() {
     }
 };
 Mouse.prototype.initMouseOverGrid = function() {
-    $("#ui").onmousemove = function(e) {
+    var _this = this;
+    this.uiEl.onmousemove = function(e) {
         // pass mousemove event to grid layout
         var event = document.createEvent('MouseEvents');
         event.initMouseEvent("mousemove"
@@ -30,17 +36,21 @@ Mouse.prototype.initMouseOverGrid = function() {
             ,0 //button
             ,null
         );
-        $("#grid").dispatchEvent(event);
+        _this.gridEl.dispatchEvent(event);
+        _this.mapEl.dispatchEvent(event);
         return false;
     };
-    $("#grid").onmousemove = function(e) {
+    this.gridEl.onmousemove = function(e) {
         GI.cursor.move(e);
-        $('#mouseevent').innerHTML = "ScreenX:" + e.screenX + " ScreenY:" + e.screenY;
-        $('#output').innerHTML = "LogicX:" + GI.cursor.x + " LogicY:" + GI.cursor.y;
+    };
+    this.mapEl.onmousemove = function(e) {
+    console.log(e.clientX, e.clientY);
+        _this.mouseEventEl.innerHTML = "ClientX:" + e.layerX + " ClientY:" + e.layerY;
+        _this.outputEl.innerHTML = "LogicX:" + GI.mapList.transferAbsolutePositionToLogicX(e.layerX, e.layerY) + " LogicY:" + GI.mapList.transferAbsolutePositionToLogicY(e.layerX, e.layerY);
     };
 };
 Mouse.prototype.initMouseClick = function() {
-    $('#grid').onmouseup = function(e) {
+    this.gridEl.onmouseup = function(e) {
         var xPX = e.layerX;
         var yPX = e.layerY;
         var x = GI.maplist.transferScreenToLogicX(xPX, yPX);
@@ -51,7 +61,7 @@ Mouse.prototype.initMouseClick = function() {
         //move
         if (e.which === 3) {
             var index = GI.maplist.getCoordinateIndex(x, y);
-            if(!GI.maplist.verifyClickMovePossible(index)) return;
+            if (!GI.maplist.verifyClickMovePossible(index)) return;
             ws.send(obj);
         }
         return false;
