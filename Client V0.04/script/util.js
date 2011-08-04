@@ -2,7 +2,7 @@ var util = {
     /* Copy from node.js */
     inherits : function(constructor, superConstructor) {
         constructor.super_ = superConstructor;
-        constructor.prototype = Object.create(superConstructor.prototype, { constructor: { value: constructor, enumerable: false } });
+        constructor.prototype = Object.create(superConstructor.prototype, { constructor: { value: constructor, enumerable: false, writable: true, configurable: true } });
     } 
     ,fix : function(float) {
         return typeof(float) === 'number' ? parseInt(float.toFixed()) : float;

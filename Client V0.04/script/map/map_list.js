@@ -2,6 +2,8 @@ var Map_List = function() {
     Map_List.super_.apply(this, arguments);
     this.list = {};
     this.el = $("#map");
+    this.el.style.width = this.WORLDWIDTH + 'px';
+    this.el.style.height = this.WORLDHEIGHT + 'px';
 };
 
 util.inherits(Map_List, Map);
@@ -18,12 +20,17 @@ Map_List.prototype.getList = function() {
     return this.list;
 };
 Map_List.prototype.getBlockIDs = function(list) {
+    /* list = {
+     *  directionID : blockID
+     * }
+     * */
     if (list === undefined) { //no list inputed
         var list = this.getList();
+        var newList = {};
         for (var directionID in list) {
-            list[directionID] = list[directionID].getID();
+            newList[directionID] = list[directionID].getID();
         }
-        return list;
+        return newList;
     }
     
     var xy;

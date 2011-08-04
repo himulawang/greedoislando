@@ -15,8 +15,13 @@ div {
     text-align: center;
 }
 
-#map {
+.output {
     position: relative;
+    color: red;
+}
+
+#map {
+    position: absolute;
 }
 
 .mapblock {
@@ -47,6 +52,7 @@ div {
     margin-right: auto;
     border: 1px solid black;
     display: none;
+    position: relative;
 }
 
 #login {

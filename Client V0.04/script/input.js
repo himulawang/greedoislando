@@ -35,7 +35,7 @@ Input.prototype.initMyCharacter = function(data, stream) {
     var character = GI.characterList.setMyPlayer(data);
     
     //TODO For hacking character position
-    character.setPosition(240, 240);
+    character.setPosition(1, 1);
 
     GI.initMapList();
     GI.initLog();
