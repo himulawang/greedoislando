@@ -1,4 +1,5 @@
 var Mouse = function() {
+    Mouse.super_.apply(this, arguments);
     this.uiEl = $('#ui');
     this.gridEl = $('#grid');
     this.mapEl = $('#map');
@@ -8,6 +9,8 @@ var Mouse = function() {
     this.initMouseOverGrid();
     this.initMouseClick();
 };
+
+util.inherits(Mouse, Map);
 
 Mouse.prototype.initLogin = function() {
     var el = $('.choose-character');
@@ -44,24 +47,42 @@ Mouse.prototype.initMouseOverGrid = function() {
         GI.cursor.move(e);
     };
     this.mapEl.onmousemove = function(e) {
-    console.log(e.clientX, e.clientY);
         _this.mouseEventEl.innerHTML = "ClientX:" + e.layerX + " ClientY:" + e.layerY;
-        _this.outputEl.innerHTML = "LogicX:" + GI.mapList.transferAbsolutePositionToLogicX(e.layerX, e.layerY) + " LogicY:" + GI.mapList.transferAbsolutePositionToLogicY(e.layerX, e.layerY);
+        _this.outputEl.innerHTML = "LogicX:" + _this.transferAbsolutePositionToLogicX(e.layerX, e.layerY) + " LogicY:" + _this.transferAbsolutePositionToLogicY(e.layerX, e.layerY);
     };
 };
 Mouse.prototype.initMouseClick = function() {
+    var _this = this;
+    this.uiEl.onmouseup = function(e) {
+        // pass mousemove event to grid layout
+        var event = document.createEvent('MouseEvents');
+        event.initMouseEvent("mouseup"
+            ,false //canBubble
+            ,true //cancelable
+            ,window //view
+            ,0 //detail mouse click count
+            ,e.screenX //screenX
+            ,e.screenY //screenY
+            ,e.clientX //clientX
+            ,e.clientY //clientY
+            ,false //ctrl
+            ,false //alt
+            ,false //shift
+            ,false //metaKey
+            ,3 //button
+            ,null
+        );
+        _this.gridEl.dispatchEvent(event);
+        return false;
+    };
     this.gridEl.onmouseup = function(e) {
-        var xPX = e.layerX;
-        var yPX = e.layerY;
-        var x = GI.maplist.transferScreenToLogicX(xPX, yPX);
-        var y = GI.maplist.transferScreenToLogicY(xPX, yPX);
-        if (!GI.maplist.checkMoveOut(x, y)) return;
-        var endPoint = GI.maplist.getCoordinateIndex(x, y);
+        var xy = GI.cursor.getPosition();
+        if (!_this.checkMoveOut(xy.x, xy.y)) return;
+        var endPoint = _this.getCoordinateIndex(xy.x, xy.y);
         var obj = { type : 'moveCharacter', endPoint : endPoint };
         //move
+        console.log(endPoint);
         if (e.which === 3) {
-            var index = GI.maplist.getCoordinateIndex(x, y);
-            if (!GI.maplist.verifyClickMovePossible(index)) return;
             ws.send(obj);
         }
         return false;

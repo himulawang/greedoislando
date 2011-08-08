@@ -17,6 +17,13 @@ var Cursor = function() {
 
 util.inherits(Cursor, Map);
 
+Cursor.prototype.setPosition = function(x, y) {
+    this.x = x;
+    this.y = y;
+};
+Cursor.prototype.getPosition = function() {
+    return { x : this.x, y : this.y };
+};
 Cursor.prototype.draw = function() { // Draw Cursor Side
     this.canvas.clearRect(0, 0, this.TILEWIDTH, this.TILEHEIGHT);
     this.canvas.globalAlpha = this.alpha;
@@ -44,7 +51,8 @@ Cursor.prototype.startBreath = function() {
     }, 100);
 };
 Cursor.prototype.move = function(e) {
-    this.put(e.clientX, e.clientY);
+    this.setPosition(e.layerX, e.layerY);
+    this.put(e.layerX, e.layerY);
 };
 Cursor.prototype.setPreCastSkill = function(skillID) {
     this.preCastSkill = skillID;
