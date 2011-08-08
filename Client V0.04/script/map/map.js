@@ -1,4 +1,5 @@
 var Map = function() {
+    this.GRIDQUANTITY = global.GI_GRID_QUANTITY;
     //World
     this.MAPBLOCKX = global.GI_MAPBLOCK_X;
     this.MAPBLOCKY = global.GI_MAPBLOCK_Y;
@@ -6,6 +7,8 @@ var Map = function() {
     this.WORLDHEIGHT = global.GI_MAP_HEIGHT * this.MAPBLOCKY;
     this.HALFWORLDWIDTH = this.WORLDWIDTH / 2;
     this.HALFWORLDHEIGHT = this.WORLDHEIGHT / 2;
+
+    this.WORLDGRIDQUANTITY = this.GRIDQUANTITY * this.MAPBLOCKX;
     //Map Block
     this.MAPWIDTH = global.GI_MAP_WIDTH;
     this.MAPHEIGHT = global.GI_MAP_HEIGHT;
@@ -16,7 +19,6 @@ var Map = function() {
     this.SCREENHEIGHT = global.GI_SCREEN_HEIGHT;
     this.HALFSCREENWIDTH = this.SCREENWIDTH / 2;
     this.HALFSCREENHEIGHT = this.SCREENHEIGHT / 2;
-    this.GRIDQUANTITY = global.GI_GRID_QUANTITY;
     //Title
     this.TILEWIDTH = this.MAPWIDTH / this.GRIDQUANTITY;
     this.TILEHEIGHT = this.MAPHEIGHT / this.GRIDQUANTITY;
@@ -48,9 +50,9 @@ Map.prototype.put = function(left, top) {
 
 Map.prototype.checkMoveOut = function(x, y) {
     if (x >= 0
-        && x < this.GRIDQUANTITY
+        && x < this.WORLDGRIDQUANTITY
         && y >= 0
-        && y < this.GRIDQUANTITY
+        && y < this.WORLDGRIDQUANTITY
     ) return true;
 };
 Map.prototype.getCoordinateIndex = function(x, y) {
@@ -80,26 +82,22 @@ Map.prototype.transferMapBlockIndexToXY = function(index) {
     var xy = /^b(\d{3})_(\d{3})$/.exec(index);
     return { x : parseInt(xy[1]), y : parseInt(xy[2]) };
 };
-Map.prototype.transferMapBlockLogicToLayoutX = function(x, y) {
-    return (x - y) * this.HALFMAPWIDTH;
+Map.prototype.transferMapBlockLogicToLayerX = function(x, y) {
+    return (x - y) * this.HALFMAPWIDTH + this.HALFWORLDWIDTH - this.HALFMAPWIDTH;
 };
-Map.prototype.transferMapBlockLogicToLayoutY = function(x, y) {
+Map.prototype.transferMapBlockLogicToLayerY = function(x, y) {
     return (x + y) * this.HALFMAPHEIGHT;
 };
 //absolutePosition
 Map.prototype.transferAbsolutePositionToOffsetLeft = function(x, y) {
-    return (x - y) * this.HALFTILEWIDTH - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
+    return - (x - y) * this.HALFTILEWIDTH - this.HALFWORLDWIDTH + this.HALFSCREENWIDTH;
 };
 Map.prototype.transferAbsolutePositionToOffsetTop = function(x, y) {
     return - (x + y) * this.HALFTILEHEIGHT + this.HALFSCREENHEIGHT;
 };
 Map.prototype.transferAbsolutePositionToLogicX = function(x, y) {
-    x = x - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
-    y = y + this.HALFSCREENHEIGHT;
     return parseInt((x - this.WORLDWIDTH / 2) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
 };
 Map.prototype.transferAbsolutePositionToLogicY = function(x, y) {
-    x = x - this.HALFMAPWIDTH + this.HALFSCREENWIDTH;
-    y = y + this.HALFSCREENHEIGHT;
     return parseInt((this.WORLDWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
 };

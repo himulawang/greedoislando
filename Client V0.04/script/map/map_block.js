@@ -15,17 +15,17 @@ var Map_Block = function(id) {
 
     this.canvas = this.el.getContext('2d');
     this.draw();
-    this.setPosition();
+    this.put();
 };
 
 util.inherits(Map_Block, Map);
 
-Map_Block.prototype.setPosition = function() {
+Map_Block.prototype.put = function() {
     var x = this.x - 1;
     var y = this.y - 1;
 
-    var left = this.transferMapBlockLogicToLayoutX(x, y);
-    var top = this.transferMapBlockLogicToLayoutY(x, y);
+    var left = this.transferMapBlockLogicToLayerX(x, y);
+    var top = this.transferMapBlockLogicToLayerY(x, y);
     $.left(this.el, left);
     $.top(this.el, top);
 };
