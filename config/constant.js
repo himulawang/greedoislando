@@ -5,8 +5,8 @@ global.GI_SKILL_CAST_BLUR_RANGE = 3;
 
 //For Client
 global.GI_SERVER = {
-    DEV : "ws://192.168.0.130:8064"
-    ,STABLE : "ws://192.168.0.130:8081"
+    DEV : "ws://192.168.0.130:8081"
+    ,STABLE : "ws://192.168.0.130:8064"
 };
 global.GI_MAP_WIDTH = 1248;
 global.GI_MAP_HEIGHT = 672;

@@ -232,4 +232,4 @@ global.SKILL =
         }
         ,"animationEffect" : "lightingball"
     }
-};
+}
