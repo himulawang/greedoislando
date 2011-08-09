@@ -44,9 +44,9 @@ Mouse.prototype.initMouseOverGrid = function() {
         return false;
     };
     this.gridEl.onmousemove = function(e) {
-        GI.cursor.move(e);
     };
     this.mapEl.onmousemove = function(e) {
+        GI.cursor.move(e);
         _this.mouseEventEl.innerHTML = "ClientX:" + e.layerX + " ClientY:" + e.layerY;
         _this.outputEl.innerHTML = "LogicX:" + _this.transferAbsolutePositionToLogicX(e.layerX, e.layerY) + " LogicY:" + _this.transferAbsolutePositionToLogicY(e.layerX, e.layerY);
     };
@@ -81,10 +81,7 @@ Mouse.prototype.initMouseClick = function() {
         var endPoint = _this.getCoordinateIndex(xy.x, xy.y);
         var obj = { type : 'moveCharacter', endPoint : endPoint };
         //move
-        console.log(endPoint);
-        if (e.which === 3) {
-            ws.send(obj);
-        }
+        ws.send(obj);
         return false;
     };
 };

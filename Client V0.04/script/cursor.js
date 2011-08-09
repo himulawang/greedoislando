@@ -51,7 +51,9 @@ Cursor.prototype.startBreath = function() {
     }, 100);
 };
 Cursor.prototype.move = function(e) {
-    this.setPosition(e.layerX, e.layerY);
+    var x = this.transferAbsolutePositionToLogicX(e.layerX, e.layerY);
+    var y = this.transferAbsolutePositionToLogicY(e.layerX, e.layerY);
+    this.setPosition(x, y);
     this.put(e.layerX, e.layerY);
 };
 Cursor.prototype.setPreCastSkill = function(skillID) {

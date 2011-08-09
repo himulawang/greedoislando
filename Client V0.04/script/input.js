@@ -25,7 +25,7 @@ var Input = function() {
 };
 
 Input.prototype.execute = function(stream) {
-    //console.log(stream.type);
+    console.log(stream.type);
     this.PROCESS[stream.type](stream.data, stream);
 };
 /* Process Start */
@@ -35,7 +35,7 @@ Input.prototype.initMyCharacter = function(data, stream) {
     var character = GI.characterList.setMyPlayer(data);
     
     //TODO For hacking character position
-    character.setPosition(384, 96);
+    //character.setPosition(12, 6);
 
     GI.initMapList();
     GI.initLog();
@@ -89,6 +89,7 @@ Input.prototype.keepSession = function(data, stream) {
     $("#lag").innerHTML = lag + 'ms';
 };
 Input.prototype.addActionQueue = function(data, stream){
+    console.log(data);
     GI.characterList.getPlayer(data.cID).actionQueue.add(stream);
 };
 Input.prototype.debuff = function(data, stream) {

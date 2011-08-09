@@ -79,7 +79,8 @@ Animation.prototype.drawMove = function() {
 
     var nowDisplacementX = util.fix(this.nowScreenX + deltaTime / this.moveDuration * this.displacementX);
     var nowDisplacementY = util.fix(this.nowScreenY + deltaTime / this.moveDuration * this.displacementY);
-    this.el.css({ left : nowDisplacementX + 'px' , top : nowDisplacementY + 'px' });
+    $.left(this.el, nowDisplacementX + 'px');
+    $.top(this.el, nowDisplacementY + 'px');
 
     var _this = this;
     this.moveAnimationID = requestAnimationFrame(function() { _this.drawMove(); });
