@@ -8,6 +8,10 @@ global.GI_SERVER = {
     DEV : "ws://192.168.0.130:8081"
     ,STABLE : "ws://192.168.0.130:8064"
 };
+global.GI_SERVER_PORT = {
+    DEV : 8081
+    ,STABLE : 8064
+}
 global.GI_MAP_WIDTH = 1248;
 global.GI_MAP_HEIGHT = 672;
 global.GI_CHARACTER_SPEED = 120;
