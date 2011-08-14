@@ -20,10 +20,10 @@ var util = {
         }
         return undefined;
     }
-    ,createCanvas : function(id, class) {
+    ,createCanvas : function(id, className) {
         var el = document.createElement('canvas');
         if (id != undefined) el.id = id;
-        if (class != undefined) el.className = class;
+        if (className != undefined) el.className = className;
         return el;
     }
 };
