@@ -20,7 +20,7 @@ div {
     color: red;
 }
 
-#map {
+#map, #object {
     position: absolute;
 }
 

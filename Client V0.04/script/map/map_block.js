@@ -1,24 +1,30 @@
+/* <div id='map'>
+ *      <div id='b001_001'>Line&Terrain</div>
+ * </div>
+ * <div id='object'>
+ *      <div class='b001_001'><img src='TREE'></div>
+ *      <div><canvas id='9348091a-63b5-b861-fc7b-33cedaf10e52'>Character</canvas></div>
+ *      <div><canvas id='9348091a-63b5-b861-fc7b-33cedaf10e53'>NPC</canvas></div>
+ * </div>
+ * */
 var Map_Block = function(id) {
-    Map_Block.super_.apply(this, arguments);
-    this.TERRAIN = global.TERRAIN;
-    this.id = id;
-    this.grid = window[id];
     var xy = this.transferMapBlockIndexToXY(id);
-    this.x = xy.x;
-    this.y = xy.y;
+    // argument: objID, typeID, mapBlockID, x, y
+    Map_Block.super_.apply(this, [fc.guid(), id, id, xy.x, xy.y]);
+    this.setGroupID(3);
+    this.scene = window[id];
 
-    var canvasEl = util.createCanvas(this.id, 'mapblock');
-    $('#map').appendChild(canvasEl);
-    this.el = canvasEl;
-    this.el.width = this.MAPWIDTH;
-    this.el.height = this.MAPHEIGHT;
+    this.el.style.width = this.MAPWIDTH;
+    this.el.style.height = this.MAPHEIGHT;
+    this.canvasEl.width = this.MAPWIDTH;
+    this.canvasEl.height = this.MAPHEIGHT;
+    $('#map').appendChild(this.el);
 
-    this.canvas = this.el.getContext('2d');
     this.draw();
     this.put();
 };
 
-util.inherits(Map_Block, Map);
+util.inherits(Map_Block, Obj);
 
 Map_Block.prototype.put = function() {
     var x = this.x - 1;
@@ -26,6 +32,7 @@ Map_Block.prototype.put = function() {
 
     var left = this.transferMapBlockLogicToLayerX(x, y);
     var top = this.transferMapBlockLogicToLayerY(x, y);
+
     $.left(this.el, left);
     $.top(this.el, top);
 };
@@ -39,6 +46,7 @@ Map_Block.prototype.draw = function() {
     this.canvas.closePath();
     this.canvas.stroke();
 
+    /*
     var xy, tmpXY, img;
     for (var index in this.grid) {
         tmpXY = this.getCoordinateXY(index);
@@ -54,18 +62,18 @@ Map_Block.prototype.draw = function() {
             this.canvas.drawImage(img, this.transferLogicToScreenX(x, y) - offsetX, this.transferLogicToScreenY(x, y) - offsetY);
         }
     }
+    */
 };
+/*
 Map_Block.prototype.getTerrainType = function(index) {
     if (!this.grid[index]) return false;
     var objID = this.grid[index].objID;
     
     return this.TERRAIN[objID].name;
 };
-Map_Block.prototype.getID = function() {
-    return this.id;
-};
 Map_Block.prototype.drawTest = function() {
     var img = new Image();
     img.src = 'images/plain.png';
     this.canvas.drawImage(img, 0, 0);
 };
+*/

@@ -101,3 +101,7 @@ Map.prototype.transferAbsolutePositionToLogicX = function(x, y) {
 Map.prototype.transferAbsolutePositionToLogicY = function(x, y) {
     return parseInt((this.WORLDWIDTH / 2 - x) / (2 * this.HALFTILEWIDTH) + y / (2 * this.HALFTILEHEIGHT));
 };
+//z-index
+Map.prototype.getZIndex = function(x, y) {
+    return (x + y) * 10;
+};
