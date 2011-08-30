@@ -26,6 +26,12 @@ var util = {
         if (className != undefined) el.className = className;
         return el;
     }
+    ,createDiv : function(id, className) {
+        var el = document.createElement('div');
+        if (id != undefined) el.id = 'div-' + id;
+        if (className != undefined) el.className = className;
+        return el;
+    }
 };
 var $ = function(selector, context) {
     context = context || document;
@@ -47,6 +53,9 @@ $.left = function(el, value) {
 $.top = function(el, value) {
     el.style.top = value + 'px';
 };
+$.z = function(el, z) {
+    el.style['z-index'] = z;
+}
 $.show = function(el) {
     el.style.display = 'block';
 };
